@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class ElectoralAreaResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'is_active' => $this->is_active,
+            'code' => $this->code,
+            'constituency_id' => $this->constituency_id,
+            'constituency_name' => $this->constituency->name,
+            'constituency_code' => $this->constituency->code,
+            'updated_at' => $this->updated_at,
+            'total_voters' => $this->delegates()->count(),
+            'registered_voters' => $this->registered_voters,
+        ];
+    }
+}
