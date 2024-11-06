@@ -57,7 +57,7 @@
                     <a href="{{route("property-types.index")}}" class="nav-link" data-key="t-user_activity"> Property Types</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route("service-types.index")}}" class="nav-link" data-key="t-user_activity"> Property Categories</a>
+                    <a href="{{route("property-categories.index")}}" class="nav-link" data-key="t-user_activity"> Property Categories</a>
                 </li>
             </ul>
         </div>
