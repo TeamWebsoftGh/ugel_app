@@ -4,29 +4,29 @@ namespace App\Services;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
-use App\Models\Property\PropertyCategory;
-use App\Repositories\PropertyCategoryRepository;
+use App\Models\Property\PropertyLease;
+use App\Repositories\Interfaces\IPropertyLeaseRepository;
 use App\Repositories\Interfaces\IEmployeeRepository;
 use App\Services\Helpers\Response;
-use App\Services\Interfaces\IPropertyCategoryService;
+use App\Services\Interfaces\IPropertyLeaseService;
 use App\Traits\UploadableTrait;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
-class PropertyCategoryService extends ServiceBase implements IPropertyCategoryService
+class PropertyLeaseService extends ServiceBase implements IPropertyLeaseService
 {
     use UploadableTrait;
-    private PropertyCategoryRepository $propertyCategoryRepo;
+    private IPropertyLeaseRepository $propertyLeaseRepo;
 
     /**
-     * PropertyCategoryService constructor.
-     * @param PropertyCategoryRepository $propertyCategory
+     * PropertyLeaseService constructor.
+     * @param IPropertyLeaseRepository $propertyLease
      */
-    public function __construct(PropertyCategoryRepository $propertyCategory)
+    public function __construct(IPropertyLeaseRepository $propertyLease)
     {
         parent::__construct();
-        $this->propertyCategoryRepo = $propertyCategory;
+        $this->propertyLeaseRepo = $propertyLease;
     }
 
     /**
@@ -36,9 +36,9 @@ class PropertyCategoryService extends ServiceBase implements IPropertyCategorySe
      *
      * @return Collection
      */
-    public function listPropertyCategories(array $filter = null, string $orderBy = 'updated_at', string $sortBy = 'desc', array $columns = ['*']) : Collection
+    public function listPropertyLeases(array $filter = null, string $orderBy = 'updated_at', string $sortBy = 'desc', array $columns = ['*']) : Collection
     {
-        return $this->propertyCategoryRepo->listPropertyCategories($filter, $orderBy, $sortBy);
+        return $this->propertyLeaseRepo->listPropertyLeases($filter, $orderBy, $sortBy);
     }
 
     /**
@@ -46,24 +46,24 @@ class PropertyCategoryService extends ServiceBase implements IPropertyCategorySe
      *
      * @return Response
      */
-    public function createPropertyCategory(array $params)
+    public function createPropertyLease(array $params)
     {
         //Declaration
-        $propertyCategory = null;
+        $propertyLease = null;
         try{
             //Prepare request
             if(isset($params['photo']) && $params['photo']instanceof UploadedFile)
             {
-                $params['image'] = $this->uploadPublic($params['photo'], Str::slug($params['short_name']), 'property_Categorys');
+                $params['image'] = $this->uploadPublic($params['photo'], Str::slug($params['short_name']), 'property_leases');
             }
-            $propertyCategory = $this->propertyCategoryRepo->createPropertyCategory($params);
+            $propertyLease = $this->propertyLeaseRepo->createPropertyLease($params);
 
         }catch (\Exception $ex){
-            log_error(format_exception($ex), new PropertyCategory(), 'create-property-Category-failed');
+            log_error(format_exception($ex), new PropertyLease(), 'create-property-lease-failed');
         }
 
         //Check if Successful
-        if ($propertyCategory == null)
+        if ($propertyLease == null)
         {
             $this->response->status = ResponseType::ERROR;
             $this->response->message = ResponseMessage::DEFAULT_ERROR;
@@ -72,14 +72,14 @@ class PropertyCategoryService extends ServiceBase implements IPropertyCategorySe
         }
 
         //Audit Trail
-        $logAction = 'create-property-Category-successful';
+        $logAction = 'create-property-leasee-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_CREATE;
 
-        log_activity($auditMessage, $propertyCategory, $logAction);
+        log_activity($auditMessage, $propertyLease, $logAction);
 
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
-        $this->response->data = $propertyCategory;
+        $this->response->data = $propertyLease;
 
         return $this->response;
     }
@@ -87,10 +87,10 @@ class PropertyCategoryService extends ServiceBase implements IPropertyCategorySe
 
     /**
      * @param array $data
-     * @param PropertyCategory $propertyCategory
+     * @param PropertyLease $propertyLease
      * @return Response
      */
-    public function updatePropertyCategory(array $params, PropertyCategory $propertyCategory)
+    public function updatePropertyLease(array $params, PropertyLease $propertyLease)
     {
         //Declaration
         $result = false;
@@ -98,12 +98,12 @@ class PropertyCategoryService extends ServiceBase implements IPropertyCategorySe
             //Prepare request
             if(isset($params['photo']) && $params['photo']instanceof UploadedFile)
             {
-                $params['image'] = $this->uploadPublic($params['photo'], Str::slug($params['short_name']), 'property_Categorys');
+                $params['image'] = $this->uploadPublic($params['photo'], Str::slug($params['short_name']), 'property_leases');
             }
 
-            $result = $this->propertyCategoryRepo->updatePropertyCategory($params, $propertyCategory);
+            $result = $this->propertyLeaseRepo->updatePropertyLease($params, $propertyLease);
         }catch (\Exception $ex){
-            log_error(format_exception($ex), new PropertyCategory(), 'create-property-Category-failed');
+            log_error(format_exception($ex), new PropertyLease(), 'create-property-lease-failed');
         }
 
         //Check if Successful
@@ -116,14 +116,14 @@ class PropertyCategoryService extends ServiceBase implements IPropertyCategorySe
         }
 
         //Audit Trail
-        $logAction = 'update-property-Category-successful';
+        $logAction = 'update-property-lease-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
 
-        log_activity($auditMessage, $propertyCategory, $logAction);
+        log_activity($auditMessage, $propertyLease, $logAction);
 
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
-        $this->response->data = $propertyCategory;
+        $this->response->data = $propertyLease;
 
         return $this->response;
     }
@@ -131,27 +131,27 @@ class PropertyCategoryService extends ServiceBase implements IPropertyCategorySe
 
     /**
      * @param int $id
-     * @return PropertyCategory|null
+     * @return PropertyLease|null
      */
-    public function findPropertyCategoryById(int $id)
+    public function findPropertyLeaseById(int $id)
     {
-        return $this->propertyCategoryRepo->findPropertyCategoryById($id);
+        return $this->propertyLeaseRepo->findPropertyLeaseById($id);
     }
 
 
     /**
-     * @param PropertyCategory $propertyCategory
+     * @param PropertyLease $propertyLease
      * @return Response
      */
-    public function deletePropertyCategory(PropertyCategory $propertyCategory)
+    public function deletePropertyLease(PropertyLease $propertyLease)
     {
         //Declaration
         $result = false;
 
         try{
-            $result = $this->propertyCategoryRepo->deletePropertyCategory($propertyCategory);
+            $result = $this->propertyLeaseRepo->deletePropertyLease($propertyLease);
         }catch (\Exception $ex){
-            log_error(format_exception($ex), $propertyCategory, 'delete-property-Category-failed');
+            log_error(format_exception($ex), $propertyLease, 'delete-property-lease-failed');
         }
 
         if (!isset($result) || !$result) {
@@ -162,10 +162,10 @@ class PropertyCategoryService extends ServiceBase implements IPropertyCategorySe
         }
 
         //Audit Trail
-        $logAction = 'delete-property-Category-successful';
+        $logAction = 'delete-property-lease-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
 
-        log_activity($auditMessage, $propertyCategory, $logAction);
+        log_activity($auditMessage, $propertyLease, $logAction);
 
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;

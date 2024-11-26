@@ -18,7 +18,7 @@
                             <th>#</th>
                             <th>Name</th>
                             <th>Short Name</th>
-                            <th>Category</th>
+                            <th>Description</th>
                             <th>Status</th>
                             <th>Last Modified</th>
                             <th>Action</th>
@@ -46,12 +46,12 @@
                         {data: null, orderable: false, searchable: false},
                         {data: 'name', name: 'name'},
                         {data: 'short_name', name: 'short_name'},
-                        {data: 'category', name: 'category'},
+                        {data: 'description', name: 'description'},
                         {data: 'status', name: 'status'},
                         {data: 'updated_at', name: 'updated_at'},
                         {data: 'action', name: 'action', orderable: false }
                     ];
-                loadDataAndInitializeDataTable("property_Category", "{{ route('property-Categories.index') }}", cols);
+                loadDataAndInitializeDataTable("property_Category", "{{ route('property-categories.index') }}", cols);
             });
         })(jQuery);
     </script>

@@ -16,7 +16,7 @@
         <div class="form-group col-6 col-md-4">
             <label>Short Name <span class="text-danger">*</span></label>
             <input type="text" name="short_name" id="short_name" required class="form-control"
-                   placeholder="short_name" value="{{old('name', $property_type->short_name)}}">
+                   placeholder="short_name" value="{{old('name', $property_category->short_name)}}">
             <span class="input-note text-danger" id="error-short_name"> </span>
             @error('short_name')
             <span class="input-note text-danger">{{ $message }} </span>
@@ -28,7 +28,7 @@
                     data-live-search="true"
                     title='{{__('Property Category')}}'>
                 @foreach($categories as $cat)
-                    <option value="{{$cat->id}}" @selected(old('property_category_id', $property_type->property_category_id) == $cat->id)>{{$cat->name}}</option>
+                    <option value="{{$cat->id}}" @selected(old('property_category_id', $property_category->property_category_id) == $cat->id)>{{$cat->name}}</option>
                 @endforeach
             </select>
             <span class="input-note text-danger" id="error-property_category_id"> </span>

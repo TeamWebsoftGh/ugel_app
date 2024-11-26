@@ -6,26 +6,27 @@ use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Property\PropertyCategory;
 use App\Models\Property\PropertyType;
-use App\Services\PropertyCategoryService;
+use App\Models\Property\PropertyUnit;
+use App\Services\PropertyUnitService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class PropertyCategoryController extends Controller
+class PropertyUnitController extends Controller
 {
-    private PropertyCategoryService $propertyCategoryService;
+    private PropertyUnitService $propertyUnitService;
 
     /**
      * Create a new controller instance.
      *
-     * @param PropertyCategoryService $propertyCategoryService
+     * @param PropertyUnitService $propertyUnitService
      */
-    public function __construct(PropertyCategoryService $propertyCategoryService)
+    public function __construct(PropertyUnitService $propertyUnitService)
     {
         parent::__construct();
-        $this->propertyCategoryService = $propertyCategoryService;
+        $this->propertyUnitService = $propertyUnitService;
     }
 
 
@@ -37,7 +38,7 @@ class PropertyCategoryController extends Controller
 	public function index(Request $request)
 	{
         $data = request()->all();
-		$types = $this->propertyCategoryService->listPropertyCategories($data, "updated_at", "desc");
+		$types = $this->propertyUnitService->listPropertyUnits($data, "updated_at", "desc");
         if (request()->ajax())
         {
             return datatables()->of($types)
@@ -57,12 +58,12 @@ class PropertyCategoryController extends Controller
                 {
                     $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></button>';
                     $button .= '&nbsp;';
-                    if (user()->can('update-property-categories'))
+                    if (user()->can('update-property-Units'))
                     {
                         $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
                         $button .= '&nbsp;';
                     }
-                    if (user()->can('delete-property-categories'))
+                    if (user()->can('delete-property-Units'))
                     {
                         $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
                     }
@@ -73,7 +74,7 @@ class PropertyCategoryController extends Controller
                 ->make(true);
         }
 
-        return view('property.property-categories.index');
+        return view('property.property-units.index');
 	}
 
     /**
@@ -84,14 +85,14 @@ class PropertyCategoryController extends Controller
      */
     public function create()
     {
-        $property_category = new PropertyCategory();
+        $property_unit = new PropertyUnit();
         // $categories = PropertyCategory::select('id', 'name')->get();
 
         if (request()->ajax()){
-            return view('property.property-categories.edit', compact('property_category'));
+            return view('property.property-units.edit', compact('property_unit'));
         }
 
-        return redirect()->route("property-categories.index");
+        return redirect()->route("property-units.index");
     }
 	/**
 	 * Store a newly created resource in storage.
@@ -102,20 +103,18 @@ class PropertyCategoryController extends Controller
 	public function store(Request $request)
 	{
         $validatedData = $request->validate([
-            'name' => 'required',
-            'short_name' => 'required',
+            'unit_name' => 'required',
             'is_active' => 'sometimes',
-            // 'image' => 'nullable|image|max:10240|mimes:jpeg,png,jpg,gif',
         ]);
 
         $data = $request->except('_token', '_method', 'id');
 
         if ($request->has("id") && $request->input("id") != null)
         {
-            $property_Category = $this->propertyCategoryService->findPropertyCategoryById($request->input("id"));
-            $results = $this->propertyCategoryService->updatePropertyCategory($data, $property_Category);
+            $property_unit = $this->propertyUnitService->findPropertyUnitById($request->input("id"));
+            $results = $this->propertyUnitService->updatePropertyUnit($data, $property_unit);
         }else{
-            $results = $this->propertyCategoryService->createPropertyCategory($data);
+            $results = $this->propertyUnitService->createPropertyUnit($data);
         }
 
         if ($request->ajax()){
@@ -129,7 +128,7 @@ class PropertyCategoryController extends Controller
 
         request()->session()->flash('message', $results->message);
 
-        return redirect()->route('property-categories.index');
+        return redirect()->route('property-units.index');
 	}
 
 
@@ -141,14 +140,14 @@ class PropertyCategoryController extends Controller
      */
 	public function show($id)
 	{
-        $property_Category = $this->propertyCategoryService->findPropertyCategoryById($id);
+        $property_unit = $this->propertyUnitService->findPropertyUnitById($id);
         // $categories = PropertyCategory::select('id', 'name')->get();
 
         if (request()->ajax()){
-            return view('property.property-categories.edit', compact('property_category', 'categories'));
+            return view('property.property-units.edit', compact('property_unit'));
         }
 
-        return redirect()->route("property-categories.index");
+        return redirect()->route("property-units.index");
 	}
 
 	/**
@@ -159,14 +158,14 @@ class PropertyCategoryController extends Controller
      */
 	public function edit($id)
 	{
-        $property_Category = $this->propertyCategoryService->findPropertyCategoryById($id);
+        $property_unit = $this->propertyUnitService->findPropertyUnitById($id);
         // $categories = PropertyCategory::select('id', 'name')->get();
 
         if (request()->ajax()){
-            return view('property.property-categories.edit');
+            return view('property.property-units.edit', compact('property_unit'));
         }
 
-        return redirect()->route("property-categories.index");
+        return redirect()->route("property-units.index");
 	}
 
 
@@ -178,8 +177,8 @@ class PropertyCategoryController extends Controller
      */
 	public function destroy(int $id)
 	{
-        $award = $this->propertyCategoryService->findPropertyCategoryById($id);
-        $result = $this->propertyCategoryService->deletePropertyCategory($award);
+        $award = $this->propertyUnitService->findPropertyUnitById($id);
+        $result = $this->propertyUnitService->deletePropertyUnit($award);
 
         return $this->responseJson($result);
 	}

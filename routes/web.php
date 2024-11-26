@@ -28,6 +28,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function ()
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
     Route::group(['middleware' => ['auth', \App\Http\Middleware\CheckIfTodoIsSet::class]], function ()
     {
         includeRouteFiles(__DIR__.'/admin/');
@@ -35,6 +36,17 @@ Route::group(['namespace' => 'App\Http\Controllers'], function ()
 
         Route::get('dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
         Route::get('employee/dashboard', 'DashboardController@employeeDashboard')->name('employee.dashboard');
+
+        // Route::namespace('Property')->group(function () {
+        //     Route::resource('property-category', 'PropertyCategoryController')->except([
+        //         'destroy', 'create', 'update'
+        //     ]);
+    
+        //     Route::resource('property-units', 'PropertyUnitController')->except([
+        //         'destroy', 'create', 'update'
+        //     ]);
+        // });
+
 
         Route::namespace('Account')->group(function () {
             // Route::get('account', 'AccountController@index')->name('account.index');
@@ -82,6 +94,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function ()
             Route::resource('projects', 'ProjectController')->except([
                 'destroy', 'create', 'update'
             ]);
+        
             Route::get('projects/{id}/delete', 'ProjectController@destroy')->name('projects.destroy');
 
             Route::get('projects/{id}/calendarable', 'ProjectController@calendarableDetails')->name('projects.calendarable');
@@ -216,23 +229,23 @@ Route::group(['namespace' => 'App\Http\Controllers'], function ()
         });
 
 
-//        Route::post('events/update', 'EventController@update')->name('events.update');
-//        Route::resource('events', 'EventController')->except([
-//            'destroy', 'create', 'update'
-//        ]);
-//        Route::get('events/{id}/delete', 'EventController@destroy')->name('events.destroy');
-//        Route::post('events/delete/selected', 'EventController@delete_by_selection')->name('mass_delete_events');
-//
-//        Route::get('events/{id}/calendarable', 'EventController@calendarableDetails')->name('events.calendarable');
+        //        Route::post('events/update', 'EventController@update')->name('events.update');
+        //        Route::resource('events', 'EventController')->except([
+        //            'destroy', 'create', 'update'
+        //        ]);
+        //        Route::get('events/{id}/delete', 'EventController@destroy')->name('events.destroy');
+        //        Route::post('events/delete/selected', 'EventController@delete_by_selection')->name('mass_delete_events');
+        //
+        //        Route::get('events/{id}/calendarable', 'EventController@calendarableDetails')->name('events.calendarable');
 
-//        Route::post('service-types/update', 'ServiceTypeController@update')->name('service-types.update');
-//        Route::resource('service-types', 'ServiceTypeController')->except([
-//            'destroy', 'create', 'update'
-//        ]);
-//        Route::get('service-types/{id}/delete', 'ServiceTypeController@destroy')->name('service-types.destroy');
-//        Route::post('service-types/delete/selected', 'ServiceTypeController@delete_by_selection')->name('mass_delete_meetings');
-//
-//        Route::get('service-types/{id}/calendarable', 'ServiceTypeController@calendarableDetails')->name('service-types.calendarable');
+        //        Route::post('service-types/update', 'ServiceTypeController@update')->name('service-types.update');
+        //        Route::resource('service-types', 'ServiceTypeController')->except([
+        //            'destroy', 'create', 'update'
+        //        ]);
+        //        Route::get('service-types/{id}/delete', 'ServiceTypeController@destroy')->name('service-types.destroy');
+        //        Route::post('service-types/delete/selected', 'ServiceTypeController@delete_by_selection')->name('mass_delete_meetings');
+        //
+        //        Route::get('service-types/{id}/calendarable', 'ServiceTypeController@calendarableDetails')->name('service-types.calendarable');
     });
 
 
@@ -314,3 +327,4 @@ Route::group(['namespace' => 'App\Http\Controllers'], function ()
     });
 
 });
+

@@ -14,6 +14,8 @@ Route::group(['prefix' => '', 'namespace' => 'Property'], function ()
 {
     Route::resource('property-categories', 'PropertyCategoryController')->except(['update']);
     Route::resource('property-types', 'PropertyTypeController')->except(['update']);
+    Route::resource('property-units', 'PropertyUnitController')->except(['update']);
+    Route::resource('property-leases', 'PropertyLeaseController')->except(['update']);
 
     //service-types
     Route::get('companies/kyc', 'OfferController@kyc')->name('companies.kyc');

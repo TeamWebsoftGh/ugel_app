@@ -3,21 +3,21 @@
 namespace App\Repositories;
 
 
-use App\Models\Property\PropertyCategory;
-use App\Repositories\Interfaces\IPropertyCategoryRepository;
+use App\Models\Property\PropertyUnit;
+use App\Repositories\Interfaces\IPropertyUnitRepository;
 use Illuminate\Support\Collection;
 
-class PropertyCategoryRepository extends BaseRepository implements IPropertyCategoryRepository
+class PropertyUnitRepository extends BaseRepository implements IPropertyUnitRepository
 {
     /**
      * SemesterRepository constructor.
      *
-     * @param PropertyCategory $propertyCategory
+     * @param PropertyUnit $propertyUnit
      */
-    public function __construct(PropertyCategory $propertyCategory)
+    public function __construct(PropertyUnit $propertyUnit)
     {
-        parent::__construct($propertyCategory);
-        $this->model = $propertyCategory;
+        parent::__construct($propertyUnit);
+        $this->model = $propertyUnit;
     }
 
     /**
@@ -25,9 +25,9 @@ class PropertyCategoryRepository extends BaseRepository implements IPropertyCate
      *
      * @param int $id
      *
-     * @return PropertyCategory
+     * @return PropertyUnit
      */
-    public function findPropertyCategoryById(int $id): PropertyCategory
+    public function findPropertyUnitById(int $id): PropertyUnit
     {
         return $this->findOneOrFail($id);
     }
@@ -36,9 +36,9 @@ class PropertyCategoryRepository extends BaseRepository implements IPropertyCate
     /**
      * @param array $data
      *
-     * @return PropertyCategory
+     * @return PropertyUnit
      */
-    public function createPropertyCategory(array $data) : PropertyCategory
+    public function createPropertyUnit(array $data) : PropertyUnit
     {
         return $this->create($data);
     }
@@ -46,21 +46,21 @@ class PropertyCategoryRepository extends BaseRepository implements IPropertyCate
     /**
      * @param array $data
      *
-     * @param PropertyCategory $propertyCategory
+     * @param PropertyUnit $propertyUnit
      * @return bool
      */
-    public function updatePropertyCategory(array $data, PropertyCategory $propertyCategory) : bool
+    public function updatePropertyUnit(array $data, PropertyUnit $propertyUnit) : bool
     {
-        return $propertyCategory->update($data);
+        return $propertyUnit->update($data);
     }
 
     /**
-     * @param PropertyCategory $propertyCategory
+     * @param PropertyUnit $propertyUnit
      * @return bool
      */
-    public function deletePropertyCategory(PropertyCategory $propertyCategory) : bool
+    public function deletePropertyUnit(PropertyUnit $propertyUnit) : bool
     {
-        return $propertyCategory->delete();
+        return $propertyUnit->delete();
     }
 
     /**
@@ -70,7 +70,7 @@ class PropertyCategoryRepository extends BaseRepository implements IPropertyCate
      * @param array $columns
      * @return Collection
      */
-    public function listPropertyCategories(array $filter = null, string $order = 'id', string $sort = 'desc', array $columns = ['*']) : Collection
+    public function listPropertyUnits(array $filter = null, string $order = 'id', string $sort = 'desc', array $columns = ['*']) : Collection
     {
         $result = $this->model->query();
         if (!empty($filter['filter_property_category']))

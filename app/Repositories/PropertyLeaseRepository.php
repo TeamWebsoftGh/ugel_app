@@ -3,21 +3,21 @@
 namespace App\Repositories;
 
 
-use App\Models\Property\PropertyCategory;
-use App\Repositories\Interfaces\IPropertyCategoryRepository;
+use App\Models\Property\PropertyDetail;
+use App\Repositories\Interfaces\IPropertyLeaseRepository;
 use Illuminate\Support\Collection;
 
-class PropertyCategoryRepository extends BaseRepository implements IPropertyCategoryRepository
+class PropertyLeaseRepository extends BaseRepository implements IPropertyLeaseRepository
 {
     /**
      * SemesterRepository constructor.
      *
-     * @param PropertyCategory $propertyCategory
+     * @param PropertyLease $propertyLease
      */
-    public function __construct(PropertyCategory $propertyCategory)
+    public function __construct(PropertyLease $propertyLease)
     {
-        parent::__construct($propertyCategory);
-        $this->model = $propertyCategory;
+        parent::__construct($propertyLease);
+        $this->model = $propertyLease;
     }
 
     /**
@@ -25,9 +25,9 @@ class PropertyCategoryRepository extends BaseRepository implements IPropertyCate
      *
      * @param int $id
      *
-     * @return PropertyCategory
+     * @return PropertyLease
      */
-    public function findPropertyCategoryById(int $id): PropertyCategory
+    public function findPropertyLeaseById(int $id): PropertyLease
     {
         return $this->findOneOrFail($id);
     }
@@ -36,9 +36,9 @@ class PropertyCategoryRepository extends BaseRepository implements IPropertyCate
     /**
      * @param array $data
      *
-     * @return PropertyCategory
+     * @return PropertyLease
      */
-    public function createPropertyCategory(array $data) : PropertyCategory
+    public function createPropertyLease(array $data) : PropertyLease
     {
         return $this->create($data);
     }
@@ -46,21 +46,21 @@ class PropertyCategoryRepository extends BaseRepository implements IPropertyCate
     /**
      * @param array $data
      *
-     * @param PropertyCategory $propertyCategory
+     * @param PropertyLease $propertyLease
      * @return bool
      */
-    public function updatePropertyCategory(array $data, PropertyCategory $propertyCategory) : bool
+    public function updatePropertyLease(array $data, PropertyLease $propertyLease) : bool
     {
-        return $propertyCategory->update($data);
+        return $propertyLease->update($data);
     }
 
     /**
-     * @param PropertyCategory $propertyCategory
+     * @param PropertyLease $propertyLease
      * @return bool
      */
-    public function deletePropertyCategory(PropertyCategory $propertyCategory) : bool
+    public function deletePropertyLease(PropertyLease $propertyLease) : bool
     {
-        return $propertyCategory->delete();
+        return $propertyLease->delete();
     }
 
     /**
@@ -70,7 +70,7 @@ class PropertyCategoryRepository extends BaseRepository implements IPropertyCate
      * @param array $columns
      * @return Collection
      */
-    public function listPropertyCategories(array $filter = null, string $order = 'id', string $sort = 'desc', array $columns = ['*']) : Collection
+    public function listPropertyLeases(array $filter = null, string $order = 'id', string $sort = 'desc', array $columns = ['*']) : Collection
     {
         $result = $this->model->query();
         if (!empty($filter['filter_property_category']))
