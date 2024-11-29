@@ -7,7 +7,7 @@
         <div class="form-group col-6 col-md-4">
             <label>Name <span class="text-danger">*</span></label>
             <input type="text" name="name" id="name" required class="form-control"
-                   placeholder="name" value="{{old('name', $property_Category->name)}}">
+                   placeholder="name" value="{{old('name', $property_category->name)}}">
             <span class="input-note text-danger" id="error-name"> </span>
             @error('name')
             <span class="input-note text-danger">{{ $message }} </span>
@@ -22,24 +22,10 @@
             <span class="input-note text-danger">{{ $message }} </span>
             @enderror
         </div>
-        <div class="form-group col-6 col-md-4">
-            <label>{{__('Property Category')}} <span class="text-danger">*</span></label>
-            <select name="property_category_id" id="property_category_id" class="form-control selectpicker "
-                    data-live-search="true"
-                    title='{{__('Property Category')}}'>
-                @foreach($categories as $cat)
-                    <option value="{{$cat->id}}" @selected(old('property_category_id', $property_category->property_category_id) == $cat->id)>{{$cat->name}}</option>
-                @endforeach
-            </select>
-            <span class="input-note text-danger" id="error-property_category_id"> </span>
-            @error('property_category_id')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
         <div class="form-group col-12 col-md-12">
             <label for="description" class="control-label">Description</label>
             <textarea class="form-control" id="description" name="description"
-                      rows="3">{{old('description', $property_type->description)}}</textarea>
+                      rows="3">{{old('description', $property_category->description)}}</textarea>
             <span class="input-note text-danger" id="error-description"> </span>
             @error('description')
             <span class="input-note text-danger">{{ $message }} </span>

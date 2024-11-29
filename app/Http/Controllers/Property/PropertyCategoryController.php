@@ -45,10 +45,10 @@ class PropertyCategoryController extends Controller
                 {
                     return $row->id;
                 })
-                ->addColumn('category', function ($row)
-                {
-                    return $row->property_category->name ?? '';
-                })
+                // ->addColumn('category', function ($row)
+                // {
+                //     return $row->property_category->name ?? '';
+                // })
                 ->addColumn('status', function ($row)
                 {
                     return $row->is_active?"Active":"Inactive";
@@ -93,6 +93,18 @@ class PropertyCategoryController extends Controller
 
         return redirect()->route("property-categories.index");
     }
+
+    // public function create()
+    // {
+    //     $property_type = new PropertyType();
+    //     $categories = PropertyCategory::select('id', 'name')->get();
+
+    //     if (request()->ajax()){
+    //         return view('property.property-types.edit', compact('property_type', 'categories'));
+    //     }
+
+    //     return redirect()->route("property-types.index");
+    // }
 	/**
 	 * Store a newly created resource in storage.
 	 *
