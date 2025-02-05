@@ -1,0 +1,48 @@
+<?php
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Configuration Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::group(['prefix' => 'workflow-requests', 'namespace' => 'WorkflowRequest'], function () {
+    Route::get('employee-requests', 'EmployeeRequestController@index')->name('employee-requests.index');
+    Route::get('pending', 'EmployeeRequestController@pending')->name('employee-requests.pending');
+    Route::get('my-requests', 'EmployeeRequestController@myRequests')->name('employee-requests.my-requests');
+    Route::get('all-requests', 'EmployeeRequestController@allRequests')->name('employee-requests.all-requests');
+    Route::get('all-requests/{id}', 'EmployeeRequestController@getRequest')->name('employee-requests.show');
+    Route::get('update-request/{id}', 'EmployeeRequestController@resendRequest')->name('employee-requests.resend');
+    Route::post('employee-requests', 'EmployeeRequestController@processRequest')->name('employee-requests.process');
+
+    Route::post('forward-requests/{id}', 'EmployeeRequestController@forwardRequest')->name('employee-requests.forward');
+    Route::post('send-forward-requests/{id}', 'EmployeeRequestController@sendForwardRequest')->name('employee-requests.send-forward');
+});
+
+//Workflow
+Route::group(['prefix' => 'workflows', 'namespace' => 'Workflow', 'as' => 'workflows.'], function ()
+{
+    //Workflow Positions types
+    Route::get('position-types/detail/{id}', 'PositionTypeController@show')->name('position-types.detail');
+    Route::get('position-types/{id}/delete', 'PositionTypeController@destroy')->name('position-types.destroy');
+    Route::resource('position-types', 'PositionTypeController')->except(['create', 'update', 'show']);
+
+    //Workflow Positions
+    Route::get('positions/detail/{id}', 'PositionController@show')->name('positions.detail');
+    Route::get('positions/{id}/delete', 'PositionController@destroy')->name('positions.destroy');
+    Route::resource('positions', 'PositionController')->except(['create', 'update', 'show']);
+
+    //Workflow Types
+    Route::get('workflow-types/detail/{id}', 'WorkflowTypeController@show')->name('workflow-types.detail');
+    Route::get('workflow-types/{id}/delete', 'WorkflowTypeController@destroy')->name('workflow-types.destroy');
+    Route::resource('workflow-types', 'WorkflowTypeController')->except(['create', 'update', 'show']);
+
+    //Workflows
+    Route::get('workflows/detail/{id}', 'WorkflowController@show')->name('workflows.detail');
+    Route::get('workflows/{id}/delete', 'WorkflowController@destroy')->name('workflows.destroy');
+    Route::resource('workflows', 'WorkflowController')->except(['create', 'update', 'show']);
+});
