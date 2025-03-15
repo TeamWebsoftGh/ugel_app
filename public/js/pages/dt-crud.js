@@ -254,7 +254,7 @@ function dtDeleteItem(id, url, tabId)
     Swal.fire({
         title: 'Are you sure you want to delete this record?',
         text: 'You won\'t be able to revert this!',
-        icon: 'warning',
+        icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Delete',
         confirmButtonColor: '#d33',
@@ -291,7 +291,7 @@ function dtMultiDeleteItem(ids, url, tabId)
     Swal.fire({
         title: 'Are you sure you want to delete '+ids.length+' record(s)?',
         text: 'You won\'t be able to revert this!',
-        icon: 'warning',
+        icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Delete',
         confirmButtonColor: '#d33',
@@ -336,7 +336,7 @@ $(document).on('click', '.save_dt_btn', function(e){
     Swal.fire({
         title: 'Are you sure you want to save?',
         text: '',
-        icon: 'warning',
+        icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Save',
     }).then((result) => {
@@ -357,7 +357,7 @@ $(document).on('click', '.save_dt_btn', function(e){
                 },
                 success: function (data) {
                     Swal.fire({
-                        icon: data.status,
+                        icon: data.status.toLowerCase(),
                         title: '',
                         text: data.message,
                     });

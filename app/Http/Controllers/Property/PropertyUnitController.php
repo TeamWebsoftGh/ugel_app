@@ -45,9 +45,17 @@ class PropertyUnitController extends Controller
                 {
                     return $row->id;
                 })
-                ->addColumn('category', function ($row)
+                ->addColumn('property_name', function ($row)
                 {
-                    return $row->property_category->name ?? '';
+                    return $row->property->property_name ?? '';
+                })
+                ->addColumn('property_type_name', function ($row)
+                {
+                    return $row->property->propertyType->name ?? '';
+                })
+                ->addColumn('formatted_amount', function ($row)
+                {
+                    return format_money($row->rent_amount) ?? '';
                 })
                 ->addColumn('status', function ($row)
                 {
@@ -103,6 +111,7 @@ class PropertyUnitController extends Controller
 	{
         $validatedData = $request->validate([
             'unit_name' => 'required',
+            'property_id' => 'required',
             'is_active' => 'sometimes',
         ]);
 
@@ -158,10 +167,10 @@ class PropertyUnitController extends Controller
 	public function edit($id)
 	{
         $property_unit = $this->propertyUnitService->findPropertyUnitById($id);
-        // $categories = PropertyCategory::select('id', 'name')->get();
+        $properties = $this->propertyService->listProperties();
 
         if (request()->ajax()){
-            return view('property.property-units.edit', compact('property_unit'));
+            return view('property.property-units.edit', compact('property_unit', 'properties'));
         }
 
         return redirect()->route("property-units.index");

@@ -2,7 +2,7 @@
 @section('title', 'Lease Property List')
 @section('page-title', 'Lease Properties')
 @section('breadcrumb')
-{{--    <li class="breadcrumb-item"><a href="{{route('awards.index')}}">Employee awards</a></li>--}}
+    {{--    <li class="breadcrumb-item"><a href="{{route('awards.index')}}">Employee awards</a></li>--}}
 @endsection
 
 @section('content')
@@ -10,17 +10,22 @@
         <div class="col-md-12 ">
             <div class="card">
                 @include("layouts.partials.dt-header")
+
                 <div class="card-body">
                     <p class="card-subtitle mb-4"></p>
                     <table id="property-table" class="table dt-responsive" style="box-shadow: none">
                         <thead>
                         <tr>
-                            <th>#</th>
-                            <th>Name</th>
-                            <th>Short Name</th>
+                            <th class="not-exported">
+                                <div class="form-check"><input type="checkbox" class="form-check-input fs-15 select-all"><label></label></div>
+                            </th>
+                            <th>Property Name</th>
+                            <th>Property Code</th>
+                            <th>Type</th>
                             <th>Category</th>
+                            <th>Purpose</th>
                             <th>Status</th>
-                            <th>Last Modified</th>
+                            <th>Date Added</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -34,7 +39,7 @@
 @endsection
 @section('js')
     <script>
-        let baseUrl = '/property/awards/' ;
+        let baseUrl = '/property/' ;
     </script>
     @include("layouts.shared.dt-scripts")
     <script>
@@ -44,11 +49,13 @@
                 var cols =
                     [
                         {data: null, orderable: false, searchable: false},
-                        {data: 'name', name: 'name'},
-                        {data: 'short_name', name: 'short_name'},
+                        {data: 'property_name', name: 'property_name'},
+                        {data: 'property_code', name: 'property_code'},
+                        {data: 'type', name: 'type'},
                         {data: 'category', name: 'category'},
+                        {data: 'purpose', name: 'purpose'},
                         {data: 'status', name: 'status'},
-                        {data: 'updated_at', name: 'updated_at'},
+                        {data: 'created_at', name: 'created_at'},
                         {data: 'action', name: 'action', orderable: false }
                     ];
                 loadDataAndInitializeDataTable("property", "{{ route('properties.index') }}", cols);

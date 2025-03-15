@@ -44,8 +44,8 @@
                 var cols =
                     [
                         {data: null, orderable: false, searchable: false},
-                        {data: 'name', name: 'name'},
-                        {data: 'short_name', name: 'short_name'},
+                        {data: 'property_name', name: 'property_name'},
+                        {data: 'property_name', name: 'property_name'},
                         {data: 'category', name: 'category'},
                         {data: 'status', name: 'status'},
                         {data: 'updated_at', name: 'updated_at'},

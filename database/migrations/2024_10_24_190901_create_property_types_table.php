@@ -109,10 +109,10 @@ return new class extends Migration
             $table->decimal('general_rent')->default(0)->nullable();
             $table->string('deposit_type')->nullable();
             $table->decimal('security_deposit')->default(0)->nullable();
-            $table->string('late_type')->nullable();
+            $table->string('late_fee_type')->nullable();
             $table->decimal('late_fee')->default(0)->nullable();
             $table->decimal('incident_receipt')->default(0)->nullable();
-            $table->tinyInteger('rent_type')->comment('1=daily,2=monthly,3=yearly,4=custom')->nullable();
+            $table->string('rent_type')->comment('1=daily,2=monthly,3=yearly,4=custom')->nullable();
             $table->integer('monthly_due_day')->nullable();
             $table->integer('yearly_due_day')->nullable();
             $table->integer('rent_duration')->nullable();

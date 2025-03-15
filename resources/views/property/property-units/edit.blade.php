@@ -45,11 +45,8 @@
         <x-form.input-field name="late_fee_amount" label="Late Fee Amount" type="number"
                             placeholder="Enter late fee amount" :value="$property_unit->late_fee_amount" required />
 
-        <x-form.input-field name="description" class="col-md-12" label="Description" type="textarea"
-                            placeholder="Enter description" :value="$property_unit->description" />
-
-        <x-form.input-field name="notes" class="col-md-12" label="Notes" type="textarea"
-                            placeholder="Enter additional notes" :value="$property_unit->notes" />
+        <x-form.input-field name="description" class="col-md-12" label="Notes" type="textarea"
+                            placeholder="Enter additional notes" :value="$property_unit->description" />
 
         <div class="form-group col-12">
             @include("shared.save-button")
