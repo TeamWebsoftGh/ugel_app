@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('description')->nullable();
             $this->empExtracted($table);
-            $table->foreignId('team_id')->constrained('teams');
+            $table->foreignId('team_id')->nullable()->constrained('teams');
         });
 
         Schema::create('support_tickets', function (Blueprint $table) {
@@ -78,6 +78,38 @@ return new class extends Migration
 
             $table->unsignedBigInteger('client_id')->nullable()->index();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
+
+            $this->empExtracted($table);
+        });
+
+        Schema::create('maintenance_categories', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('short_name')->nullable();
+            $table->text('description')->nullable();
+            $this->empExtracted($table);
+            $table->foreignId('team_id')->nullable()->constrained('teams');
+        });
+
+        Schema::create('maintenances', function (Blueprint $table) {
+            $table->id();
+            $table->string('reference',15)->unique();
+            $table->mediumText('description')->nullable();
+            $table->mediumText('remarks')->nullable();
+            $table->string('note')->nullable();
+            $table->string('status')->nullable();
+            $table->boolean('is_notify')->nullable();
+            $table->timestamp('closed_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
+
+            $table->unsignedBigInteger('priority_id')->nullable()->index();
+            $table->foreign('priority_id')->references('id')->on('priorities')->onDelete('cascade');
+
+            $table->unsignedBigInteger('client_id')->nullable()->index();
+            $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
+
+            $table->unsignedBigInteger('maintenance_category_id')->nullable()->index();
+            $table->foreign('maintenance_category_id')->references('id')->on('maintenance_categories')->onDelete('cascade');
 
             $this->empExtracted($table);
         });

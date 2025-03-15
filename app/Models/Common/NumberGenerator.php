@@ -3,6 +3,7 @@
 namespace App\Models\Common;
 
 use App\Abstracts\Model;
+use App\Models\Property\Property;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class NumberGenerator extends Model
@@ -34,7 +35,7 @@ class NumberGenerator extends Model
     private static function get_prefix($generatable_type)
     {
         $prefix_list = [
-            'App\Models\Task\Task' => 'GT',
+            Property::class => 'UGEL',
             'App\Models\Payment' => 'PMT',
             'App\Models\Wallet' => 'WAL',
             'App\Models\SupportTicket' => 'ST',

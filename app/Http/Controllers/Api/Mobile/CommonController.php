@@ -6,6 +6,7 @@ use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
 use App\Http\Resources\PropertyCategoryResource;
 use App\Http\Resources\PropertyTypeResource;
+use App\Services\Helpers\PropertyHelper;
 use App\Services\Interfaces\Properties\IPropertyCategoryService;
 use App\Services\Interfaces\Properties\IPropertyTypeService;
 use Illuminate\Http\Request;
@@ -65,5 +66,22 @@ class CommonController extends MobileController
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, new PropertyCategoryResource($item));
     }
 
+    public function countries(Request $request)
+    {
+        $items = PropertyHelper::getAllCountries();
 
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $items);
+    }
+
+    public function regions(Request $request)
+    {
+        $items = PropertyHelper::getAllRegions(request()->get('filter_country'));
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $items);
+    }
+
+    public function cities(Request $request)
+    {
+        $items = PropertyHelper::getAllCities(request()->get('filter_region'));
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $items);
+    }
 }

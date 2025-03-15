@@ -2,7 +2,6 @@
 
 namespace App\Models\Auth;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Role extends \Spatie\Permission\Models\Role

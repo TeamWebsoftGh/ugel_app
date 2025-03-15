@@ -2,7 +2,6 @@
 @section('title', 'Create Property')
 @section('page-title', 'Create Property')
 @section('breadcrumb')
-    {{--    <li class="breadcrumb-item"><a href="{{route('awards.index')}}">Employee awards</a></li>--}}
 @endsection
 
 @section('content')
@@ -11,137 +10,165 @@
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title mb-0">Property Setup</h4>
-                </div><!-- end card header -->
+                </div>
                 <div class="card-body">
-                    <form action="#" class="form-steps" autocomplete="off">
-                        <div class="text-center pt-3 pb-4 mb-1 d-flex justify-content-center">
-                            <img src="{{asset(settings("logo"))}}" class="card-logo card-logo-dark" alt="logo dark" height="60">
-                            <img src="{{asset(settings("logo"))}}}" class="card-logo card-logo-light" alt="logo light" height="60">
-                        </div>
-                        <div class="step-arrow-nav mb-4">
-                            <ul class="nav nav-pills custom-nav nav-justified" role="tablist">
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link active" id="property-info-tab" data-bs-toggle="pill" data-bs-target="#steparrow-gen-info" type="button" role="tab" data-position="0" tabindex="-1">Property Information</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="steparrow-description-info-tab" data-bs-toggle="pill" data-bs-target="#steparrow-description-info" type="button" role="tab" data-position="1" tabindex="-1">Unit</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="steparrow-description-info-tab" data-bs-toggle="pill" data-bs-target="#steparrow-description-info" type="button" role="tab" data-position="2" tabindex="-1">Rent & Charges</button>
-                                </li>
-                                <li class="nav-item" role="presentation">
-                                    <button class="nav-link" id="pills-experience-tab" data-bs-toggle="pill" data-bs-target="#pills-experience" type="button" role="tab" data-position="3">Summary</button>
-                                </li>
-                            </ul>
+                    <div class="text-center pt-3 pb-4 mb-1 d-flex justify-content-center">
+                        <img src="{{ asset(settings('logo')) }}" class="card-logo card-logo-dark" alt="logo dark" height="60">
+                        <img src="{{ asset(settings('logo')) }}" class="card-logo card-logo-light" alt="logo light" height="60">
+                    </div>
+
+                    <div class="step-arrow-nav mb-4">
+                        <ul class="nav nav-pills custom-nav nav-justified" role="tablist">
+                            <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#steparrow-gen-info">Property Information</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#steparrow-unit-info">Unit</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#steparrow-rent-charges">Rent & Charges</button></li>
+                            <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-experience">Summary</button></li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade active show" id="steparrow-gen-info">
+                            @include("property.properties.property-info")
                         </div>
 
-                        <div class="tab-content">
-                            <div class="tab-pane fade active show" id="property-info" role="tabpanel">
+                        <div class="tab-pane fade" id="steparrow-unit-info">
+                            <form action="#" class="form-steps">
+                                <div class="mb-3">
+                                    <label for="formFile" class="form-label">Upload Image</label>
+                                    <input class="form-control" type="file" id="formFile">
+                                </div>
                                 <div>
-                                   @include("property.properties.property-info")
+                                    <label class="form-label" for="description">Description</label>
+                                    <textarea class="form-control" placeholder="Enter Description" id="description" rows="3" required></textarea>
                                 </div>
-                                <div class="d-flex align-items-start gap-3 mt-4">
-                                    <button type="button" class="btn btn-success btn-label right ms-auto nexttab nexttab" data-nexttab="steparrow-description-info-tab"><i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>Go to more info</button>
-                                </div>
-                            </div>
-                            <!-- end tab pane -->
+                            </form>
+                        </div>
 
-                            <div class="tab-pane fade" id="steparrow-description-info" role="tabpanel" aria-labelledby="steparrow-description-info-tab">
-                                <div>
-                                    <div class="mb-3">
-                                        <label for="formFile" class="form-label">Upload Image</label>
-                                        <input class="form-control" type="file" id="formFile">
-                                    </div>
-                                    <div>
-                                        <label class="form-label" for="des-info-description-input">Description</label>
-                                        <textarea class="form-control" placeholder="Enter Description" id="des-info-description-input" rows="3" required=""></textarea>
-                                        <div class="invalid-feedback">Please enter a description</div>
-                                    </div>
-                                </div>
-                                <div class="d-flex align-items-start gap-3 mt-4">
-                                    <button type="button" class="btn btn-light btn-label previestab" data-previous="steparrow-gen-info-tab"><i class="ri-arrow-left-line label-icon align-middle fs-16 me-2"></i> Back to General</button>
-                                    <button type="button" class="btn btn-success btn-label right ms-auto nexttab nexttab" data-nexttab="pills-experience-tab"><i class="ri-arrow-right-line label-icon align-middle fs-16 ms-2"></i>Submit</button>
-                                </div>
-                            </div>
-                            <!-- end tab pane -->
+                        <div class="tab-pane fade" id="steparrow-rent-charges">
+                            <form action="#" class="form-steps">
+                                <p>Rent & Charges form content goes here...</p>
+                            </form>
+                        </div>
 
-                            <div class="tab-pane fade" id="pills-experience" role="tabpanel" aria-labelledby="pills-experience-tab">
+                        <div class="tab-pane fade" id="pills-experience">
+                            <form action="#" class="form-steps">
                                 <div class="text-center">
-
-                                    <div class="avatar-md mt-5 mb-4 mx-auto">
-                                        <div class="avatar-title bg-light text-success display-4 rounded-circle">
-                                            <i class="ri-checkbox-circle-fill"></i>
-                                        </div>
-                                    </div>
-                                    <h5>Well Done !</h5>
+                                    <h5>Well Done!</h5>
                                     <p class="text-muted">You have Successfully Signed Up</p>
                                 </div>
-                            </div>
-                            <!-- end tab pane -->
+                            </form>
                         </div>
-                        <!-- end tab content -->
-                    </form>
+                    </div>
                 </div>
-                <!-- end card body -->
             </div>
-        </div> <!-- end col -->
+        </div>
     </div>
 @endsection
+
 @section('js')
     <script>
-        let baseUrl = '/property/properties/' ;
-    </script>
-    @include("layouts.shared.dt-scripts")
-    <script>
         $(document).ready(function() {
-            // Function to update property types based on selected category
-            function updatePropertyTypes(categoryId) {
+            function saveFormData(formId, callback) {
+                let formData = $('#' + formId).serialize(); // Get form data
+
                 $.ajax({
-                    url: '/api/clients/common/property-types?filter_property_category=' + categoryId,
+                    url: $('#' + formId).attr('action'),
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        $('span.text-danger').html('');
+                        Swal.fire({
+                            icon: response.status,
+                            title: '',
+                            text: response.message,
+                        });
+                        if (response.status === 'success') {
+                            callback(); // Move to next step if save is successful
+                        } else {
+                            console.error("Save failed:", response.message);
+                        }
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown){
+                        $('span.text-danger').html('');
+                        for (control in XMLHttpRequest.responseJSON.errors) {
+                            $('#error-' + control).html(XMLHttpRequest.responseJSON.errors[control]);
+                        }
+                        HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
+                    },
+                });
+            }
+
+            $('.save-next').on('click', function() {
+                let formId = $(this).data('form'); // Get form ID from button attribute
+                let nextTab = $(this).data('nexttab');
+
+                saveFormData(formId, () => {
+                    $('[data-bs-target="#' + nextTab + '"]').click(); // Move to next tab after saving
+                });
+            });
+
+            $('.skip-step').on('click', function() {
+                let nextTab = $(this).data('nexttab');
+                $('[data-bs-target="#' + nextTab + '"]').click(); // Skip without saving
+            });
+
+            function updateDropdown(url, targetDropdown, defaultOption = 'Select an option') {
+                $.ajax({
+                    url: url,
                     type: 'GET',
                     success: function(response) {
-                        // Check if the status is "000" indicating success
                         if (response.status_code === '000') {
-                            var propertyTypeSelect = $('#property_type_id');
-                            propertyTypeSelect.find('option').remove(); // Clear existing options
-
-                            // Add a default "Select" option
-                            //propertyTypeSelect.append('<option value="">Select Property Type</option>');
-
-                            // Populate the property types from the response data
-                            $.each(response.data, function(index, type) {
-                                propertyTypeSelect.append('<option value="' + type.id + '">' + type.name + '</option>');
+                            let dropdown = $('#' + targetDropdown);
+                            dropdown.empty();
+                            dropdown.append(`<option value="">${defaultOption}</option>`);
+                            $.each(response.data, function(index, item) {
+                                dropdown.append(`<option value="${item.id}">${item.name}</option>`);
                             });
-                            // Refresh the selectpicker to apply the new options
-                            propertyTypeSelect.selectpicker('refresh');
+                            dropdown.selectpicker('refresh');
                         } else {
-                            // Handle error if status_code is not "000"
-                            console.error("Error fetching property types:", response.message);
+                            dropdown.empty();
+                            console.error("Error fetching data:", response.message);
                         }
                     },
                     error: function(xhr, status, error) {
-                        // Handle AJAX request error
-                        console.error("Error fetching property types:", error);
+                        dropdown.empty();
+                        console.error("Error fetching data:", error);
                     }
                 });
             }
 
-            // Handle category change event
             $('#property_category_id').change(function() {
-                var selectedCategoryId = $(this).val();
-                if (selectedCategoryId) {
-                    updatePropertyTypes(selectedCategoryId); // Update property types based on selected category
-                } else {
-                    $('#property_type_id').find('option').remove(); // Clear property types if no category is selected
-                    $('#property_type_id').selectpicker('refresh'); // Refresh selectpicker
+                let categoryId = $(this).val();
+                if (categoryId) {
+                    updateDropdown(`/api/clients/common/property-types?filter_property_category=${categoryId}`, 'property_type_id', 'Select Property Type');
                 }
             });
 
-            // Trigger update when the page loads, in case a category is already selected
+            $('#country_id').change(function() {
+                let countryId = $(this).val();
+                if (countryId) {
+                    updateDropdown(`/api/clients/common/regions?filter_country=${countryId}`, 'region_id', 'Select Region');
+                }
+            });
+
+            $('#region_id').change(function() {
+                let regionId = $(this).val();
+                if (regionId) {
+                    updateDropdown(`/api/clients/common/cities?filter_region=${regionId}`, 'city_id', 'Select City');
+                }
+            });
+
             if ($('#property_category_id').val()) {
-                updatePropertyTypes($('#property_category_id').val());
+                updateDropdown(`/api/clients/common/property-types?filter_property_category=${$('#property_category_id').val()}`, 'property_type_id');
+            }
+
+            if ($('#country_id').val()) {
+                updateDropdown(`/api/clients/common/regions?filter_country=${$('#country_id').val()}`, 'region_id');
+            }
+
+            if ($('#region_id').val()) {
+                updateDropdown(`/api/clients/common/cities?filter_region=${$('#region_id').val()}`, 'city_id');
             }
         });
     </script>
-
 @endsection

@@ -16,9 +16,4 @@ class ClientType extends Model
         'company_id',
         'created_by',
     ];
-
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format(env('Date_Format').' h:mA');
-    }
 }

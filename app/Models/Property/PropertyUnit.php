@@ -2,23 +2,22 @@
 
 namespace App\Models\Property;
 
+use App\Abstracts\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class PropertyUnit extends Model
 {
-    use HasFactory;
-
-
     protected $fillable = [
         'unit_name',
-        'bedroom',
-        'bathroom',
-        'kitchen',
+        'total_bedroom',
+        'total_bathroom',
+        'total_kitchen',
         'total_rooms',
         'general_rent',
+        'deposit_type',
         'security_deposit',
         'late_fee',
+        'late_fee_type',
         'incident_receipt',
         'rent_type',
         'monthly_due_pay',
@@ -37,7 +36,7 @@ class PropertyUnit extends Model
         'unit_floor',
         'square_foot',
         'property_id'
-       
+
     ];
 
     public function getUpdatedAtAtAttribute($value)

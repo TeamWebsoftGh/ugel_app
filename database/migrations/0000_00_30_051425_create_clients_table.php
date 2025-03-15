@@ -30,19 +30,24 @@ return new class extends Migration
             $table->string('last_name')->nullable();
             $table->string('other_names')->nullable();
             $table->string('email')->nullable();
-            $table->string('email_cc')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('alternate_phone_number')->nullable();
+            $table->string('nationality')->nullable();
+            $table->string('level')->nullable();
+            $table->string('programme')->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('gender')->nullable();
             $table->timestamp('approved_at')->nullable();
+            $table->string('physical_address')->nullable();
+            $table->string('postal_address')->nullable();
+            $table->string('photo')->nullable();
+            $table->string('emergency_contact_name')->nullable();
+            $table->string('emergency_contact_phone')->nullable();
 
             // Business-specific fields
             $table->string('business_name')->nullable();
             $table->string('business_telephone')->nullable();
-            $table->string('business_email')->nullable();
-            $table->string('physical_address')->nullable();
-            $table->string('postal_address')->nullable();
+            $table->string('email_cc')->nullable();
             $table->string('website')->nullable();
             $table->string('certificate_of_incorporation')->nullable();
             $table->string('number_of_employees')->nullable();

@@ -91,9 +91,9 @@
         </a>
         <div class="collapse menu-dropdown {{ (request()->is('*properties*')||request()->is('*property-*')||request()->is('*amenities')) ? 'show' : '' }}" id="operations">
             <ul class="nav nav-sm flex-column">
-                <li class="nav-item">
-                    <a href="{{route("properties.create")}}" class="nav-link" data-key="t-login_activity"> Add New Property </a>
-                </li>
+{{--                <li class="nav-item">--}}
+{{--                    <a href="{{route("properties.create")}}" class="nav-link" data-key="t-login_activity"> Add New Property </a>--}}
+{{--                </li>--}}
                 <li class="nav-item">
                     <a href="{{route("properties.index")}}" class="nav-link" data-key="t-user_activity"> List Properties </a>
                 </li>
@@ -101,7 +101,7 @@
                     <a href="{{route("properties.lease")}}" class="nav-link" data-key="t-user_activity"> Lease Properties </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route("properties.index")}}" class="nav-link" data-key="t-user_activity">Property Units </a>
+                    <a href="{{route("property-units.index")}}" class="nav-link" data-key="t-property_unit">Property Units </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route("property-types.index")}}" class="nav-link" data-key="t-property-types"> Property Types</a>
@@ -202,11 +202,14 @@
                                 <a href="{{route("support-tickets.create")}}" class="nav-link" data-key="t-hub">Add a Request </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route("support-tickets.assigned")}}" class="nav-link" data-key="t-calendar"> Assigned Requests </a>
+                                <a href="{{route("support-tickets.assigned")}}" class="nav-link" data-key="t-calendar"> Assigned Issues </a>
                             </li>
                             @if(user()->can('read-support-tickets'))
                                 <li class="nav-item">
-                                    <a href="{{route("support-tickets.index")}}" class="nav-link" data-key="t-calendar"> All Request </a>
+                                    <a href="{{route("support-tickets.index")}}" class="nav-link" data-key="t-calendar"> All Issues </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{route("maintenance-categories.index")}}" class="nav-link" data-key="t-hub"> Maintenance Categories </a>
                                 </li>
                             @endif
                         </ul>

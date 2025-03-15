@@ -2,138 +2,133 @@
 
 namespace App\Services\Helpers;
 
-
 use App\Models\Auth\User;
 use App\Models\Client\Client;
 use App\Models\Client\ClientType;
-use App\Models\Organization\Department;
-use App\Models\Organization\Designation;
-use App\Models\Organization\EmployeeCategory;
-use App\Models\Organization\EmployeeType;
-use App\Models\Organization\Branch;
 use App\Models\Property\PropertyCategory;
 use App\Models\Property\PropertyPurpose;
 use App\Models\Property\PropertyType;
-use App\Models\ServiceType;
-use App\Models\Timesheet\OfficeShift;
-use App\Models\Organization\Subsidiary;
+use App\Models\Settings\City;
+use App\Models\Settings\Country;
+use App\Models\Settings\Region;
 use Illuminate\Support\Collection;
 
 class PropertyHelper
 {
-    public static function getById(int $id)
+    /**
+     * Get a User by ID
+     */
+    public static function getById(int $id): ?User
     {
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
         return User::find($id);
     }
 
-
-    public static function getAll($exc_exit = null, $company_id = null)
+    /**
+     * Get All Users with optional filtering
+     */
+    public static function getAll(?bool $exc_exit = null, ?int $company_id = null): Collection
     {
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
-        if(is_owner())
-        {
-            return User::select('id', 'first_name', 'last_name', 'title')->get();
-        }
-
-        return User::where('company_id', user()->company_id)->select('id', 'first_name', 'last_name', 'title')->get();
-
+        return User::select('id', 'first_name', 'last_name', 'title')
+            ->when(!is_owner(), fn($query) => $query->where('company_id', user()->company_id))
+            ->get();
     }
 
-    public static function getAllCustomers()
+    /**
+     * Get All Customers
+     */
+    public static function getAllCustomers(): Collection
     {
-        return Client::select('id', 'first_name', 'last_name', 'title','business_name')->get();
+        return Client::select('id', 'first_name', 'last_name', 'title', 'business_name')->get();
     }
 
-    public static function getAllPropertyTypes($provider = null)
+    /**
+     * Get All Active Property Types
+     */
+    public static function getAllPropertyTypes(): Collection
     {
         return PropertyType::select('id', 'name')
-            ->where(['is_active' => 1])->get();
+            ->where('is_active', 1)
+            ->orderBy('name')
+            ->get();
     }
 
-    public static function getAllPropertyCategories()
+    /**
+     * Get All Active Property Categories
+     */
+    public static function getAllPropertyCategories(): Collection
     {
         return PropertyCategory::select('id', 'name')
-            ->where(['is_active' => 1])->get();
+            ->where('is_active', 1)
+            ->orderBy('name')
+            ->get();
     }
 
-
-    public static function getAllPropertyPurposes()
+    /**
+     * Get All Active Property Purposes
+     */
+    public static function getAllPropertyPurposes(): Collection
     {
         return PropertyPurpose::select('id', 'name')
-            ->where(['is_active' => 1])->get();
+            ->where('is_active', 1)
+            ->orderBy('name')
+            ->get();
     }
 
-    public static function getAllCategories($company_id = null)
+    /**
+     * Get All Active Countries
+     */
+    public static function getAllCountries(): Collection
     {
-        $company_id = $company_id??user()->employee->company_id;
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
-
-        return EmployeeCategory::select('id', 'name')
-            ->where(['is_active' => 1])->get();
+        return Country::select('id', 'name')
+            ->where('is_active', 1)
+            ->orderBy('name')
+            ->get();
     }
 
-    public static function getAllClientTypes($category = null)
+    /**
+     * Get All Active Regions (Filtered by Country)
+     */
+    public static function getAllRegions(?int $country_id = null): Collection
     {
-        /**
-         *
-         *
-         * @return Collection
-         */
+        return Region::select('id', 'name')
+            ->where('is_active', 1)
+            ->when($country_id, fn($query) => $query->where('country_id', $country_id))
+            ->orderBy('name')
+            ->get();
+    }
 
+    /**
+     * Get All Active Cities (Filtered by Region)
+     */
+    public static function getAllCities(?int $region_id = null): Collection
+    {
+        return City::select('id', 'name')
+            ->where('is_active', 1)
+            ->when($region_id, fn($query) => $query->where('region_id', $region_id))
+            ->orderBy('name')
+            ->get();
+    }
+
+    /**
+     * Get All Active Client Types
+     */
+    public static function getAllClientTypes(): Collection
+    {
         return ClientType::select('id', 'name', 'category')
-            ->where(['is_active' => 1])->get();
+            ->where('is_active', 1)
+            ->orderBy('name')
+            ->get();
     }
 
-    public static function getAllClientTypesByCategory($category = "individual")
+    /**
+     * Get All Active Client Types Filtered by Category
+     */
+    public static function getAllClientTypesByCategory(string $category = "individual"): Collection
     {
-        /**
-         *
-         *
-         * @return Collection
-         */
-
         return ClientType::select('id', 'name', 'category')
-            ->where(['is_active' => 1, 'category' => $category])->get();
-    }
-
-
-
-    public static function getAllDesignations($company_id = null)
-    {
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
-
-        return Designation::select('id', 'designation_name')
-            ->where(['is_active' => 1])->get();
-    }
-
-    public static function getAllOfficeShifts($company_id = null)
-    {
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
-
-        return OfficeShift::select('id', 'shift_name')
-            ->where(['is_active' => 1])->get();
+            ->where('is_active', 1)
+            ->where('category', $category)
+            ->orderBy('name')
+            ->get();
     }
 }
-
-

@@ -391,6 +391,48 @@ if (!function_exists('standardize')) {
     }
 }
 
+if (!function_exists('format_money')) {
+    /**
+     * Format Money based on Currency Settings
+     *
+     * @param float|int $amount
+     * @param string|null $currencyCode
+     * @param bool $applyExchangeRate
+     * @return string
+     */
+    function format_money($amount, $currencyCode = "GHS", $applyExchangeRate = false)
+    {
+        // Fetch default currency settings if no currency is provided
+        $currency = $currencyCode
+            ? Currency::where('code', strtoupper($currencyCode))->where('is_active', 1)->first()
+            : Currency::where('is_default', 1)->where('is_active', 1)->first();
+
+        if (!$currency) {
+            return number_format($amount, 2); // Fallback formatting if no currency settings found
+        }
+
+        // Apply exchange rate if needed
+        if ($applyExchangeRate) {
+            $amount *= $currency->exchange_rate;
+        }
+
+        // Format number
+        $formattedAmount = number_format(
+            $amount,
+            $currency->precision,
+            $currency->decimal_separator,
+            $currency->thousand_separator
+        );
+
+        // Determine placement of currency symbol
+        return $currency->symbol_first
+            ? $currency->symbol . " " . $formattedAmount
+            : $formattedAmount . " " . $currency->symbol;
+    }
+}
+
+
+
 if (!function_exists('format_date')) {
     /**
      * Format Date

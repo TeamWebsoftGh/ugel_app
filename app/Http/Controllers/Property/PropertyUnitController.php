@@ -4,29 +4,28 @@ namespace App\Http\Controllers\Property;
 
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
-use App\Models\Property\PropertyCategory;
-use App\Models\Property\PropertyType;
 use App\Models\Property\PropertyUnit;
-use App\Services\PropertyUnitService;
-use Illuminate\Contracts\Foundation\Application;
+use App\Services\Interfaces\IPropertyService;
+use App\Services\Interfaces\IPropertyUnitService;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class PropertyUnitController extends Controller
 {
-    private PropertyUnitService $propertyUnitService;
+    private IPropertyUnitService $propertyUnitService;
+    private IPropertyService $propertyService;
 
     /**
      * Create a new controller instance.
      *
-     * @param PropertyUnitService $propertyUnitService
+     * @param IPropertyUnitService $propertyUnitService
      */
-    public function __construct(PropertyUnitService $propertyUnitService)
+    public function __construct(IPropertyUnitService $propertyUnitService, IPropertyService $propertyService)
     {
         parent::__construct();
         $this->propertyUnitService = $propertyUnitService;
+        $this->propertyService = $propertyService;
     }
 
 
@@ -38,7 +37,7 @@ class PropertyUnitController extends Controller
 	public function index(Request $request)
 	{
         $data = request()->all();
-		$types = $this->propertyUnitService->listPropertyUnits($data, "updated_at", "desc");
+		$types = $this->propertyUnitService->listPropertyUnits($data);
         if (request()->ajax())
         {
             return datatables()->of($types)
@@ -46,9 +45,17 @@ class PropertyUnitController extends Controller
                 {
                     return $row->id;
                 })
-                ->addColumn('category', function ($row)
+                ->addColumn('property_name', function ($row)
                 {
-                    return $row->property_category->name ?? '';
+                    return $row->property->property_name ?? '';
+                })
+                ->addColumn('property_type_name', function ($row)
+                {
+                    return $row->property->propertyType->name ?? '';
+                })
+                ->addColumn('formatted_amount', function ($row)
+                {
+                    return format_money($row->rent_amount) ?? '';
                 })
                 ->addColumn('status', function ($row)
                 {
@@ -58,12 +65,12 @@ class PropertyUnitController extends Controller
                 {
                     $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></button>';
                     $button .= '&nbsp;';
-                    if (user()->can('update-property-Units'))
+                    if (user()->can('update-property-units'))
                     {
                         $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
                         $button .= '&nbsp;';
                     }
-                    if (user()->can('delete-property-Units'))
+                    if (user()->can('delete-property-units'))
                     {
                         $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
                     }
@@ -86,10 +93,10 @@ class PropertyUnitController extends Controller
     public function create()
     {
         $property_unit = new PropertyUnit();
-        // $categories = PropertyCategory::select('id', 'name')->get();
+        $properties = $this->propertyService->listProperties();
 
         if (request()->ajax()){
-            return view('property.property-units.edit', compact('property_unit'));
+            return view('property.property-units.edit', compact('property_unit', 'properties'));
         }
 
         return redirect()->route("property-units.index");
@@ -104,6 +111,7 @@ class PropertyUnitController extends Controller
 	{
         $validatedData = $request->validate([
             'unit_name' => 'required',
+            'property_id' => 'required',
             'is_active' => 'sometimes',
         ]);
 
@@ -159,10 +167,10 @@ class PropertyUnitController extends Controller
 	public function edit($id)
 	{
         $property_unit = $this->propertyUnitService->findPropertyUnitById($id);
-        // $categories = PropertyCategory::select('id', 'name')->get();
+        $properties = $this->propertyService->listProperties();
 
         if (request()->ajax()){
-            return view('property.property-units.edit', compact('property_unit'));
+            return view('property.property-units.edit', compact('property_unit', 'properties'));
         }
 
         return redirect()->route("property-units.index");

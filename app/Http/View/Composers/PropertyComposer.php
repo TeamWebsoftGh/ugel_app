@@ -27,7 +27,7 @@ class PropertyComposer
             'client_types' => PropertyHelper::getAllClientTypes(),
             'companies' => Company::select('id', 'company_name')->get(),
             'task_statuses' => StatusHelper::getAllTaskStatuses(),
-            'countries' => Country::all()
+            'countries' => PropertyHelper::getAllCountries()
         ]);
 	}
 }

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Client\Client;
 use App\Models\Client\ClientType;
+use App\Models\CustomerService\MaintenanceCategory;
 use App\Models\Organization\Company;
 use App\Models\Property\Amenity;
 use App\Models\Property\PropertyCategory;
@@ -30,6 +31,19 @@ class CustomerTableSeeder extends Seeder
             ClientType::updateOrCreate(
                 ['name' => $type['name'],'company_id' => $company_id],
                 ['code' => $type['code'], 'category' => $type['category']]
+            );
+        }
+
+        $mtypes = [
+            ['name' => 'Plumbing Issue', 'short_name' => 'plumbing'],
+            ['name' => 'Carpentry Issue', 'short_name' => 'carpentry'],
+            ['name' => 'Electrical Issue', 'short_name' => 'electrical'],
+        ];
+
+        foreach ($mtypes as $type) {
+            MaintenanceCategory::updateOrCreate(
+                ['name' => $type['name'],'company_id' => $company_id],
+                ['short_name' => $type['short_name']]
             );
         }
     }

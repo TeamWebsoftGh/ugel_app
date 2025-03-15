@@ -68,21 +68,15 @@ abstract class BaseRepository implements IBaseRepository
     public function create(array $attributes)
     {
         $attributes = $this->addDefaultAttributes($attributes);
+        $model = $this->model->create($attributes);
 
-        try {
-            $model = $this->model->create($attributes);
+        // Save any attachments related to the model
+        $attributes = $this->saveAttachments($attributes, $model);
 
-            // Save any attachments related to the model
-            $attributes = $this->saveAttachments($attributes, $model);
+        // Log activity: record the action of creating the model
+        $this->logActivity('create', 'success', $model);
 
-            // Log activity: record the action of creating the model
-            $this->logActivity('create', 'success', $model);
-
-            return $model;
-        } catch (\Exception $e) {
-            $this->logActivity('create', 'failed', null, $e);
-            return null;
-        }
+        return $model;
     }
 
     /**

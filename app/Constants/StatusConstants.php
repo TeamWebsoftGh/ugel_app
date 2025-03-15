@@ -12,9 +12,9 @@ class StatusConstants
     const DECLINED = 0;
     const PENDING = 1;
     const ACCEPTED = 2;
-    const INPROGRESS = 3;
+    const IN_PROGRESS = 3;
     const SUBMITTED = 4;
-    const ONHOLD = 5;
+    const ON_HOLD = 5;
     const COMPLETED = 6;
     const REOPENED = 7;
 }

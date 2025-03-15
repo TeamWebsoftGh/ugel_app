@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 interface IPropertyCategoryService extends IBaseService
 {
-    public function listPropertyCategories(array $filter = null, string $orderBy = 'id', string $sortBy = 'desc', array $columns = ['*']) : Collection;
+    public function listPropertyCategories(array $filter = [], string $orderBy = 'id', string $sortBy = 'desc', array $columns = ['*']) : Collection;
 
     public function createPropertyCategory(array $params);
 

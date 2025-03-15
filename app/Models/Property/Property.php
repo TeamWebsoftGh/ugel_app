@@ -4,6 +4,7 @@ namespace App\Models\Property;
 
 
 use App\Abstracts\Model;
+use App\Models\Settings\City;
 
 class Property extends Model
 {
@@ -15,6 +16,8 @@ class Property extends Model
         'number_of_units',
         'status',
         'is_active',
+        'city_id',
+        'physical_address',
         'description',
         'property_type_id',
         'property_purpose_id'
@@ -26,6 +29,11 @@ class Property extends Model
         return $this->belongsTo(PropertyType::class)->withDefault(['name' => 'N/A']);
     }
 
+    public function city()
+    {
+        return $this->belongsTo(City::class)->withDefault(['name' => 'N/A']);
+    }
+
     public function propertyPurpose()
     {
         return $this->belongsTo(PropertyPurpose::class)->withDefault(['name' => 'N/A']);
@@ -33,7 +41,7 @@ class Property extends Model
 
     public function amenities()
     {
-        return $this->morphMany(Ameni::class, 'amenitable');
+        return $this->morphMany(Amenity::class, 'amenitable');
     }
 
 }

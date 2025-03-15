@@ -14,7 +14,7 @@ class CurrenciesSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            [ "id" => "1", "country" => "Ghana", "currency" => "Cedis", "code" => "GHS", "symbol" => "¢",
+            [ "id" => "1", "country" => "Ghana", "currency" => "Ghana Cedi", "code" => "GHS", "symbol" => "¢",
                 "thousand_separator" => ",", "decimal_separator" => ".", "created_at" => null , "updated_at" => null ],
             [ "id" => "2", "country" => "America", "currency" => "Dollars", "code" => "USD", "symbol" => '$',
                 "thousand_separator" => ",", "decimal_separator" => ".", "created_at" => null , "updated_at" => null ],
