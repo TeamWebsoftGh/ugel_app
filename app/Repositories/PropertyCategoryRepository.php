@@ -70,7 +70,7 @@ class PropertyCategoryRepository extends BaseRepository implements IPropertyCate
      * @param array $columns
      * @return Collection
      */
-    public function listPropertyCategories(array $filter = null, string $order = 'id', string $sort = 'desc', array $columns = ['*']) : Collection
+    public function listPropertyCategories(array $filter = [], string $order = 'id', string $sort = 'desc', array $columns = ['*']) : Collection
     {
         $result = $this->model->query();
 

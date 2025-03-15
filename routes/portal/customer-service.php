@@ -27,6 +27,11 @@ Route::group(['namespace' => 'App\Http\Controllers\CustomerService', 'prefix' =>
     Route::get('enquiries/change-status/{id}', 'EnquiryController@show')->name('enquiries.change-status');
     Route::resource('enquiries', 'EnquiryController')->except(['update']);
 
+    //Maintenance Request
+    Route::get('maintenance-categories/import', 'MaintenanceCategoryController@import')->name('maintenance-categories.import');
+    Route::post('maintenance-categories/import', 'MaintenanceCategoryController@importPost')->name('maintenance-categories.importPost');
+    Route::delete('maintenance-categories/delete/selected', 'MaintenanceCategoryController@bulkDelete')->name('maintenance-categories.delete.selected');
+    Route::resource('maintenance-categories', 'MaintenanceCategoryController')->except(['update']);
 
 });
 

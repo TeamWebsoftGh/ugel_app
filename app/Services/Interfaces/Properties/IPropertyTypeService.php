@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 interface IPropertyTypeService extends IBaseService
 {
-    public function listPropertyTypes(array $filter = null, string $orderBy = 'id', string $sortBy = 'desc', array $columns = ['*']) : Collection;
+    public function listPropertyTypes(array $filter = [], string $orderBy = 'id', string $sortBy = 'desc', array $columns = ['*']) : Collection;
 
     public function createPropertyType(array $params);
 

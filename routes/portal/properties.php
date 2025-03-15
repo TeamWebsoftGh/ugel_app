@@ -34,6 +34,9 @@ Route::group(['prefix' => '', 'namespace' => 'App\Http\Controllers\Property'], f
     Route::get('properties/lease', 'PropertyController@propertyLease')->name('properties.lease');
     Route::resource('properties', 'PropertyController')->except(['update']);
 
+    //Property Units
+    Route::resource('property-units', 'PropertyUnitController')->except(['update']);
+
     //service-types
     Route::get('companies/kyc', 'AmenityController@kyc')->name('companies.kyc');
     Route::get('offers/payment', 'AmenityController@payment')->name('offers.payment');

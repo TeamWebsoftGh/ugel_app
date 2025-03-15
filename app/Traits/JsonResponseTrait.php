@@ -15,8 +15,9 @@ trait JsonResponseTrait
         $response = $this->getResponse($result);
 
         return response()->json([
-            'Result' => $response->status,
-            'Message' => $response->message
+            'status' => $response->status,
+            'message' => $response->message,
+            'data' => $response->data
         ]);
     }
 

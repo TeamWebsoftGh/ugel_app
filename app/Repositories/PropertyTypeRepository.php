@@ -70,7 +70,7 @@ class PropertyTypeRepository extends BaseRepository implements IPropertyTypeRepo
      * @param array $columns
      * @return Collection
      */
-    public function listPropertyTypes(array $filter = null, string $order = 'id', string $sort = 'desc', array $columns = ['*']) : Collection
+    public function listPropertyTypes(array $filter = [], string $order = 'id', string $sort = 'desc', array $columns = ['*']) : Collection
     {
         $result = $this->model->query();
         if (!empty($filter['filter_property_category']))

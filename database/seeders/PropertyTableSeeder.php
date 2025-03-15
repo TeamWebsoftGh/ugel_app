@@ -27,6 +27,7 @@ class PropertyTableSeeder extends Seeder
                     ['name' => 'Single-family home', 'description' => 'Standalone home for one family'],
                     ['name' => 'Apartment', 'description' => 'Unit in a multi-family building'],
                     ['name' => 'Villa', 'description' => 'Privately owned unit in a complex'],
+                    ['name' => 'Hostel', 'description' => 'Shared accommodation for students or workers'],
                 ]
             ],
             [
@@ -115,7 +116,6 @@ class PropertyTableSeeder extends Seeder
                 ['description' => $amenityData['description'], 'short_name' => Str::slug($amenityData['name'])]
             );
         }
-
 
         //
         PropertyPurpose::updateOrCreate(

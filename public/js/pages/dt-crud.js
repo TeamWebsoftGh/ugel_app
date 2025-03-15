@@ -274,9 +274,9 @@ function dtDeleteItem(id, url, tabId)
                 },
                 success: function (data) {
                     Swal.fire({
-                        icon: data.Result,
+                        icon: data.status,
                         title: '',
-                        text: data.Message,
+                        text: data.message,
                     });
                     $('#' + tabId + '-table').DataTable().ajax.reload();
                 },
@@ -314,9 +314,9 @@ function dtMultiDeleteItem(ids, url, tabId)
                 },
                 success: function (data) {
                     Swal.fire({
-                        icon: data.Result,
+                        icon: data.status,
                         title: '',
-                        text: data.Message,
+                        text: data.message,
                     });
                     $('#' + tabId + '-table').DataTable().ajax.reload();
                 },
@@ -357,11 +357,11 @@ $(document).on('click', '.save_dt_btn', function(e){
                 },
                 success: function (data) {
                     Swal.fire({
-                        icon: data.Result,
+                        icon: data.status,
                         title: '',
-                        text: data.Message,
+                        text: data.message,
                     });
-                    if(data.Result ==="success"){
+                    if(data.status ==="success"){
                         $('#' + formId + '-table').DataTable().ajax.reload();
                         $('#editModal').modal('hide');
                     }

@@ -7,8 +7,10 @@ use App\Repositories\BulkSmsRepository;
 use App\Repositories\ClientRepository;
 use App\Repositories\Interfaces\IAmenityRepository;
 use App\Repositories\Interfaces\IBulkSmsRepository;
+use App\Repositories\Interfaces\IMaintenanceCategoryRepository;
 use App\Repositories\Interfaces\IPropertyCategoryRepository;
 use App\Repositories\Interfaces\IPropertyRepository;
+use App\Repositories\MaintenanceCategoryRepository;
 use App\Repositories\PropertyCategoryRepository;
 use App\Repositories\PropertyRepository;
 use App\Repositories\ServiceTypeRepository;
@@ -156,6 +158,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ISupportTicketRepository::class, SupportTicketRepository::class);
         $this->app->bind(IVisitorLogRepository::class, VisitorLogRepository::class);
         $this->app->bind(IEnquiryRepository::class, EnquiryRepository::class);
+        $this->app->bind(IMaintenanceCategoryRepository::class, MaintenanceCategoryRepository::class);
 
         //Properties
         $this->app->bind(IPropertyCategoryRepository::class, PropertyCategoryRepository::class);

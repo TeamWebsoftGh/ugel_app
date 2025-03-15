@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Property;
 
 use App\Constants\ResponseType;
 use App\Models\Property\Property;
-use App\Models\Property\PropertyPurpose;
 use App\Services\Helpers\PropertyHelper;
 use App\Services\Interfaces\IPropertyService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use App\Abstracts\Http\Controller;
 
-class PropertyController extends \App\Abstracts\Http\Controller
+class PropertyController extends Controller
 {
     /**
      * @var IPropertyService
@@ -93,6 +93,10 @@ class PropertyController extends \App\Abstracts\Http\Controller
         $property->is_active = 1;
         $property_purposes = PropertyHelper::getAllPropertyPurposes();
 
+        if (request()->ajax()){
+            return view('property.properties.edit', compact('property', "property_purposes"));
+        }
+
         return view("property.properties.create", compact("property", "property_purposes"));
     }
 
@@ -105,21 +109,25 @@ class PropertyController extends \App\Abstracts\Http\Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required',
-            'max_amount' => 'required',
-            'min_amount' => 'required',
-            'provider' => 'required',
-            'description' => 'required',
+            'property_name' => 'required',
+            'property_purpose_id' => 'required',
+            'property_category_id' => 'required',
+            'property_type_id' => 'required',
+            'is_active' => 'required',
+            'description' => 'nullable|string',
+            'country_id' => 'required|integer',
+            'region_id' => 'required|integer',
+            'city_id' => 'required|integer',
         ]);
 
         $data = $request->except('_token', '_method', 'id');
 
         if ($request->has("id") && $request->input("id") != null)
         {
-            $meeting = $this->serviceTypeService->findServiceTypeById($request->input("id"));
-            $results = $this->serviceTypeService->updateServiceType($data, $meeting);
+            $meeting = $this->propertyService->findPropertyById($request->input("id"));
+            $results = $this->propertyService->updateProperty($data, $meeting);
         }else{
-            $results = $this->serviceTypeService->createServiceType($data);
+            $results = $this->propertyService->createProperty($data);
         }
 
         if ($request->ajax()){
@@ -162,14 +170,16 @@ class PropertyController extends \App\Abstracts\Http\Controller
      */
     public function edit(Request $request, $id)
     {
-        $service_type = $this->serviceTypeService->findServiceTypeById($id);
+        $property = $this->propertyService->findPropertyById($id);
+        $property_purposes = PropertyHelper::getAllPropertyPurposes();
 
         if ($request->ajax()){
-            return view('service-types.edit', compact('service_type'));
+            return view('property.properties.edit', compact('property', "property_purposes"));
         }
 
-        return view('service-types.create', compact('service_type'));
+        return view("property.properties.create", compact("property", "property_purposes"));
     }
+
 
     /**
      *

@@ -36,7 +36,7 @@ class PropertyTypeService extends ServiceBase implements IPropertyTypeService
      *
      * @return Collection
      */
-    public function listPropertyTypes(array $filter = null, string $orderBy = 'updated_at', string $sortBy = 'desc', array $columns = ['*']) : Collection
+    public function listPropertyTypes(array|null $filter = [], string $orderBy = 'updated_at', string $sortBy = 'desc', array $columns = ['*']) : Collection
     {
         return $this->propertyTypeRepo->listPropertyTypes($filter, $orderBy, $sortBy);
     }

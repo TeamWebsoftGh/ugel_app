@@ -10,6 +10,7 @@
         <div class="col-md-12 ">
             <div class="card">
                 @include("layouts.partials.dt-header")
+
                 <div class="card-body">
                     <p class="card-subtitle mb-4"></p>
                     <table id="property-table" class="table dt-responsive" style="box-shadow: none">

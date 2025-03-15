@@ -5,26 +5,27 @@ namespace App\Http\Controllers\Api\Mobile;
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
 use App\Http\Requests\ElectionResultRequest;
-use App\Http\Resources\ElectionResultResource;
+use App\Http\Resources\MaintenanceCategoryResource;
 use App\Services\Helpers\DelegteHelper;
 use App\Services\Interfaces\IElectionResultService;
+use App\Services\Interfaces\IMaintenanceCategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
-class ElectionResultController extends MobileController
+class MaintenanceController extends MobileController
 {
-    private IElectionResultService $electionResultService;
+    private IMaintenanceCategoryService $maintenanceCategoryService;
 
-    public function __construct(IElectionResultService $electionResultService)
+    public function __construct(IMaintenanceCategoryService $maintenanceCategoryService)
     {
         parent::__construct();
-        $this->electionResultService = $electionResultService;
+        $this->maintenanceCategoryService = $maintenanceCategoryService;
     }
 
-    public function index(Request $request)
+    public function categories(Request $request)
     {
         $data = $request->all();
-        $items = $this->electionResultService->listElectionResults($data);
+        $items = $this->maintenanceCategoryService->listMaintenanceCategories($data)->where('is_active', 1)->get();
 
         // Convert to a collection if it's not already one
         if (!$items instanceof Collection) {
@@ -36,7 +37,7 @@ class ElectionResultController extends MobileController
         $perPage = $request->input('perPage', 25);;
         $paginatedItems = $this->paginate($items, $perPage, $page);
 
-        $item = ElectionResultResource::collection($paginatedItems);
+        $item = MaintenanceCategoryResource::collection($paginatedItems);
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item, $paginatedItems);
     }
@@ -45,7 +46,7 @@ class ElectionResultController extends MobileController
     {
         $item = $this->electionResultService->findElectionResultById($id);
 
-        $item = new ElectionResultResource($item);
+        $item = new MaintenanceCategoryResource($item);
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }
@@ -54,7 +55,7 @@ class ElectionResultController extends MobileController
     {
         $item = $this->electionResultService->findElectionResultById($id);
 
-        $item = new ElectionResultResource($item);
+        $item = new MaintenanceCategoryResource($item);
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }
@@ -85,7 +86,7 @@ class ElectionResultController extends MobileController
 
         if(isset($results->data))
         {
-            $results->data = new ElectionResultResource($results->data);
+            $results->data = new MaintenanceCategoryResource($results->data);
         }
 
         return $this->apiResponseJson($results);
@@ -100,7 +101,7 @@ class ElectionResultController extends MobileController
 
         if(isset($results->data))
         {
-            $results->data = new ElectionResultResource($results->data);
+            $results->data = new MaintenanceCategoryResource($results->data);
         }
 
         return $this->apiResponseJson($results);

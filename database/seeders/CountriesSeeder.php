@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Settings\City;
+use App\Models\Settings\Country;
 use App\Models\Settings\Region;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -1217,6 +1218,8 @@ class CountriesSeeder extends Seeder
         );
 
         DB::table('countries')->insert($countries);
+
+        Country::where('code', 'gh')->update(['is_active' => 1]);
 
         Region::create([
             'name' => 'Greater Accra',

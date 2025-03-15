@@ -107,12 +107,15 @@ return new class extends Migration
             $table->integer('garage')->nullable();
             $table->decimal('total_area')->nullable();
             $table->decimal('general_rent')->default(0)->nullable();
+            $table->string('deposit_type')->nullable();
             $table->decimal('security_deposit')->default(0)->nullable();
+            $table->string('late_type')->nullable();
             $table->decimal('late_fee')->default(0)->nullable();
             $table->decimal('incident_receipt')->default(0)->nullable();
             $table->tinyInteger('rent_type')->comment('1=daily,2=monthly,3=yearly,4=custom')->nullable();
             $table->integer('monthly_due_day')->nullable();
             $table->integer('yearly_due_day')->nullable();
+            $table->integer('rent_duration')->nullable();
             $table->date('lease_start_date')->nullable();
             $table->date('lease_end_date')->nullable();
             $table->date('lease_payment_due_date')->nullable();
@@ -124,7 +127,7 @@ return new class extends Migration
 
             $table->string('status')->nullable();
 
-            $table->double('rent_amount')->nullable();
+            $table->decimal('rent_amount')->nullable();
             $table->integer('unit_floor')->nullable();
             $this->empExtracted($table);
 

@@ -1,63 +1,58 @@
-<form method="POST" id="property_unit" action="{{route('property-units.store')}}" >
+<form method="POST" id="property_unit" action="{{ route('property-units.store') }}">
     <p>All fields with <span class="text-danger">*</span> are required.</p>
     @csrf
-    <input type="hidden" id="_id" name="id" value="{{$property_unit->id}}">
-    <input type="hidden" id="_name" name="me" value=" award for {{$property_unit->name}}">
+    <input type="hidden" id="_id" name="id" value="{{ $property_unit->id }}">
+    <input type="hidden" id="_name" name="me" value="award for {{ $property_unit->name }}">
+
     <div class="row">
-        <div class="form-group col-6 col-md-4">
-            <label>Name <span class="text-danger">*</span></label>
-            <input type="text" name="name" id="name" required class="form-control"
-                   placeholder="name" value="{{old('name', $property_unit->name)}}">
-            <span class="input-note text-danger" id="error-name"> </span>
-            @error('name')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
-        <div class="form-group col-6 col-md-4">
-            <label>Short Name <span class="text-danger">*</span></label>
-            <input type="text" name="short_name" id="short_name" required class="form-control"
-                   placeholder="short_name" value="{{old('name', $property_unit->short_name)}}">
-            <span class="input-note text-danger" id="error-short_name"> </span>
-            @error('short_name')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
-        <div class="form-group col-6 col-md-4">
-            <label>{{__('Property Category')}} <span class="text-danger">*</span></label>
-            <select name="property_category_id" id="property_category_id" class="form-control selectpicker "
-                    data-live-search="true"
-                    title='{{__('Property Category')}}'>
-                @foreach($categories as $cat)
-                    <option value="{{$cat->id}}" @selected(old('property_category_id', $property_type->property_category_id) == $cat->id)>{{$cat->name}}</option>
-                @endforeach
-            </select>
-            <span class="input-note text-danger" id="error-property_category_id"> </span>
-            @error('property_category_id')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
-        <div class="form-group col-12 col-md-12">
-            <label for="description" class="control-label">Description</label>
-            <textarea class="form-control" id="description" name="description"
-                      rows="3">{{old('description', $property_type->description)}}</textarea>
-            <span class="input-note text-danger" id="error-description"> </span>
-            @error('description')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
+        <x-form.input-field name="property_id" label="Property" type="select"
+                            :options="$properties->pluck('property_name', 'id')" :value="$property_unit->property_id" required />
+
+        <x-form.input-field name="unit_name" label="Unit Name" type="text"
+                            placeholder="Enter Unit Name" :value="$property_unit->unit_name" required />
+
+        <x-form.input-field name="total_bedroom" label="Bedroom" type="number"
+                            placeholder="Enter number of bedrooms" :value="$property_unit->total_bedroom" required />
+
+        <x-form.input-field name="total_kitchen" label="Kitchen" type="number"
+                            placeholder="Enter number of kitchens" :value="$property_unit->total_kitchen" required />
+
+        <x-form.input-field name="total_bathroom" label="Bathroom" type="number"
+                            placeholder="Enter number of bathrooms" :value="$property_unit->total_bathroom" required />
+
+        <x-form.input-field name="rent_amount" label="Rent Amount" type="number"
+                            placeholder="Enter unit rent" :value="$property_unit->rent_amount" required />
+
+        <x-form.input-field name="rent_type" label="Rent Type" type="select"
+                            :options="['monthly' => 'Monthly', 'weekly' => 'Weekly', 'yearly' => 'Yearly']"
+                            :value="$property_unit->rent_type" required />
+
+        <x-form.input-field name="rent_duration" label="Rent Duration" type="number"
+                            placeholder="Enter day of month between 1 to 30" min="1" max="30"
+                            :value="$property_unit->rent_duration" required />
+
+        <x-form.input-field name="deposit_type" label="Deposit Type" type="select"
+                            :options="['fixed' => 'Fixed', 'percentage' => 'Percentage']"
+                            :value="$property_unit->deposit_type" required />
+
+        <x-form.input-field name="deposit_amount" label="Deposit Amount" type="number"
+                            placeholder="Enter deposit amount" :value="$property_unit->deposit_amount" required />
+
+        <x-form.input-field name="late_fee_type" label="Late Fee Type" type="select"
+                            :options="['fixed' => 'Fixed', 'percentage' => 'Percentage']"
+                            :value="$property_unit->late_fee_type" required />
+
+        <x-form.input-field name="late_fee_amount" label="Late Fee Amount" type="number"
+                            placeholder="Enter late fee amount" :value="$property_unit->late_fee_amount" required />
+
+        <x-form.input-field name="description" class="col-md-12" label="Description" type="textarea"
+                            placeholder="Enter description" :value="$property_unit->description" />
+
+        <x-form.input-field name="notes" class="col-md-12" label="Notes" type="textarea"
+                            placeholder="Enter additional notes" :value="$property_unit->notes" />
+
         <div class="form-group col-12">
             @include("shared.save-button")
         </div>
     </div>
 </form>
-<script>
-    $(document).ready(function () {
-        let date = $('.date');
-        date.datepicker({
-            format: '{{ env('Date_Format_JS')}}',
-            autoclose: true,
-            todayHighlight: true
-        });
-    });
-</script>
-

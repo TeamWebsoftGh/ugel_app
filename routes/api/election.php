@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\Mobile\ClientController;
 use App\Http\Controllers\Api\Mobile\ClientInvestmentController;
 use App\Http\Controllers\Api\Mobile\ClientLoanController;
 use App\Http\Controllers\Api\Mobile\PropertyController;
-use App\Http\Controllers\Api\Mobile\ElectionResultController;
+use App\Http\Controllers\Api\Mobile\MaintenanceController;
 use App\Http\Controllers\Api\Mobile\ElectoralAreaController;
 use App\Http\Controllers\Api\Mobile\ExistingLoanController;
 use App\Http\Controllers\Api\Mobile\LoanCollateralController;
@@ -25,14 +25,14 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['namespace' => 'Mobile', 'prefix' => 'ec'], function () {
-    Route::get('election-results/create', [ElectionResultController::class, 'create']);
-    Route::get('election-results/total-votes', [ElectionResultController::class, 'totalVotes']);
-    Route::get('election-results/total-votes-by-region', [ElectionResultController::class, 'totalVotesByRegion']);
-    Route::get('election-results/total-votes-by-constituency', [ElectionResultController::class, 'totalVotesByConstituency']);
-    Route::get('election-results/total-votes-by-electoral-area', [ElectionResultController::class, 'totalVotesByElectoralArea']);
-    Route::get('election-results/total-votes-by-polling-station', [ElectionResultController::class, 'totalVotesByPollingStation']);
-    Route::get('election-results/polling-stations-vote-summary', [ElectionResultController::class, 'pollingStationVoteSummary']);
-    Route::apiResource('election-results', ElectionResultController::class);
+    Route::get('election-results/create', [MaintenanceController::class, 'create']);
+    Route::get('election-results/total-votes', [MaintenanceController::class, 'totalVotes']);
+    Route::get('election-results/total-votes-by-region', [MaintenanceController::class, 'totalVotesByRegion']);
+    Route::get('election-results/total-votes-by-constituency', [MaintenanceController::class, 'totalVotesByConstituency']);
+    Route::get('election-results/total-votes-by-electoral-area', [MaintenanceController::class, 'totalVotesByElectoralArea']);
+    Route::get('election-results/total-votes-by-polling-station', [MaintenanceController::class, 'totalVotesByPollingStation']);
+    Route::get('election-results/polling-stations-vote-summary', [MaintenanceController::class, 'pollingStationVoteSummary']);
+    Route::apiResource('election-results', MaintenanceController::class);
 
     Route::get('parliamentary-candidates/create', [ParliamentaryCandidateController::class, 'create']);
     Route::apiResource('parliamentary-candidates', ParliamentaryCandidateController::class);

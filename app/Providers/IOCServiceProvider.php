@@ -31,11 +31,13 @@ use App\Services\Interfaces\IEnquiryService;
 use App\Services\Interfaces\IEventService;
 use App\Services\Interfaces\IFinancialYearService;
 use App\Services\Interfaces\IKnowledgeBaseService;
+use App\Services\Interfaces\IMaintenanceCategoryService;
 use App\Services\Interfaces\IMeetingService;
 use App\Services\Interfaces\IPaymentService;
 use App\Services\Interfaces\IPayRunService;
 use App\Services\Interfaces\IPermissionService;
 use App\Services\Interfaces\IPropertyService;
+use App\Services\Interfaces\IPropertyUnitService;
 use App\Services\Interfaces\IPublicationService;
 use App\Services\Interfaces\IRoleService;
 use App\Services\Interfaces\IServiceTypeService;
@@ -54,6 +56,7 @@ use App\Services\Interfaces\Properties\IAmenityService;
 use App\Services\Interfaces\Properties\IPropertyCategoryService;
 use App\Services\Interfaces\Properties\IPropertyTypeService;
 use App\Services\KnowledgeBaseService;
+use App\Services\MaintenanceCategoryService;
 use App\Services\MeetingService;
 use App\Services\PaymentService;
 use App\Services\PayRunService;
@@ -62,6 +65,7 @@ use App\Services\Properties\AmenityService;
 use App\Services\Properties\PropertyCategoryService;
 use App\Services\Properties\PropertyTypeService;
 use App\Services\PropertyService;
+use App\Services\PropertyUnitService;
 use App\Services\PublicationService;
 use App\Services\RoleService;
 use App\Services\ServiceTypeService;
@@ -132,12 +136,14 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(ISupportTicketService::class, SupportTicketService::class);
         $this->app->bind(IVisitorLogService::class, VisitorLogService::class);
         $this->app->bind(IEnquiryService::class, EnquiryService::class);
+        $this->app->bind(IMaintenanceCategoryService::class, MaintenanceCategoryService::class);
 
         //Properties
         $this->app->bind(IAmenityService::class, AmenityService::class);
         $this->app->bind(IPropertyCategoryService::class, PropertyCategoryService::class);
         $this->app->bind(IPropertyTypeService::class, PropertyTypeService::class);
         $this->app->bind(IPropertyService::class, PropertyService::class);
+        $this->app->bind(IPropertyUnitService::class, PropertyUnitService::class);
     }
 
     /**

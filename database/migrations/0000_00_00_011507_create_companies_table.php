@@ -39,11 +39,14 @@ return new class extends Migration
             $table->id();
             $table->string('code');
             $table->string('name');
-            $table->boolean('is_active')->default(1);
+            $table->boolean('is_active')->default(0);
 
             $table->string('created_from', 100)->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedBigInteger('import_id')->nullable();
+
+            $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('regions', function (Blueprint $table) {

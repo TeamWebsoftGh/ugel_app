@@ -3,7 +3,6 @@
 
 namespace App\Constants;
 
-
 class Constants
 {
     /**
@@ -19,34 +18,12 @@ class Constants
     /**
      * Default date format
      */
-    const DATE_FORMAT = 'd-M-Y';
-
-    const SEND_NEW_ACCOUNT_MAIL = true;
-    const TOTAL_RATING = 10;
-    const WORDS_PER_PAGE = 300;
     const ITEMS_PER_PAGE = 25;
-    const TIER1 = (13.5/100);
-    const SSNIT_TIER_1 = 13.5;
-    const TIER2 = (5/100);
-    const SSNIT_TIER_2 = 5;
-    const BASIC_SALARY = 1;
-    const INCOME_TAX = 1;
-    const SSNIT = [1,2,3];
-    const RETIREMENT_AGE = 62;
-    const SEND_PASSWORD_RESET_MAIL = true;
     const NOTIFICATIONS_MEDIUM = ['mail'];
     const BONUS_AMOUNT = 10;
-    const HRM = true;
-    const PAYROLL = true;
-    const ACCOUNT = true;
-    const FINANCE_URL = '127.0.0.1:60';
-    const CRM = true;
-    const PAYSLIP_COLOR = "#297ff9";
     const DEVELOPER = "Websoft";
     const DEFAULT_CSS = "/public/css/style.red.css";
     const COMPANY_LOGO  = "/logo/logo.png";
-    const MANAGEMENT_ID  = [1];
-
     public const DELETE_PROMPT = 'Are you sure you want to delete this record?';
     public const REMOVE_PROMPT = 'Are you sure you want to remove this element?';
     public const SAVE_PROMPT = 'Save this record?';
@@ -54,8 +31,6 @@ class Constants
 
     public const HOME = '/customer';
     public const ADMIN = '/admin';
-
-    public const CANSETFOROTHERS = true;
 
 
     /**
@@ -82,8 +57,8 @@ class Constants
 
     public const MOMO_TYPES = [
         'MTN' => 'MTN MOBILE MONEY',
-        'VODAFONE' => 'VODAFONE CASH',
-        'AIRTELTIGO' => 'AIRTELTIGO CASH'
+        'VODAFONE' => 'Telecel CASH',
+        'AIRTELTIGO' => 'AT CASH'
     ];
 
     public const PAYMENT_TYPES = [
@@ -101,10 +76,6 @@ class Constants
         'years' => 'Years'
     ];
 
-    public const PAYROLL_IMPORT_TYPES = [
-        'allowance' => 'Allowance',
-        'deduction' => 'Deduction',
-    ];
 
     public const SERVICE_CATEGORIES = [
         'ACADEMIC' => 'ACADEMIC',
@@ -148,30 +119,10 @@ class Constants
         '600' => 'VOTERS ID',
     ];
 
-    public const SECTORS = [
-        '01' => 'MISCELLANEOUS',
-        '10' => 'AGRICULTURE AND FORESTRY',
-        '20' => 'MINING AND QUARRING',
-        '30' => 'MANUFACTURING',
-        '40' => 'CONSTRUCTION',
-        '50' => 'ELECTRICITY GAS & WATER',
-        '60' => 'COMMERCE & FINANCE',
-        '70' => 'TRANSPORT STORAGE & COMMUNICATION',
-        '80' => 'SERVICES',
-    ];
-
-
     public const ACCOUNT_CHANNEL = [
         'mtn' => 'MTN',
         'vodafone' => 'Telecel',
         'airtel' => 'AirtelTigo',
-    ];
-
-    public const TRANSFER_TYPE = [
-        'bill' => 'Bill Payment',
-        'internal' => 'Internal Fund Transfer',
-        'external' => 'External Fund Transfer',
-        'momo' => 'Mobile Money',
     ];
 
     public const RELATIONSHIP_TYPES = [
@@ -200,12 +151,6 @@ class Constants
         '0' => 'No',
     ];
 
-
-    public const STAFF_TYPES = [
-        '1' => 'Local',
-        '0' => 'Expat',
-    ];
-
     public const THEMES = [
         'style.default.css' => 'Default',
         'style.red.css' => 'Red',
@@ -220,6 +165,7 @@ class Constants
         'unit-head' => 'Unit Head',
         'supervisor' => 'Supervisor',
         'employee' => 'Employee',
+        'team' => 'Team',
         'cfo' => 'CFO',
         'ceo' => 'CEO'
     ];
@@ -263,48 +209,4 @@ class Constants
         'M-d-Y' => 'MM-dd-yyyy(May-23-2021)',
         'd-M-Y' => 'dd-MM-yyyy(23-May-2021)',
     ];
-
-    public const CB_REPORT_TYPES = [
-        '14515' => 'Consumer Product',
-        '14516' => 'Commercial Product',
-        '14820' => 'Consumer Basic Profile',
-        '14819' => 'Commercial Basic Profile',
-    ];
-
-    public const CB_SUBJECT_TYPES = [
-        '1' => 'Consumer',
-        '2' => 'Commercial',
-    ];
-
-    public const CB_PURPOSE_OF_ENQUIRY = [
-        '1' => 'New Credit Application',
-        '2' => 'New Guarantor',
-        '3' => 'Consumer Basic Profile',
-        '4' => 'Commercial Basic Profile',
-    ];
-
-    public const CORE_BANKING_RESPONSES = [
-        0 => 'SUCCESSFUL',
-        1 => 'INVALID APPLICATION ID/PASSWORD',
-        2 => 'INVALID TRANSACTION ID',
-        3 => 'INSUFFICIENT FUNDS',
-        4 => 'INVALID USER CREDENTIAL',
-        5 => 'USER ID IS LOCKED',
-        6 => 'USER ID IS EXPIRED',
-        7 => 'USER TIMED OUT',
-        8 => 'INVALID ACCOUNT',
-        9 => 'FUNCTION NOT AVAILABLE',
-        10 => 'UNSPECIFIED ERROR',
-        11 => 'CHANGE PASSWORD(NEW USER)',
-        12 => 'CHANGE PASSWORD(PASSWORD EXPIRED)',
-        13 => 'INVALID INPUT DATA',
-        14 => 'RECORD ALREADY EXIST',
-        15 => 'INVALID CUSTOMER ID(CUSTOMER RECORD IS PENDING AUTHORIZATION)',
-        16 => 'INVALID CUSTOMER ID(CUSTOMER ID DOES NOT EXIST)',
-        17 => 'PIN is locked',
-        18 => 'PIN has expired',
-        19 => 'Invalid PIN',
-        20 => 'Debit Limit exceeded'
-    ];
-
 }

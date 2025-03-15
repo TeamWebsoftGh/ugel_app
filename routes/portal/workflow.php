@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::group(['prefix' => 'workflow-requests', 'namespace' => 'WorkflowRequest'], function () {
+Route::group(['prefix' => 'workflow-requests', 'namespace' => 'App\Http\Controllers\WorkflowRequest'], function () {
     Route::get('employee-requests', 'EmployeeRequestController@index')->name('employee-requests.index');
     Route::get('pending', 'EmployeeRequestController@pending')->name('employee-requests.pending');
     Route::get('my-requests', 'EmployeeRequestController@myRequests')->name('employee-requests.my-requests');
@@ -24,12 +24,12 @@ Route::group(['prefix' => 'workflow-requests', 'namespace' => 'WorkflowRequest']
 });
 
 //Workflow
-Route::group(['prefix' => 'workflows', 'namespace' => 'Workflow', 'as' => 'workflows.'], function ()
+Route::group(['prefix' => 'workflows', 'namespace' => 'App\Http\Controllers\Workflow', 'as' => 'workflows.'], function ()
 {
     //Workflow Positions types
     Route::get('position-types/detail/{id}', 'PositionTypeController@show')->name('position-types.detail');
     Route::get('position-types/{id}/delete', 'PositionTypeController@destroy')->name('position-types.destroy');
-    Route::resource('position-types', 'PositionTypeController')->except(['create', 'update', 'show']);
+    Route::resource('position-types', 'PositionTypeController')->except(['update', 'show']);
 
     //Workflow Positions
     Route::get('positions/detail/{id}', 'PositionController@show')->name('positions.detail');

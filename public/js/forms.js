@@ -94,8 +94,8 @@ function DeleteItem(name, url)
                     HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
                 },
                 success: function (data) {
-                    bootbox.alert(DetermineIconFromResult(data) + " " + data.Message, function () {
-                        if(data.Result === "SUCCESS")
+                    bootbox.alert(DetermineIconFromResult(data) + " " + data.message, function () {
+                        if(data.status === "SUCCESS")
                         {
                             window.location.reload();
                         }
@@ -123,8 +123,8 @@ function DeleteItemDT(name, url)
                     HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
                 },
                 success: function (data) {
-                    bootbox.alert(DetermineIconFromResult(data) + " " + data.Message, function () {
-                        if(data.Result === "SUCCESS")
+                    bootbox.alert(DetermineIconFromResult(data) + " " + data.message, function () {
+                        if(data.status === "SUCCESS")
                         {
                             window.location.reload();
                         }
@@ -159,8 +159,8 @@ function SaveItem()
             HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
         },
         success: function (data) {
-            bootbox.alert(DetermineIconFromResult(data) + " " + data.Message, function () {
-                if(data.Result === "success")
+            bootbox.alert(DetermineIconFromResult(data) + " " + data.message, function () {
+                if(data.status === "success")
                 {
                     $('#' + id + '-table').DataTable().ajax.reload();
                 }
@@ -196,7 +196,7 @@ function ChangeStatus(name, status, url)
                         HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
                     },
                     success: function (data) {
-                        bootbox.alert(DetermineIconFromResult(data) + " " + data.Message, function () {
+                        bootbox.alert(DetermineIconFromResult(data) + " " + data.message, function () {
                             window.location.reload();
                         });
                     },
@@ -225,7 +225,7 @@ function ResetPassword(name, url){
                     HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
                 },
                 success: function (data) {
-                    bootbox.alert(DetermineIconFromResult(data) + " " + data.Message, function () {
+                    bootbox.alert(DetermineIconFromResult(data) + " " + data.message, function () {
                         window.location.reload();
                     });
                 },
@@ -251,7 +251,7 @@ function ConfirmAccount(name, url)
                     HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
                 },
                 success: function (data) {
-                    bootbox.alert(DetermineIconFromResult(data) + " " + data.Message, function () {
+                    bootbox.alert(DetermineIconFromResult(data) + " " + data.message, function () {
                         window.location.reload();
                     });
                 },
@@ -553,8 +553,8 @@ $(document).on('click', '.save_btn', function(e){
                     HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
                 },
                 success: function (data) {
-                    bootbox.alert(DetermineIconFromResult(data) + " " + data.Message, function () {
-                        if(data.Result === "SUCCESS")
+                    bootbox.alert(DetermineIconFromResult(data) + " " + data.message, function () {
+                        if(data.status === "SUCCESS")
                         {
                             window.location.reload();
                         }

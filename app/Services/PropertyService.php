@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
+use App\Models\Common\NumberGenerator;
 use App\Models\Property\Property;
 use App\Repositories\Interfaces\IPropertyRepository;
 use App\Services\Helpers\Response;
@@ -49,6 +50,9 @@ class PropertyService extends ServiceBase implements IPropertyService
         //Declaration
         $property = null;
         try{
+            if(!isset($params['code'])){
+                $params['property_code'] = NumberGenerator::gen(Property::class);
+            }
             //Prepare request
             if(isset($params['photo']) && $params['photo']instanceof UploadedFile)
             {
