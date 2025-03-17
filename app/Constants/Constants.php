@@ -164,6 +164,7 @@ class Constants
         'finance-manager' => 'Finance Manager',
         'unit-head' => 'Unit Head',
         'supervisor' => 'Supervisor',
+        'assignees' => 'Assignees',
         'employee' => 'Employee',
         'team' => 'Team',
         'cfo' => 'CFO',

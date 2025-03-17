@@ -8,12 +8,9 @@ use App\Models\Client\Client;
 use App\Models\Common\DocumentUpload;
 use App\Models\Common\Priority;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SupportTicket extends Model
 {
-    use HasFactory;
-
     protected $appends = ["assignee_names", "priority_name"];
 
     protected $fillable = ['ticket_note', 'status', 'ticket_code', 'priority_id',
@@ -59,7 +56,7 @@ class SupportTicket extends Model
 
     public function ticketComments()
     {
-        return $this->hasMany(SupportTicketComment::class);
+        return $this->hasMany(Comment::class);
     }
 
     public function documents()
@@ -67,13 +64,13 @@ class SupportTicket extends Model
         return $this->morphMany(DocumentUpload::class, 'documentable');
     }
 
-    public function getUpdatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format(env('Date_Format'). ' h:i A');
-    }
-
     public function getDateCreatedAttribute($value)
     {
         return Carbon::parse($this->created_at)->format(env('Date_Format'). ' h:i A');
+    }
+
+    public function comments(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable');
     }
 }

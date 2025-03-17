@@ -5,11 +5,13 @@
     <h5>Property Details</h5>
     <div class="row">
         <x-form.input-field name="property_name" label="Property Name" type="text" placeholder="Enter Property Name" :value="$property->property_name" required />
+        <x-form.input-field name="property_code" disabled label="Property Code" type="text" placeholder="Property Code" :value="$property->property_code" />
         <x-form.input-field name="property_purpose_id" label="Purpose" type="select" :options="$property_purposes->pluck('name', 'id')" :value="$property->property_purpose_id" required />
         <x-form.input-field name="property_category_id" label="Property Category" type="select" :options="$property_categories->pluck('name', 'id')" :value="$property->propertyType->property_category_id" required />
         <x-form.input-field name="property_type_id" label="Property Type" type="select" :options="$property_types->pluck('name', 'id')" :value="$property->property_type_id" required />
         <x-form.input-field name="is_active" label="Status" type="select" :options="['1' => 'Active', '0' => 'Inactive']" :value="$property->is_active" required />
-        <x-form.input-field name="description" class="col-md-12" label="Description" type="textarea" placeholder="Enter a description" :value="$property->description" />
+        <x-form.input-field name="cover_image" label="Cover Image" type="file" :value="$property->image" required />
+        <x-form.input-field name="description" class="col-md-8" rows="9" label="Description" type="textarea" placeholder="Enter a description" :value="$property->description" />
 
         <h5>Property Location</h5>
         <x-form.input-field name="country_id" label="Country" type="select" :options="$countries->pluck('name', 'id')" :value="$property->city->region->country_id" required id="country_id" />
@@ -23,6 +25,7 @@
     </div>
 </form>
 <script>
+    $('.dropify').dropify();
     function updateDropdown(url, targetDropdown, defaultOption = 'Select an option', selectedValue = null) {
         $.ajax({
             url: url,

@@ -21,6 +21,16 @@ Route::group(['namespace' => 'App\Http\Controllers\CustomerService', 'prefix' =>
     Route::get('support-tickets/assigned', 'SupportTicketController@assigned')->name('support-tickets.assigned');
     Route::resource('support-tickets', 'SupportTicketController')->except(['update']);
 
+   //Maintenance Requests
+    Route::post('maintenance-requests/upload-file', 'MaintenanceRequestController@uploadFile')->name('maintenance-requests.file-upload');
+    Route::delete('maintenance-requests/delete-file/{ticket_id}/{id}', 'MaintenanceRequestController@deleteDocument')->name('maintenance-requests.delete-file');
+    Route::post('maintenance-requests/post-comment', 'MaintenanceRequestController@postComment')->name('maintenance-requests.comments.store');
+    Route::delete('maintenance-requests/comments/{task_id}/{id}', 'MaintenanceRequestController@deleteComment')->name('maintenance-requests.comments.destroy');
+    Route::get('my-maintenance-requests', 'MaintenanceRequestController@myTickets')->name('maintenance-requests.my-tickets');
+    Route::get('maintenance-requests/pending', 'MaintenanceRequestController@pending')->name('maintenance-requests.pending');
+    Route::get('maintenance-requests/assigned', 'MaintenanceRequestController@assigned')->name('maintenance-requests.assigned');
+    Route::resource('maintenance-requests', 'MaintenanceRequestController')->except(['update']);
+
     //Visitor Log
     Route::resource('visitor-logs', 'VisitorLogController')->except(['update', 'show']);
 

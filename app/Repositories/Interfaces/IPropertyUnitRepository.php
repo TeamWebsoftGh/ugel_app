@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 
 interface IPropertyUnitRepository extends IBaseRepository
 {
-    public function listPropertyUnits(array $filter = [], string $order = 'id', string $sort = 'desc'): Collection;
+    public function listPropertyUnits(array $filter = [], string $order = 'id', string $sort = 'desc');
 
     public function createPropertyUnit(array $data) : PropertyUnit;
 

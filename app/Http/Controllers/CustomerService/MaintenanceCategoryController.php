@@ -51,6 +51,10 @@ class MaintenanceCategoryController extends Controller
                 {
                     return $row->is_active?"Active":"Inactive";
                 })
+                ->addColumn('parent_name', function ($row)
+                {
+                    return $row->parent->name??"Main";
+                })
                 ->addColumn('updated_at', function ($row)
                 {
                     return Carbon::parse($row->updated_at)->format(env('Date_Format'));
@@ -87,8 +91,9 @@ class MaintenanceCategoryController extends Controller
     public function create()
     {
         $maintenance_category= new PropertyCategory();
+        $categories = $this->maintenanceCategoryService->listMaintenanceCategories()->whereNull('parent_id')->get();
         if (request()->ajax()){
-            return view('customer-service.maintenance-categories.edit', compact('maintenance_category'));
+            return view('customer-service.maintenance-categories.edit', compact('maintenance_category', 'categories'));
         }
 
         return redirect()->route("maintenance-categories.index");
@@ -158,8 +163,9 @@ class MaintenanceCategoryController extends Controller
     public function edit($id)
     {
         $maintenance_category = $this->maintenanceCategoryService->findMaintenanceCategoryById($id);
+        $categories = $this->maintenanceCategoryService->listMaintenanceCategories()->whereNull('parent_id')->get();
         if (request()->ajax()){
-            return view('customer-service.maintenance-categories.edit', compact("maintenance_category"));
+            return view('customer-service.maintenance-categories.edit', compact("maintenance_category", "categories"));
         }
 
         return redirect()->route("maintenance-categories.index");

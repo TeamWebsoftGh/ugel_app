@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Ajax;
 
 use App\Http\Controllers\Controller;
 use App\Services\Interfaces\IConstituencyService;
-use App\Services\Interfaces\IElectoralAreaService;
 use App\Services\Interfaces\IPollingStationService;
+use App\Services\Properties\Interfaces\IRoomService;
 use Illuminate\Http\Request;
 
 class DynamicDependentController extends Controller
@@ -14,7 +14,7 @@ class DynamicDependentController extends Controller
      * @var IConstituencyService
      */
     private IConstituencyService $constituencyService;
-    private IElectoralAreaService $electoralAreaService;
+    private IRoomService $electoralAreaService;
     private IPollingStationService $pollingStationService;
 
     /**
@@ -23,7 +23,7 @@ class DynamicDependentController extends Controller
      * @param IConstituencyService $constituencyService
      */
     public function __construct(IConstituencyService $constituencyService,
-                                IElectoralAreaService $electoralAreaService,  IPollingStationService $pollingStationService)
+                                IRoomService         $electoralAreaService, IPollingStationService $pollingStationService)
     {
         parent::__construct();
         $this->constituencyService = $constituencyService;

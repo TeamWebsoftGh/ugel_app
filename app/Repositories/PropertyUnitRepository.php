@@ -68,27 +68,33 @@ class PropertyUnitRepository extends BaseRepository implements IPropertyUnitRepo
      * @param string $order
      * @param string $sort
      * @param array $columns
-     * @return Collection
+     * @return
      */
-    public function listPropertyUnits(array $filter = null, string $order = 'id', string $sort = 'desc', array $columns = ['*']) : Collection
+    public function listPropertyUnits(array $filter = [], string $order = 'updated_at', string $sort = 'desc', array $columns = ['*'])
     {
         $result = $this->model->query();
-        if (!empty($filter['filter_property_category']))
+        if (!empty($params['filter_property_type']))
         {
-            $result = $result->where('property_category_id', $filter['filter_property_category']);
+            $result = $result->whereHas('property', function ($query) use($params) {
+                return $query->where('property_type_id', '=', $params['filter_property_type']);
+            });
+        }
+        if (!empty($filter['filter_property']))
+        {
+            $result = $result->where('property_id', $filter['filter_property']);
         }
 
         if (!empty($filter['filter_status']))
         {
-            $result = $result->where('is_active', $filter['filter_status']);
+            $result = $result->where('status', $filter['filter_status']);
         }
 
         if (!empty($filter['filter_name']))
         {
-            $result = $result->where('name', 'like', '%'.$filter['filter_name'].'%');
+            $result = $result->where('unit_name', 'like', '%'.$filter['filter_name'].'%');
         }
 
-        return $result->orderBy($order, $sort)->get();
+        return $result->orderBy($order, $sort);
     }
 
 }

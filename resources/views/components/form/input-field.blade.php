@@ -23,7 +23,12 @@
         <textarea class="form-control" id="{{ $id }}" {{ $readonly ? 'readonly' : '' }}
         {{ $disabled ? 'disabled' : '' }}
         {{ $required ? 'required' : '' }}
-        name="{{ $name }}" rows="3">{{old($name, $value)}}</textarea>
+        name="{{ $name }}" rows="{{$rows}}">{{old($name, $value)}}</textarea>
+    @elseif ($type == 'file')
+        <input type="file" name="{{ $name }}" id="{{ $id ?? $name }}" class="form-control dropify"
+               data-default-file="{{ !empty($value) ? asset($value) : '' }}"
+               {{ $required ? 'required' : '' }}
+               accept="image/*">
 
     @elseif ($type == 'radio')
         <div class="form-check">

@@ -8,11 +8,15 @@ use App\Repositories\ClientRepository;
 use App\Repositories\Interfaces\IAmenityRepository;
 use App\Repositories\Interfaces\IBulkSmsRepository;
 use App\Repositories\Interfaces\IMaintenanceCategoryRepository;
+use App\Repositories\Interfaces\IMaintenanceRepository;
 use App\Repositories\Interfaces\IPropertyCategoryRepository;
 use App\Repositories\Interfaces\IPropertyRepository;
+use App\Repositories\Interfaces\IRoomRepository;
 use App\Repositories\MaintenanceCategoryRepository;
+use App\Repositories\MaintenanceRepository;
 use App\Repositories\PropertyCategoryRepository;
 use App\Repositories\PropertyRepository;
+use App\Repositories\RoomRepository;
 use App\Repositories\ServiceTypeRepository;
 use App\Repositories\OfferRepository;
 use App\Repositories\ContactRepository;
@@ -159,12 +163,14 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IVisitorLogRepository::class, VisitorLogRepository::class);
         $this->app->bind(IEnquiryRepository::class, EnquiryRepository::class);
         $this->app->bind(IMaintenanceCategoryRepository::class, MaintenanceCategoryRepository::class);
+        $this->app->bind(IMaintenanceRepository::class, MaintenanceRepository::class);
 
         //Properties
         $this->app->bind(IPropertyCategoryRepository::class, PropertyCategoryRepository::class);
         $this->app->bind(IPropertyTypeRepository::class, PropertyTypeRepository::class);
         $this->app->bind(IAmenityRepository::class, AmenityRepository::class);
         $this->app->bind(IPropertyRepository::class, PropertyRepository::class);
+        $this->app->bind(IRoomRepository::class, RoomRepository::class);
     }
 
     /**

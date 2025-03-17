@@ -64,7 +64,7 @@ Trait WorkflowUtil
      *
      * @return array/false
      */
-    public function addWorkflowRequest($class, $employee)
+    public function addWorkflowRequest($class, $user)
     {
         try {
             $workflowType = WorkflowType::firstWhere('subject_type', get_class($class));
@@ -72,11 +72,11 @@ Trait WorkflowUtil
             $workflowRequest = WorkflowRequest::firstOrCreate([
                 'workflow_requestable_id' => $class->id,
                 'workflow_requestable_type' => get_class($class),
-                'employee_id' => $employee->id
+                'employee_id' => $user->id
             ], [
                 'workflow_requestable_id' => $class->id,
                 'workflow_requestable_type' => get_class($class),
-                'employee_id' => $employee->id,
+                'employee_id' => $user->id,
                 'current_flow_sequence' => 0,
                 'workflow_type_id' => $workflowType->id,
                 'company_id' => user()->company_id,
@@ -87,7 +87,7 @@ Trait WorkflowUtil
             $data['status'] = "approved";
             $data["approved_at"] = Carbon::now();
 
-            $this->sendNextWorkflowRequest($workflowRequest, $employee, $data);
+            $this->sendNextWorkflowRequest($workflowRequest, $user, $data);
         }catch (\Exception $ex){
             log_error(format_exception($ex), $class, 'workflow-request-failed');
         }

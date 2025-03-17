@@ -29,6 +29,11 @@ class Property extends Model
         return $this->belongsTo(PropertyType::class)->withDefault(['name' => 'N/A']);
     }
 
+    public function propertyCategory()
+    {
+        return $this->hasOneThrough(PropertyCategory::class, PropertyType::class)->withDefault(['name' => 'N/A']);
+    }
+
     public function city()
     {
         return $this->belongsTo(City::class)->withDefault(['name' => 'N/A']);
@@ -44,4 +49,8 @@ class Property extends Model
         return $this->morphMany(Amenity::class, 'amenitable');
     }
 
+    public function getCoverImageAttribute()
+    {
+        return $this->attributes['image'] ?? "assets/images/user.png";
+    }
 }

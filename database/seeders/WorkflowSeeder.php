@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\CustomerService\Maintenance;
+use App\Models\CustomerService\MaintenanceRequest;
 use App\Models\Workflow\WorkflowPositionType;
 use App\Models\Workflow\WorkflowType;
 use Illuminate\Database\Seeder;
@@ -27,7 +27,7 @@ class WorkflowSeeder extends Seeder
         WorkflowType::create([
             'name' => 'Maintenance Request',
             'code' => 'maintenance-request',
-            'subject_type' => Maintenance::class,
+            'subject_type' => MaintenanceRequest::class,
             'company_id' => $company_id,
             ]);
     }

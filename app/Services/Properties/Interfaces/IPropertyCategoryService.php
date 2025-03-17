@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Interfaces\Properties;
+namespace App\Services\Properties\Interfaces;
 
 use App\Models\Property\PropertyCategory;
 use App\Services\Interfaces\IBaseService;

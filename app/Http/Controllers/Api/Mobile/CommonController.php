@@ -7,8 +7,8 @@ use App\Constants\ResponseMessage;
 use App\Http\Resources\PropertyCategoryResource;
 use App\Http\Resources\PropertyTypeResource;
 use App\Services\Helpers\PropertyHelper;
-use App\Services\Interfaces\Properties\IPropertyCategoryService;
-use App\Services\Interfaces\Properties\IPropertyTypeService;
+use App\Services\Properties\Interfaces\IPropertyCategoryService;
+use App\Services\Properties\Interfaces\IPropertyTypeService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Exceptions\Exception;
 

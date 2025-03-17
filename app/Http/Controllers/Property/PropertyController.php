@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Property;
 
+use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Property\Property;
 use App\Services\Helpers\PropertyHelper;
-use App\Services\Interfaces\IPropertyService;
+use App\Services\Properties\Interfaces\IPropertyService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Abstracts\Http\Controller;
 
 class PropertyController extends Controller
 {
@@ -86,6 +86,14 @@ class PropertyController extends Controller
     }
 
 
+    public function all(Request $request)
+    {
+        $data = request()->all();
+        $properties = $this->propertyService->listProperties($data, "updated_at", "desc")->paginate();
+        return view('property.properties.all', compact('properties'));
+    }
+
+
 
     public function create()
     {
@@ -118,6 +126,7 @@ class PropertyController extends Controller
             'country_id' => 'required|integer',
             'region_id' => 'required|integer',
             'city_id' => 'required|integer',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 2MB max
         ]);
 
         $data = $request->except('_token', '_method', 'id');
@@ -155,7 +164,7 @@ class PropertyController extends Controller
         $property = $this->propertyService->findPropertyById($id);
 
         if ($request->ajax()){
-            return view('service-types.show', compact('property'));
+            return view('property.properties.edit', compact('property'));
         }
 
         return view('property.properties.show', compact('property'));

@@ -138,6 +138,7 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->string('room_name');
+            $table->text('description')->nullable();
             $table->integer('floor')->nullable();
             $table->boolean('has_ac')->default(0);
             $table->boolean('has_washroom')->default(0);

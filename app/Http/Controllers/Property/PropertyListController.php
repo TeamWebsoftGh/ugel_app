@@ -6,7 +6,7 @@ use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Property\PropertyCategory;
 use App\Models\Property\PropertyType;
-use App\Services\Interfaces\Properties\IPropertyTypeService;
+use App\Services\Properties\Interfaces\IPropertyTypeService;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;

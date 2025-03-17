@@ -8,7 +8,7 @@ use App\Http\Requests\ImportRequest;
 use App\Imports\AmenitiesImport;
 use App\Models\Property\PropertyCategory;
 use App\Models\Property\PropertyType;
-use App\Services\Interfaces\Properties\IPropertyTypeService;
+use App\Services\Properties\Interfaces\IPropertyTypeService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;

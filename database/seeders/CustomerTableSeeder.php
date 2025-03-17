@@ -33,18 +33,5 @@ class CustomerTableSeeder extends Seeder
                 ['code' => $type['code'], 'category' => $type['category']]
             );
         }
-
-        $mtypes = [
-            ['name' => 'Plumbing Issue', 'short_name' => 'plumbing'],
-            ['name' => 'Carpentry Issue', 'short_name' => 'carpentry'],
-            ['name' => 'Electrical Issue', 'short_name' => 'electrical'],
-        ];
-
-        foreach ($mtypes as $type) {
-            MaintenanceCategory::updateOrCreate(
-                ['name' => $type['name'],'company_id' => $company_id],
-                ['short_name' => $type['short_name']]
-            );
-        }
     }
 }

@@ -20,6 +20,7 @@ class InputField extends Component
     public $disabled;
     public $id;
     public $selectpicker;
+    public $rows;
     public $liveSearch;
 
     /**
@@ -36,6 +37,7 @@ class InputField extends Component
         $options = [],
         $required = false,
         $disabled = false,
+        $rows = 3,
         $id = null,
         $selectpicker = true,
         $liveSearch = true
@@ -51,6 +53,7 @@ class InputField extends Component
         $this->options = $options;
         $this->required = $required;
         $this->disabled = $disabled;
+        $this->rows = $rows;
         $this->id = $id ?? $name;
         $this->selectpicker = $selectpicker;
         $this->liveSearch = $liveSearch;

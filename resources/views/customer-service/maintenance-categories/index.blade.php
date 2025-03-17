@@ -20,6 +20,7 @@
                             </th>
                             <th>Name</th>
                             <th>Short Name</th>
+                            <th>Parent Category</th>
                             <th>Status</th>
                             <th>Last Modified</th>
                             <th class="not-exported">Action</th>
@@ -47,6 +48,7 @@
                         {data: null, orderable: false, searchable: false},
                         {data: 'name', name: 'name'},
                         {data: 'short_name', name: 'short_name'},
+                        {data: 'parent_name', name: 'parent_name'},
                         {data: 'status', name: 'status'},
                         {data: 'updated_at', name: 'updated_at'},
                         {data: 'action', name: 'action', orderable: false }

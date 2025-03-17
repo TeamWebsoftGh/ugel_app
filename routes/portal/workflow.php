@@ -39,10 +39,10 @@ Route::group(['prefix' => 'workflows', 'namespace' => 'App\Http\Controllers\Work
     //Workflow Types
     Route::get('workflow-types/detail/{id}', 'WorkflowTypeController@show')->name('workflow-types.detail');
     Route::get('workflow-types/{id}/delete', 'WorkflowTypeController@destroy')->name('workflow-types.destroy');
-    Route::resource('workflow-types', 'WorkflowTypeController')->except(['create', 'update', 'show']);
+    Route::resource('workflow-types', 'WorkflowTypeController')->except(['update']);
 
     //Workflows
     Route::get('workflows/detail/{id}', 'WorkflowController@show')->name('workflows.detail');
     Route::get('workflows/{id}/delete', 'WorkflowController@destroy')->name('workflows.destroy');
-    Route::resource('workflows', 'WorkflowController')->except(['create', 'update', 'show']);
+    Route::resource('workflows', 'WorkflowController')->except(['update']);
 });

@@ -31,11 +31,13 @@ Route::group(['prefix' => '', 'namespace' => 'App\Http\Controllers\Property'], f
     Route::resource('property-types', 'PropertyTypeController')->except(['update']);
 
     //Properties
+    Route::get('properties/all', 'PropertyController@all')->name('properties.all');
     Route::get('properties/lease', 'PropertyController@propertyLease')->name('properties.lease');
     Route::resource('properties', 'PropertyController')->except(['update']);
 
     //Property Units
     Route::resource('property-units', 'PropertyUnitController')->except(['update']);
+    Route::resource('rooms', 'RoomController')->except(['update']);
 
     //service-types
     Route::get('companies/kyc', 'AmenityController@kyc')->name('companies.kyc');

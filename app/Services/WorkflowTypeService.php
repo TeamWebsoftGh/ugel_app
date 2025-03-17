@@ -12,6 +12,7 @@ use App\Repositories\Interfaces\IWorkflowTypeRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IWorkflowTypeService;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 class WorkflowTypeService extends ServiceBase implements IWorkflowTypeService
 {
@@ -72,11 +73,10 @@ class WorkflowTypeService extends ServiceBase implements IWorkflowTypeService
 
         //Process Request
         try {
-            $params['is_active'] = $params['status'];
-
+            $params['code'] = Str::slug($params['code']??$params['name']);
             $workflowType = $this->workflowTypeRepo->createWorkflowType($params);
         } catch (\Exception $e) {
-            log_error(format_exception($e), new WorkflowType(), 'create-workflow-position-failed');
+            log_error(format_exception($e), new WorkflowType(), 'create-workflow-type-failed');
         }
 
         //Check if WorkflowType was created successfully
@@ -89,7 +89,7 @@ class WorkflowTypeService extends ServiceBase implements IWorkflowTypeService
         }
 
         //Audit Trail
-        $logAction = 'create-workflow-position-successful';
+        $logAction = 'create-workflow-type-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_CREATE;
 
         log_activity($auditMessage, $workflowType, $logAction);
@@ -131,7 +131,7 @@ class WorkflowTypeService extends ServiceBase implements IWorkflowTypeService
         try {
             $result = $this->workflowTypeRepo->updateWorkflowType($params, $workflowType->id);
         } catch (\Exception $e) {
-            log_error(format_exception($e), $workflowType, 'update-workflow-position-failed');
+            log_error(format_exception($e), $workflowType, 'update-workflow-type-failed');
         }
 
         //Check if WorkflowType was updated successfully
@@ -144,7 +144,7 @@ class WorkflowTypeService extends ServiceBase implements IWorkflowTypeService
         }
 
         //Audit Trail
-        $logAction = 'update-workflow-position-successful';
+        $logAction = 'update-workflow-type-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
 
         log_activity($auditMessage, $workflowType, $logAction);
@@ -164,7 +164,7 @@ class WorkflowTypeService extends ServiceBase implements IWorkflowTypeService
         if ($this->workflowTypeRepo->deleteWorkflowType($workflowType->id))
         {
             //Audit Trail
-            $logAction = 'delete-workflow-position-successful';
+            $logAction = 'delete-workflow-type-successful';
             $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
 
             log_activity($auditMessage, $workflowType, $logAction);

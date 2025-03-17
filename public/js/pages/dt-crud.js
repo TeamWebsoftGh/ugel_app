@@ -207,6 +207,7 @@ function openShowModal(rowData, url, id)
             $('#editModal form input,#editModal form textarea,#editModal form select, .save_dt_btn').prop('disabled', true);
         },
         error: function(xhr, status, error) {
+            alert("Page failed to load.")
             console.error('Error fetching modal content: ' + error);
         }
     });
@@ -243,6 +244,7 @@ function openAddModal(url)
             $('#editModal').modal('show');
         },
         error: function(xhr, status, error) {
+            alert("Page failed to load.")
             console.error('Error fetching modal content: ' + error);
         }
     });

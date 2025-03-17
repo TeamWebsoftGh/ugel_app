@@ -4,25 +4,24 @@ namespace App\Http\Controllers\Api\Mobile;
 
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
-use App\Http\Resources\ClientResource;
 use App\Http\Resources\PropertyResource;
-use App\Services\Interfaces\IElectoralAreaService;
+use App\Services\Properties\Interfaces\IRoomService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 
 class ElectoralAreaController extends MobileController
 {
     /**
-     * @var IElectoralAreaService
+     * @var IRoomService
      */
-    private IElectoralAreaService $electoralAreaService;
+    private IRoomService $electoralAreaService;
 
     /**
      * CategoryController constructor.
      *
-     * @param IElectoralAreaService $electoralAreaService
+     * @param IRoomService $electoralAreaService
      */
-    public function __construct(IElectoralAreaService $electoralAreaService)
+    public function __construct(IRoomService $electoralAreaService)
     {
         parent::__construct();
         $this->electoralAreaService = $electoralAreaService;

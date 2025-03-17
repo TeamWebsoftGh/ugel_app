@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Properties;
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Property\Propertyunit;
 use App\Repositories\PropertyUnitRepository;
-use App\Repositories\Interfaces\IClientRepository;
 use App\Services\Helpers\Response;
-use App\Services\Interfaces\IPropertyUnitService;
+use App\Services\Properties\Interfaces\IPropertyUnitService;
+use App\Services\ServiceBase;
 use App\Traits\UploadableTrait;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
@@ -35,7 +35,7 @@ class PropertyUnitService extends ServiceBase implements IPropertyUnitService
      *
      * @return Collection
      */
-    public function listPropertyUnits(array $filter = null, string $orderBy = 'updated_at', string $sortBy = 'desc', array $columns = ['*']) : Collection
+    public function listPropertyUnits(array $filter = [], string $orderBy = 'updated_at', string $sortBy = 'desc')
     {
         return $this->propertyUnitRepo->listPropertyUnits($filter, $orderBy, $sortBy);
     }

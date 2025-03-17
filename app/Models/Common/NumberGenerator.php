@@ -3,6 +3,7 @@
 namespace App\Models\Common;
 
 use App\Abstracts\Model;
+use App\Models\CustomerService\MaintenanceRequest;
 use App\Models\Property\Property;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -36,6 +37,7 @@ class NumberGenerator extends Model
     {
         $prefix_list = [
             Property::class => 'UGEL',
+            MaintenanceRequest::class => 'MT',
             'App\Models\Payment' => 'PMT',
             'App\Models\Wallet' => 'WAL',
             'App\Models\SupportTicket' => 'ST',

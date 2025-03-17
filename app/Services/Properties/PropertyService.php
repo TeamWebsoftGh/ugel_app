@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Properties;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
@@ -8,7 +8,8 @@ use App\Models\Common\NumberGenerator;
 use App\Models\Property\Property;
 use App\Repositories\Interfaces\IPropertyRepository;
 use App\Services\Helpers\Response;
-use App\Services\Interfaces\IPropertyService;
+use App\Services\Properties\Interfaces\IPropertyService;
+use App\Services\ServiceBase;
 use App\Traits\UploadableTrait;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
@@ -54,9 +55,9 @@ class PropertyService extends ServiceBase implements IPropertyService
                 $params['property_code'] = NumberGenerator::gen(Property::class);
             }
             //Prepare request
-            if(isset($params['photo']) && $params['photo']instanceof UploadedFile)
+            if(isset($params['cover_image']) && $params['cover_image']instanceof UploadedFile)
             {
-                $params['image'] = $this->uploadPublic($params['photo'], Str::slug($params['short_name']), 'property_leases');
+                $params['image'] = $this->uploadPublic($params['cover_image'], Str::slug($params['property_code']), 'properties');
             }
             $property = $this->propertyRepo->createProperty($params);
 
@@ -98,9 +99,9 @@ class PropertyService extends ServiceBase implements IPropertyService
         $result = false;
         try{
             //Prepare request
-            if(isset($params['photo']) && $params['photo']instanceof UploadedFile)
+            if(isset($params['cover_image']) && $params['cover_image']instanceof UploadedFile)
             {
-                $params['image'] = $this->uploadPublic($params['photo'], Str::slug($params['short_name']), 'property_leases');
+                $params['image'] = $this->uploadPublic($params['cover_image'], Str::slug($property->property_code), 'properties');
             }
 
             $result = $this->propertyRepo->updateProperty($params, $property);

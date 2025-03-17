@@ -2,16 +2,13 @@
 
 namespace App\Models\Common;
 
+use App\Abstracts\Model;
 use App\Models\Auth\User;
-use App\Models\Loan\Loan;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Comment extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'message',
         'subject',
@@ -19,24 +16,13 @@ class Comment extends Model
         'commentable_type',
         'created_by',
     ];
-
-    public function commentable()
+    public function commentable(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function getCreatedAtAttribute($value)
+    public function user()
     {
-        return Carbon::parse($value)->format(env('Date_Format'));
-    }
-
-    public function sender()
-    {
-        return $this->belongsTo(User::class, 'created_by');
-    }
-
-    public function loan()
-    {
-        return $this->belongsTo(Loan::class);
+        return $this->belongsTo(User::class);
     }
 }

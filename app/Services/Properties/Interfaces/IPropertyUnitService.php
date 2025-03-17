@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Services\Interfaces;
+namespace App\Services\Properties\Interfaces;
 
 use App\Models\Property\Propertyunit;
+use App\Services\Interfaces\IBaseService;
 use Illuminate\Support\Collection;
 
 interface IPropertyUnitService extends IBaseService
 {
-    public function listPropertyUnits(array $filter = null, string $orderBy = 'id', string $sortBy = 'desc', array $columns = ['*']) : Collection;
+    public function listPropertyUnits(array $filter = [], string $orderBy = 'updated_at', string $sortBy = 'desc');
 
     public function createPropertyUnit(array $params);
 

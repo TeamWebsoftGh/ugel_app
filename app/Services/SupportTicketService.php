@@ -10,7 +10,7 @@ use App\Mail\Tickets\TicketStatusChangeMail;
 use App\Models\Common\DocumentUpload;
 use App\Models\Common\NumberGenerator;
 use App\Models\CustomerService\SupportTicket;
-use App\Models\CustomerService\SupportTicketComment;
+use App\Models\CustomerService\Comment;
 use App\Services\Helpers\PropertyHelper;
 use App\Traits\TaskUtil;
 use App\Traits\UploadableTrait;
@@ -242,7 +242,7 @@ class SupportTicketService extends ServiceBase implements ISupportTicketService
 //                return $this->response;
 //            }
             $data['user_id'] = user()->id;
-            $result = $ticket->ticketComments()->create($data);
+            $result = $ticket->comments()->create($data);
             event(new NewTicketCommentEvent($result));
 
         }catch (\Exception $ex)
@@ -270,11 +270,11 @@ class SupportTicketService extends ServiceBase implements ISupportTicketService
     }
 
     /**
-     * @param SupportTicketComment $comment
+     * @param Comment $comment
      * @param SupportTicket $ticket
      * @return Response
      */
-    public function deleteComment(SupportTicketComment $comment, SupportTicket $ticket): Response
+    public function deleteComment(Comment $comment, SupportTicket $ticket): Response
     {
         //Declaration
         $result = false;
@@ -368,14 +368,6 @@ class SupportTicketService extends ServiceBase implements ISupportTicketService
         $result = false;
 
         try{
-//            if(!$this->canAccessTask($task))
-//            {
-//                $this->response->status = ResponseType::ERROR;
-//                $this->response->message = ResponseMessage::DEFAULT_NOT_AUTHORIZED;
-//
-//                return $this->response;
-//            }
-
             $result = $this->supportTicketRepo->deleteDocument($document);
 
         }catch (\Exception $ex)

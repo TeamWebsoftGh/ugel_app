@@ -5,6 +5,7 @@ namespace App\Traits;
 use App\Models\Auth\User;
 use App\Models\Common\Priority;
 use App\Models\Common\Status;
+use App\Models\CustomerService\MaintenanceCategory;
 use Illuminate\Support\Collection;
 
 class TaskUtil
@@ -67,19 +68,18 @@ class TaskUtil
             ->where(['is_active' => 1])->get();
     }
 
-    public static function getAllSubsidiaries()
+    public static function getMaintenanceCategories()
     {
         /**
-         * Admission Type
+         * Priority
          *
          * @return Collection
          */
 
-        $locations = Subsidiary::select('id', 'name')
-            ->where(['status' => 1])->get();
-
-        return $locations;
+        return MaintenanceCategory::select('id', 'name')
+            ->where(['is_active' => 1])->get();
     }
+
 
     public static function getAllUnits($department = null)
     {

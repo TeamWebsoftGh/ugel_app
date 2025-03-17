@@ -5,6 +5,7 @@ namespace App\Services\Helpers;
 use App\Models\Auth\User;
 use App\Models\Client\Client;
 use App\Models\Client\ClientType;
+use App\Models\Property\Property;
 use App\Models\Property\PropertyCategory;
 use App\Models\Property\PropertyPurpose;
 use App\Models\Property\PropertyType;
@@ -49,6 +50,14 @@ class PropertyHelper
         return PropertyType::select('id', 'name')
             ->where('is_active', 1)
             ->orderBy('name')
+            ->get();
+    }
+
+    public static function getAllProperties($propertyTypeId): Collection
+    {
+        return Property::select('id', 'property_name', 'property_type_id')
+            ->where('is_active', 1)
+            ->orderBy('property_name')
             ->get();
     }
 

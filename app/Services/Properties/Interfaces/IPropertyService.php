@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Interfaces;
+namespace App\Services\Properties\Interfaces;
 
 use App\Models\Property\Property;
+use App\Services\Interfaces\IBaseService;
 
 interface IPropertyService extends IBaseService
 {

@@ -7,7 +7,7 @@ use App\Constants\ResponseType;
 use App\Models\Property\PropertyCategory;
 use App\Repositories\Interfaces\IPropertyCategoryRepository;
 use App\Services\Helpers\Response;
-use App\Services\Interfaces\Properties\IPropertyCategoryService;
+use App\Services\Properties\Interfaces\IPropertyCategoryService;
 use App\Services\ServiceBase;
 use App\Traits\UploadableTrait;
 use Illuminate\Http\UploadedFile;
