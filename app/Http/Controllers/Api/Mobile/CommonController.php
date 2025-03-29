@@ -66,6 +66,17 @@ class CommonController extends MobileController
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, new PropertyCategoryResource($item));
     }
 
+
+    public function getPrice(Request $request)
+    {
+        $validatedData = $request->validate([
+            'booking_period_id' => 'nullable',
+            'property_unit_id' => 'required',
+        ]);
+
+        $item = PropertyHelper::getPropertyUnitPrice(request()->get('property_unit_id'), request()->get('booking_period_id'));
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
+    }
     public function countries(Request $request)
     {
         $items = PropertyHelper::getAllCountries();

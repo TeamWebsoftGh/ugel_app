@@ -10,6 +10,7 @@ class Booking extends Model
     //
     protected $fillable = [
         'client_id',
+        'booking_number',
         'property_id',
         'property_unit_id',
         'room_id',
@@ -35,5 +36,10 @@ class Booking extends Model
     public function bookingPeriod()
     {
         return $this->belongsTo(BookingPeriod::class)->withDefault();
+    }
+
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class)->withDefault();
     }
 }

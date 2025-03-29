@@ -29,8 +29,14 @@ class BookingRepository extends BaseRepository implements IBookingRepository
      */
     public function listBookings(array $filter = [], string $order = 'updated_at', string $sort = 'desc'): \Illuminate\Database\Eloquent\Builder
     {
-        $result = $this->getFilteredList();
-        return $result->orderBy($order, $sort);
+        $query = $this->getFilteredList();
+        $query->when(!empty($filter['filter_property_unit']), function ($q) use ($filter) {
+            $q->where('property_unit_id', $filter['filter_property_unit']);
+        });
+        $query->when(!empty($filter['filter_client']), function ($q) use ($filter) {
+            $q->where('client_id', $filter['filter_client']);
+        });
+        return $query->orderBy($order, $sort);
     }
 
     /**

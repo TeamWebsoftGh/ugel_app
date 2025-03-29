@@ -3,6 +3,8 @@
 namespace App\Models\Common;
 
 use App\Abstracts\Model;
+use App\Models\Billing\Booking;
+use App\Models\Billing\Invoice;
 use App\Models\CustomerService\MaintenanceRequest;
 use App\Models\Property\Property;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,6 +40,8 @@ class NumberGenerator extends Model
         $prefix_list = [
             Property::class => 'UGEL',
             MaintenanceRequest::class => 'MT',
+            Booking::class => 'B',
+            Invoice::class => 'INV',
             'App\Models\Payment' => 'PMT',
             'App\Models\Wallet' => 'WAL',
             'App\Models\SupportTicket' => 'ST',

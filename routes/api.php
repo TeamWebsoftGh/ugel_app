@@ -39,6 +39,7 @@ Route::group(['namespace' => '\App\Http\Controllers\Api', 'prefix' => 'clients']
         Route::get('countries', [CommonController::class, 'countries']);
         Route::get('regions', [CommonController::class, 'regions']);
         Route::get('cities', [CommonController::class, 'cities']);
+        Route::post('getPrice', [CommonController::class, 'getPrice']);
 
     });
 

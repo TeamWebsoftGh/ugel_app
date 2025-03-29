@@ -37,6 +37,7 @@ return new class extends Migration
 
         Schema::create('bookings', function (Blueprint $table) {
             $table->id();
+            $table->string('booking_number')->unique();
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
             $table->foreignId('property_unit_id')->constrained()->onDelete('cascade');
@@ -66,6 +67,8 @@ return new class extends Migration
             $table->foreignId('booking_id')->constrained()->onDelete('cascade');
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->decimal('total_amount', 18, 2);
+            $table->string('invoice_number')->unique();
+            $table->date('due_date');
             $table->decimal('sub_total_amount', 18, 2);
             $table->string('status')->default('pending');
             $this->empExtracted($table);
@@ -79,6 +82,7 @@ return new class extends Migration
             $table->decimal('amount', 10, 2);
             $this->empExtracted($table);
         });
+
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
             $table->string('comment')->nullable();
@@ -101,6 +105,12 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('property_unit_prices');
+        Schema::dropIfExists('invoice_items');
+        Schema::dropIfExists('invoices');
+        Schema::dropIfExists('invoice_item_lookups');
         Schema::dropIfExists('bookings');
+        Schema::dropIfExists('booking_periods');
+        Schema::dropIfExists('reviews');
     }
 };
