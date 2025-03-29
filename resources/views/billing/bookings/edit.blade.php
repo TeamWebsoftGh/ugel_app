@@ -7,7 +7,7 @@
     <div class="row">
         <!-- Type -->
         <x-form.input-field
-            name="type"
+            name="client_id"
             label="Student/Customer"
             type="select"
             :options="$customers->pluck('name', 'id')"
@@ -19,7 +19,7 @@
             name="booking_period_id"
             label="Booking Period"
             type="select"
-            :options="$customers->pluck('name', 'id')"
+            :options="$booking_periods->pluck('name', 'id')"
             :value="$item->booking_period_id"
         />
 
@@ -27,7 +27,7 @@
             name="property_id"
             label="Property"
             type="select"
-            :options="$customers->pluck('name', 'id')"
+            :options="$properties->pluck('property_name', 'id')"
             :value="$item->property_id"
         />
 

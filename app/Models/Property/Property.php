@@ -44,6 +44,11 @@ class Property extends Model
         return $this->belongsTo(PropertyPurpose::class)->withDefault(['name' => 'N/A']);
     }
 
+    public function propertyUnits()
+    {
+        return $this->hasMany(PropertyUnit::class);
+    }
+
     public function amenities()
     {
         return $this->morphMany(Amenity::class, 'amenitable');
@@ -52,5 +57,10 @@ class Property extends Model
     public function getCoverImageAttribute()
     {
         return $this->attributes['image'] ?? "assets/images/user.png";
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->attributes['property_name'];
     }
 }

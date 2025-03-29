@@ -18,9 +18,11 @@
                             <th class="not-exported">
                                 <div class="form-check"><input type="checkbox" class="form-check-input fs-15 select-all"><label></label></div>
                             </th>
-                            <th>Name</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
+                            <th>Customer Name</th>
+                            <th>Customer Id</th>
+                            <th>Booking Type</th>
+                            <th>Lease Start Date</th>
+                            <th>Lease End Date</th>
                             <th>Status</th>
                             <th>Last Modified</th>
                             <th class="not-exported">Action</th>
@@ -46,9 +48,11 @@
                 var cols =
                     [
                         {data: null, orderable: false, searchable: false},
-                        {data: 'name', name: 'name'},
-                        {data: 'booking_start_date', name: 'booking_start_date'},
-                        {data: 'booking_end_date', name: 'booking_end_date'},
+                        {data: 'client_name', name: 'client_name'},
+                        {data: 'client_number', name: 'client_number'},
+                        {data: 'booking_type', name: 'booking_type'},
+                        {data: 'lease_start_date', name: 'lease_start_date'},
+                        {data: 'lease_end_date', name: 'lease_end_date'},
                         {data: 'status', name: 'status'},
                         {data: 'updated_at', name: 'updated_at'},
                         {data: 'action', name: 'action', orderable: false }

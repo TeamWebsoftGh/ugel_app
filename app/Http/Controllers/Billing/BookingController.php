@@ -11,6 +11,7 @@ use App\Models\Property\Amenity;
 use App\Services\Billing\Interfaces\IBookingService;
 use App\Services\Helpers\PropertyHelper;
 use App\Services\Properties\Interfaces\IAmenityService;
+use App\Services\Properties\Interfaces\IPropertyService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -22,11 +23,13 @@ use Illuminate\Http\Request;
 class BookingController extends Controller
 {
     private IBookingService $bookingService;
+    private IPropertyService $propertyService;
 
-    public function __construct(IBookingService $bookingService)
+    public function __construct(IBookingService $bookingService, IPropertyService $propertyService)
     {
         parent::__construct();
         $this->bookingService = $bookingService;
+        $this->propertyService = $propertyService;
     }
 
     /**
@@ -41,6 +44,9 @@ class BookingController extends Controller
             $amenities = $this->bookingService->listBookings($request->all(), 'updated_at');
             return datatables()->of($amenities)
                 ->setRowId(fn($row) => $row->id)
+                ->addColumn('client_name', fn($row) => $row->client->fullname)
+                ->addColumn('client_number', fn($row) => $row->client->client_number)
+                ->addColumn('booking_type', fn($row) => $row->bookingPeriod->name)
                 ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
                 ->addColumn('updated_at', fn($row) => Carbon::parse($row->updated_at)->format(env('Date_Format')))
                 ->addColumn('action', fn($data) => $this->getActionButtons($data, "amenities"))
@@ -59,11 +65,15 @@ class BookingController extends Controller
     public function create()
     {
         $item = new Booking();
-        $hostels = PropertyHelper::getAllHostels();
+        $properties = $this->propertyService->listLeaseProperties(['filter_active' => 1]);
+        $booking_periods =PropertyHelper::getActiveBookingPeriods();
 
         $item->is_active = 1;
 
-        return view('billing.bookings.edit', compact('item', 'hostels'));
+        return request()->ajax()
+            ? view('billing.bookings.edit', compact('item', 'properties', 'booking_periods'))
+            : redirect()->route('bookings.index');
+
     }
 
     /**
@@ -75,9 +85,10 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required',
-            'short_name' => 'nullable',
-            'is_active' => 'sometimes|boolean',
+            'booking_period_id' => 'required',
+            'property_id' => 'required',
+            'property_unit_id' => 'required',
+            'client_id' => 'required',
         ]);
 
         $data = $request->except('_token', '_method', 'id');
@@ -101,19 +112,13 @@ class BookingController extends Controller
     public function edit(int $id)
     {
         $item = $this->bookingService->findBookingById($id);
-        $hostels = PropertyHelper::getAllHostels();
-        // Fetch existing prices and rent types for the given Booking Period
-        $propertyUnitPrices = $item->propertyUnitPrices;
+        $properties = $this->propertyService->listLeaseProperties(['filter_active' => 1]);
+        $booking_periods =PropertyHelper::getActiveBookingPeriods();
 
-        // Attach existing prices and rent types to hostels
-        foreach ($hostels as $hostel) {
-            $priceData = $propertyUnitPrices->where('property_unit_id', $hostel->id)->first();
-            $hostel->existing_price = $priceData->price ?? null;
-            $hostel->existing_rent_type = $priceData->rent_type ?? null;
-        }
+        $item->is_active = 1;
 
         return request()->ajax()
-            ? view('billing.bookings.edit', compact('item', 'hostels'))
+            ? view('billing.bookings.edit', compact('item', 'properties', 'booking_periods'))
             : redirect()->route('bookings.index');
     }
 

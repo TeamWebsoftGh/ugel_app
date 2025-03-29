@@ -90,25 +90,6 @@ class BookingService extends ServiceBase implements IBookingService
         //Declaration
         DB::beginTransaction();
         $result = $this->bookingRepo->updateBooking($data, $booking);
-
-        // Store Property Unit Prices
-        $propertyUnitIds = $data['property_unit_ids'];
-        $prices = $data['prices'];
-        $rentTypes = $data['rent_types'];
-
-        foreach ($propertyUnitIds as $index => $propertyUnitId) {
-            PropertyUnitPrice::updateOrCreate(
-                [
-                    'property_unit_id' => $propertyUnitId,
-                    'booking_period_id' => $booking->id
-                ],
-                [
-                    'price' => $prices[$index],
-                    'rent_type' => $rentTypes[$index],
-                ]
-            );
-        }
-
         DB::commit();
         return $this->buildUpdateResponse($booking, $result);
     }

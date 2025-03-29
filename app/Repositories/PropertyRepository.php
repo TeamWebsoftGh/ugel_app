@@ -65,35 +65,52 @@ class PropertyRepository extends BaseRepository implements IPropertyRepository
 
     /**
      *
+     * @param array $filter
      * @param string $order
      * @param string $sort
-     * @param array $columns
-     * @return Collection
+     * @return
      */
-    public function listProperties(array $filter = [], string $order = 'updated', string $sort = 'desc', array $columns = ['*'])
+    public function listProperties(array $filter = [], string $order = 'updated_at', string $sort = 'desc')
     {
-        $result = $this->model->query();
-        if (!empty($filter['filter_property_category']))
-        {
-            $result = $result->where('property_category_id', $filter['filter_property_category']);
-        }
+        $query = $this->model->query();
 
-        if (!empty($filter['filter_property_type']))
-        {
-            $result = $result->where('property_type_id', $filter['filter_property_type']);
-        }
+        // Apply filters using when() for cleaner querying
+        $query->when(!empty($filter['filter_property_category']), function ($q) use ($filter) {
+            $q->whereHas('propertyCategory', function ($query) use ($filter) {
+                $query->where('id', $filter['filter_property_category']);
+            });
+        });
 
-        if (!empty($filter['filter_status']))
-        {
-            $result = $result->where('is_active', $filter['filter_status']);
-        }
+        $query->when(!empty($filter['filter_property_type']), function ($q) use ($filter) {
+            $q->where('property_type_id', $filter['filter_property_type']);
+        });
 
-        if (!empty($filter['filter_name']))
-        {
-            $result = $result->where('name', 'like', '%'.$filter['filter_name'].'%');
-        }
+        $query->when(!empty($filter['filter_active']), function ($q) use ($filter) {
+            $q->where('is_active', $filter['filter_active']);
+        });
 
-        return $result->orderBy($order, $sort);
+        $query->when(!empty($filter['filter_name']), function ($q) use ($filter) {
+            $q->where('property_name', 'like', '%' . $filter['filter_name'] . '%');
+        });
+
+        $query->when(!empty($filter['filter_city']), function ($q) use ($filter) {
+            $q->where('city_id', $filter['filter_city']);
+        });
+
+        $query->when(!empty($filter['filter_purpose']), function ($q) use ($filter) {
+            $q->where('property_purpose_id', $filter['filter_purpose']);
+        });
+
+        $query->when(!empty($filter['filter_status']), function ($q) use ($filter) {
+            $q->where('status', $filter['filter_status']);
+        });
+
+        // Filter properties that have associated Property Units
+        $query->when(!empty($filter['filter_has_units']), function ($q) {
+            $q->whereHas('propertyUnits');
+        });
+
+        // Order by and return result
+        return $query->orderBy($order, $sort);
     }
-
 }

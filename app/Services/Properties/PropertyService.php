@@ -41,6 +41,20 @@ class PropertyService extends ServiceBase implements IPropertyService
         return $this->propertyRepo->listProperties($filter, $orderBy, $sortBy);
     }
 
+    public function listLeaseProperties(array $filter = [], string $orderBy = 'updated_at', string $sortBy = 'desc', array $columns = ['*'])
+    {
+        $filter['property_purpose_id'] = 1;
+        $filter['filter_has_units'] = true;
+        return $this->propertyRepo->listProperties($filter, $orderBy, $sortBy);
+    }
+
+    public function listOwnProperties(array $filter = [], string $orderBy = 'updated_at', string $sortBy = 'desc', array $columns = ['*'])
+    {
+        $filter['property_purpose_id'] = 2;
+        $filter['filter_has_units'] = true;
+        return $this->propertyRepo->listProperties($filter, $orderBy, $sortBy);
+    }
+
     /**
      * @param array $params
      *

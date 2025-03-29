@@ -48,7 +48,7 @@ class BookingController extends MobileController
     public function create()
     {
         $data['hostels'] = PropertyHelper::getAllHostels();
-        $data['booking_periods'] = PropertyHelper::getAllBookingPeriods();
+        $data['booking_periods'] = PropertyHelper::getActiveBookingPeriods();
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $data);
     }

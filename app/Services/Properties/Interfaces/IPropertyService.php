@@ -7,7 +7,10 @@ use App\Services\Interfaces\IBaseService;
 
 interface IPropertyService extends IBaseService
 {
-    public function listProperties(array $filter = [], string $orderBy = 'id', string $sortBy = 'desc', array $columns = ['*']);
+    public function listProperties(array $filter = [], string $orderBy = 'updated_at', string $sortBy = 'desc');
+
+    public function listLeaseProperties(array $filter = [], string $orderBy = 'updated_at', string $sortBy = 'desc');
+    public function listOwnProperties(array $filter = [], string $orderBy = 'updated_at', string $sortBy = 'desc');
 
     public function createProperty(array $params);
 

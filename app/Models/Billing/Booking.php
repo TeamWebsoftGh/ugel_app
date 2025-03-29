@@ -2,6 +2,7 @@
 
 namespace App\Models\Billing;
 
+use App\Models\Client\Client;
 use Illuminate\Database\Eloquent\Model;
 
 class Booking extends Model
@@ -25,4 +26,14 @@ class Booking extends Model
         'status'
     ];
 
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class)->withDefault();
+    }
+
+    public function bookingPeriod()
+    {
+        return $this->belongsTo(BookingPeriod::class)->withDefault();
+    }
 }

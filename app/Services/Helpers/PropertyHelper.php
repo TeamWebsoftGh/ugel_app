@@ -15,6 +15,7 @@ use App\Models\Property\PropertyUnit;
 use App\Models\Settings\City;
 use App\Models\Settings\Country;
 use App\Models\Settings\Region;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 
@@ -167,6 +168,30 @@ class PropertyHelper
             }
             return PropertyUnit::where('id', $propertyUnitId)->value('rent_amount');
         });
+    }
+
+    /**
+     * Retrieve all active booking periods within the specified date range
+     *
+     * @param string|null $currentDate
+     * @param array $columns
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getActiveBookingPeriods(?string $currentDate = null, array $columns = ['id', 'name', 'type', 'booking_start_date', 'booking_end_date'])
+    {
+        $currentDate = $currentDate ?? Carbon::now()->toDateString();
+
+        return BookingPeriod::where('is_active', 1)
+            ->where(function ($query) use ($currentDate) {
+                $query->whereNull('booking_start_date')
+                    ->orWhere('booking_start_date', '<=', $currentDate);
+            })
+            ->where(function ($query) use ($currentDate) {
+                $query->whereNull('booking_end_date')
+                    ->orWhere('booking_end_date', '>=', $currentDate);
+            })
+            ->orderBy('booking_start_date', 'desc')
+            ->get($columns);
     }
 
     /**
