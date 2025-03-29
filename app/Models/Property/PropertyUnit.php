@@ -3,7 +3,6 @@
 namespace App\Models\Property;
 
 use App\Abstracts\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PropertyUnit extends Model
 {
@@ -39,13 +38,11 @@ class PropertyUnit extends Model
 
     ];
 
-    public function getUpdatedAtAtAttribute($value)
-    {
-        return Carbon::parse($value)->format(env('Date_Format'));
-    }
 
     public function property()
     {
         return $this->belongsTo(Property::class)->withDefault(['name' => 'N/A']);
     }
+
+
 }

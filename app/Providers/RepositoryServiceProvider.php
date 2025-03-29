@@ -3,17 +3,25 @@
 namespace App\Providers;
 
 use App\Repositories\AmenityRepository;
+use App\Repositories\Billing\BookingPeriodRepository;
+use App\Repositories\Billing\BookingRepository;
+use App\Repositories\Billing\Interfaces\IBookingPeriodRepository;
+use App\Repositories\Billing\Interfaces\IBookingRepository;
+use App\Repositories\Billing\Interfaces\IInvoiceItemRepository;
+use App\Repositories\Billing\InvoiceItemRepository;
 use App\Repositories\BulkSmsRepository;
 use App\Repositories\ClientRepository;
 use App\Repositories\Interfaces\IAmenityRepository;
 use App\Repositories\Interfaces\IBulkSmsRepository;
 use App\Repositories\Interfaces\IMaintenanceCategoryRepository;
 use App\Repositories\Interfaces\IMaintenanceRepository;
+use App\Repositories\Interfaces\IPaymentGatewayRepository;
 use App\Repositories\Interfaces\IPropertyCategoryRepository;
 use App\Repositories\Interfaces\IPropertyRepository;
 use App\Repositories\Interfaces\IRoomRepository;
 use App\Repositories\MaintenanceCategoryRepository;
 use App\Repositories\MaintenanceRepository;
+use App\Repositories\PaymentGatewayRepository;
 use App\Repositories\PropertyCategoryRepository;
 use App\Repositories\PropertyRepository;
 use App\Repositories\RoomRepository;
@@ -171,6 +179,14 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IAmenityRepository::class, AmenityRepository::class);
         $this->app->bind(IPropertyRepository::class, PropertyRepository::class);
         $this->app->bind(IRoomRepository::class, RoomRepository::class);
+
+        //Billing
+        $this->app->bind(IBookingPeriodRepository::class, BookingPeriodRepository::class);
+        $this->app->bind(IBookingRepository::class, BookingRepository::class);
+        $this->app->bind(IInvoiceItemRepository::class, InvoiceItemRepository::class);
+
+        //Configurations
+        $this->app->bind(IPaymentGatewayRepository::class, PaymentGatewayRepository::class);
     }
 
     /**

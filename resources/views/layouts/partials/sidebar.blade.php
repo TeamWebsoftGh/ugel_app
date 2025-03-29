@@ -119,6 +119,34 @@
         </div>
     </li>
     <li class="nav-item">
+        <a class="nav-link menu-link" href="#bookings" data-bs-toggle="collapse" role="button"
+           aria-expanded="false" aria-controls="sidebarAuth">
+            <i class="ri-calculator-fill"></i> <span data-key="t-authentication">Billing Center</span>
+        </a>
+        <div class="collapse menu-dropdown {{ (request()->is('*booking*')||request()->is('*invoice-*')||request()->is('*booking')|request()->is('*booking')) ? 'show' : '' }}" id="bookings">
+            <ul class="nav nav-sm flex-column">
+                <li class="nav-item">
+                    <a href="{{route("bookings.index")}}" class="nav-link" data-key="t-amenities">Bookings</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route("property-types.index")}}" class="nav-link" data-key="t-property-types"> Invoices</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route("rooms.index")}}" class="nav-link" data-key="t-user_activity"> Transactions </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route("properties.index")}}" class="nav-link" data-key="t-user_activity"> Reviews </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route("invoice-items.index")}}" class="nav-link" data-key="t-property_unit">Invoice Items </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route("booking-periods.index")}}" class="nav-link" data-key="t-amenities">Booking Periods</a>
+                </li>
+            </ul>
+        </div>
+    </li>
+    <li class="nav-item">
         <a class="nav-link menu-link" href="#customers" data-bs-toggle="collapse" role="button"
            aria-expanded="false" aria-controls="sidebarAuth">
             <i class="ri-calculator-fill"></i> <span data-key="t-authentication">Customers</span>
@@ -370,9 +398,6 @@
                                             <a href="{{route('configuration.settings.whatsapp')}}" class="nav-link" data-key="t-sms-settings">WhatsApp Settings</a>
                                         </li>
                                     @endif
-                                    <li class="nav-item">
-                                        <a href="{{route("configuration.currencies.index")}}" class="nav-link" data-key="t-level-2.1">Currencies</a>
-                                    </li>
                                 </ul>
                             </div>
                         </li>
@@ -396,6 +421,19 @@
                             </ul>
                         </div>
                     </li>
+                    <li class="nav-item">
+                            <a href="#paymentSettings" class="nav-link collapsed" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarAccount" data-key="t-level-1.2">Payment</a>
+                            <div class="menu-dropdown collapse  {{ (request()->is('*payment-gateways*'))? 'show' : '' }}" id="paymentSettings" style="">
+                                <ul class="nav nav-sm flex-column">
+                                    <li class="nav-item">
+                                        <a href="{{route("configuration.currencies.index")}}" class="nav-link" data-key="t-level-2.1">Currencies</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{route("configuration.payment-gateways.index")}}" class="nav-link" data-key="t-level-2.1">Payment Gateways</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
                 </ul>
             </div>
         </li>

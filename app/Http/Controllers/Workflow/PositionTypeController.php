@@ -47,11 +47,6 @@ class PositionTypeController extends Controller
                     return $award->id;
                 })
                 ->addIndexColumn()
-                ->setRowAttr([
-                    'data-target' => function($travel) {
-                        return '#wf_position-content';
-                    },
-                ])
                 ->addColumn('action', function ($data)
                 {
                     $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Show"><i class="las la-eye"></i></button>';

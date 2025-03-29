@@ -52,10 +52,6 @@ class PropertyTypeController extends Controller
                 {
                     return $row->propertyCategory->name ?? '';
                 })
-                ->addColumn('updated_at', function ($row)
-                {
-                    return Carbon::parse($row->updated_at)->format(env('Date_Format'));
-                })
                 ->addColumn('status', function ($row)
                 {
                     return $row->is_active?"Active":"Inactive";

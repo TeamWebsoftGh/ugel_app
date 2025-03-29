@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
+use App\Models\Auth\Team;
 use App\Models\Organization\Branch;
 use App\Models\Organization\Company;
 use App\Models\Organization\Department;
@@ -193,13 +194,11 @@ class WorkflowPositionService extends ServiceBase implements IWorkflowPositionSe
             $params['subject_id'] = $department->id;
         }
 
-        if ($params['workflow_position_type'] == 'branch-manager') {
-            $location = Branch::find($params['category']);
-            $location->location_head = $params['employee_id'];
-            $location->save();
+        if ($params['workflow_position_type'] == 'team') {
+            $team = Team::find($params['category']);
 
-            $params['subject_type'] = get_class($location);
-            $params['subject_id'] = $location->id;
+            $params['subject_type'] = get_class($team);
+            $params['subject_id'] = $team->id;
         }
 
         return $params;

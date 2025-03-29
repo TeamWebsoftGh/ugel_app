@@ -6,7 +6,6 @@ use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Workflow\WorkflowPosition;
 use App\Models\Workflow\WorkflowPositionType;
-use App\Traits\JsonResponseTrait;
 use App\Services\Interfaces\IWorkflowPositionService;
 use App\Traits\WorkflowUtil;
 use Illuminate\Contracts\Foundation\Application;
@@ -17,7 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 
-class PositionController extends Controller
+class WorkflowPositionController extends Controller
 {
     use WorkflowUtil;
 
@@ -42,26 +41,52 @@ class PositionController extends Controller
      */
     public function index()
     {
-        $workflowPosition = new WorkflowPosition();
-        $positionTypes = WorkflowPositionType::where('is_active', 1)->get();
-        $workflowPositions = $this->workflowPositionService->listWorkflowPositions('updated_at');
         if (request()->ajax())
         {
+            $workflowPositions = $this->workflowPositionService->listWorkflowPositions('updated_at');
             return datatables()->of($workflowPositions)
                 ->setRowId(function ($award)
                 {
                     return $award->id;
                 })
                 ->addIndexColumn()
-                ->setRowAttr([
-                    'data-target' => function($travel) {
-                        return '#wf_position-content';
-                    },
-                ])
+                ->addColumn('workflow_position_type_name', function ($row)
+                {
+                    return $row->workflowPositionType->name ?? '';
+                })
+                ->addColumn('category', function ($row)
+                {
+                    return $row->subject->name ?? 'N/A';
+                })
+                ->addColumn('employee_name', function ($row)
+                {
+                    return $row->user->fullname ?? '';
+                })
+                ->addColumn('status', function ($row)
+                {
+                    return $row->is_active?"Active":"Inactive";
+                })
+                ->addColumn('action', function ($data)
+                {
+                    $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Show"><i class="las la-eye"></i></button>';
+                    $button .= '&nbsp;';
+                    if (user()->can('update-workflow-positions'))
+                    {
+                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
+                        $button .= '&nbsp;';
+                    }
+                    if (user()->can('delete-workflow-positions'))
+                    {
+                        $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
+                    }
+
+                    return $button;
+                })
+                ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('workflow.positions.create', compact('positionTypes', 'workflowPosition'));
+        return view('workflow.positions.index');
     }
 
     /**
@@ -70,7 +95,25 @@ class PositionController extends Controller
      * @param int $id
      * @return Application|Factory|RedirectResponse|View
      */
-    public function show($id)
+    public function create()
+    {
+        $positionTypes = WorkflowPositionType::where('is_active', 1)->get();
+        $workflowPosition = new WorkflowPosition();
+
+        if (request()->ajax()){
+            return view('workflow.positions.edit', compact('positionTypes', 'workflowPosition'));
+        }
+
+        return redirect()->route('workflows.positions.index');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param int $id
+     * @return Application|Factory|RedirectResponse|View
+     */
+    public function edit($id)
     {
         $positionTypes = WorkflowPositionType::where('is_active', 1)->get();
         $workflowPosition = $this->workflowPositionService->findWorkflowPositionById($id);
@@ -93,12 +136,11 @@ class PositionController extends Controller
         $validatedData = $request->validate([
             'position_name' => 'required',
             'workflow_position_type' => 'required',
-            'employee_id' => 'required',
+            'user_id' => 'required',
             'status' => 'required',
         ]);
 
         $data = $request->except('_token', '_method', 'id');
-        $data['user_id'] = $data['employee_id'];
 
         if ($request->has("id") && $request->input("id") != null)
         {

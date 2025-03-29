@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 if (!function_exists('user')) {
     /**
@@ -72,6 +73,14 @@ if (!function_exists('enable_sms')) {
     {
         return env('ENABLE_SMS', 1);
     }
+}
+function updateEnvKeys($keys)
+{
+    DotenvEditor::setKeys($keys);
+    DotenvEditor::save();
+
+    \Artisan::call("cache:clear");
+    \Artisan::call("config:clear");
 }
 
 

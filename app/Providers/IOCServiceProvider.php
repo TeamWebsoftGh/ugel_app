@@ -3,6 +3,12 @@
 namespace App\Providers;
 
 use App\Services\AuditService;
+use App\Services\Billing\BookingPeriodService;
+use App\Services\Billing\BookingService;
+use App\Services\Billing\Interfaces\IBookingPeriodService;
+use App\Services\Billing\Interfaces\IBookingService;
+use App\Services\Billing\Interfaces\IInvoiceItemService;
+use App\Services\Billing\InvoiceItemService;
 use App\Services\BranchService;
 use App\Services\BulkSmsService;
 use App\Services\CategoryService;
@@ -34,6 +40,7 @@ use App\Services\Interfaces\IKnowledgeBaseService;
 use App\Services\Interfaces\IMaintenanceCategoryService;
 use App\Services\Interfaces\IMaintenanceService;
 use App\Services\Interfaces\IMeetingService;
+use App\Services\Interfaces\IPaymentGatewayService;
 use App\Services\Interfaces\IPaymentService;
 use App\Services\Interfaces\IPayRunService;
 use App\Services\Interfaces\IPermissionService;
@@ -55,6 +62,7 @@ use App\Services\KnowledgeBaseService;
 use App\Services\MaintenanceCategoryService;
 use App\Services\MaintenanceService;
 use App\Services\MeetingService;
+use App\Services\PaymentGatewayService;
 use App\Services\PaymentService;
 use App\Services\PayRunService;
 use App\Services\PermissionService;
@@ -123,6 +131,7 @@ class IOCServiceProvider extends ServiceProvider
         //Configurations
         $this->app->bind(IRoleService::class, RoleService::class);
         $this->app->bind(ICurrencyService::class, CurrencyService::class);
+        $this->app->bind(IPaymentGatewayService::class, PaymentGatewayService::class);
 
         //Organization
         $this->app->bind(ICompanyService::class, CompanyService::class);
@@ -150,6 +159,11 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(IPropertyService::class, PropertyService::class);
         $this->app->bind(IPropertyUnitService::class, PropertyUnitService::class);
         $this->app->bind(IRoomService::class, RoomService::class);
+
+        //Billing
+        $this->app->bind(IBookingPeriodService::class, BookingPeriodService::class);
+        $this->app->bind(IInvoiceItemService::class, InvoiceItemService::class);
+        $this->app->bind(IBookingService::class, BookingService::class);
     }
 
     /**

@@ -3,16 +3,20 @@
 namespace App\Services\Helpers;
 
 use App\Models\Auth\User;
+use App\Models\Billing\BookingPeriod;
+use App\Models\Billing\PropertyUnitPrice;
 use App\Models\Client\Client;
 use App\Models\Client\ClientType;
 use App\Models\Property\Property;
 use App\Models\Property\PropertyCategory;
 use App\Models\Property\PropertyPurpose;
 use App\Models\Property\PropertyType;
+use App\Models\Property\PropertyUnit;
 use App\Models\Settings\City;
 use App\Models\Settings\Country;
 use App\Models\Settings\Region;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class PropertyHelper
 {
@@ -39,7 +43,7 @@ class PropertyHelper
      */
     public static function getAllCustomers(): Collection
     {
-        return Client::select('id', 'first_name', 'last_name', 'title', 'business_name')->get();
+        return Client::select('id', 'first_name', 'last_name', 'title', 'business_name', 'client_number')->get();
     }
 
     /**
@@ -51,6 +55,23 @@ class PropertyHelper
             ->where('is_active', 1)
             ->orderBy('name')
             ->get();
+    }
+
+    public static function getAllHostels(): Collection
+    {
+        return PropertyUnit::whereHas('property.propertyType', function ($query) {
+            $query->where('short_name', 'hostel'); // Assuming 'name' is the column indicating the type
+        })
+            ->where('is_active', 1)
+            ->get();
+    }
+
+
+    public static function getAllBookingPeriods(): Collection
+    {
+        return BookingPeriod::where('short_name', 'hostel')
+            ->where('is_active', 1)
+            ->get(['id', 'name', 'type', 'booking_start_date', 'booking_end_date']);
     }
 
     public static function getAllProperties($propertyTypeId): Collection
@@ -127,6 +148,25 @@ class PropertyHelper
             ->where('is_active', 1)
             ->orderBy('name')
             ->get();
+    }
+
+    public static function getPropertyUnitPrice($propertyUnitId, $bookingPeriodId = null)
+    {
+        $cacheKey = "property_unit_price:{$propertyUnitId}:{$bookingPeriodId}";
+
+        return Cache::remember($cacheKey, 3600, function () use ($propertyUnitId, $bookingPeriodId) {
+            if ($bookingPeriodId) {
+                $propertyUnitPrice = PropertyUnitPrice::where([
+                    ['property_unit_id', '=', $propertyUnitId],
+                    ['booking_period_id', '=', $bookingPeriodId],
+                ])->value('price');
+
+                if ($propertyUnitPrice !== null) {
+                    return $propertyUnitPrice;
+                }
+            }
+            return PropertyUnit::where('id', $propertyUnitId)->value('rent_amount');
+        });
     }
 
     /**

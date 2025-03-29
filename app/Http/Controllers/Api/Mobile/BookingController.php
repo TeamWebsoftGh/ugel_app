@@ -4,35 +4,31 @@ namespace App\Http\Controllers\Api\Mobile;
 
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
-use App\Constants\ResponseType;
 use App\Http\Resources\EnquiryResource;
-use App\Models\Election\ParliamentaryCandidate;
-use App\Services\Helpers\DelegteHelper;
+use App\Services\Billing\Interfaces\IBookingService;
+use App\Services\Helpers\PropertyHelper;
 use App\Services\Interfaces\IParliamentaryCandidateService;
-use App\Traits\JsonResponseTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
 
-class PresidentialCandidateController extends MobileController
+class BookingController extends MobileController
 {
     /**
      * @var IParliamentaryCandidateService
      */
-    private IParliamentaryCandidateService $parliamentaryCandidateService;
+    private IBookingService $bookingService;
 
-    public function __construct(IParliamentaryCandidateService $parliamentaryCandidateService)
+    public function __construct(IBookingService $bookingService)
     {
         parent::__construct();
-        $this->parliamentaryCandidateService = $parliamentaryCandidateService;
+        $this->bookingService = $bookingService;
     }
 
     public function index(Request $request)
     {
         $data = $request->all();
         $data['filter_type'] = 'presidential';
-        $items = $this->parliamentaryCandidateService->listParliamentaryCandidates($data);
+        $items = $this->bookingService->listBookings($data);
         // Convert to a collection if it's not already one
         if (!$items instanceof Collection) {
             $items = collect($items);
@@ -51,8 +47,8 @@ class PresidentialCandidateController extends MobileController
 
     public function create()
     {
-        $data['political_parties'] = DelegteHelper::getAllPoliticalParties();
-        $data['elections'] = DelegteHelper::getAllElections();
+        $data['hostels'] = PropertyHelper::getAllHostels();
+        $data['booking_periods'] = PropertyHelper::getAllBookingPeriods();
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $data);
     }
@@ -97,15 +93,13 @@ class PresidentialCandidateController extends MobileController
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'political_party_id' => 'required',
-            'election_id' => 'required',
+            'booking_period_id' => 'required',
+            'property_id' => 'required',
+            'property_unit_id' => 'required',
         ]);
 
         $data = $request->except('_token', '_method', 'id');
-        $data['type'] = 'presidential';
-        $results = $this->parliamentaryCandidateService->createParliamentaryCandidate($data);
+        $results = $this->bookingService->createBooking($data);
 
         if(isset($results->data))
         {

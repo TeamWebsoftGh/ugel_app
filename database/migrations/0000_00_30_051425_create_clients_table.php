@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name')->nullable();
             $table->string('other_names')->nullable();
+            $table->string('client_number')->nullable();
             $table->string('email')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('alternate_phone_number')->nullable();

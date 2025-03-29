@@ -1,4 +1,4 @@
-<form method="POST" action="{{route('admin.configurations.payment-gateways.store')}}" enctype="multipart/form-data">
+<form method="POST" action="{{route('configuration.payment-gateways.store')}}" enctype="multipart/form-data" id="payment_gateway">
     <p>All fields with <span class="text-danger">*</span> are required.</p>
     @csrf
     <input type="hidden" name="offline" value="1">
@@ -17,12 +17,12 @@
                 </div>
                 <div class="form-group col-6 col-md-4">
                     <label for="express_amount" class="control-label">Status</label>
-                    <select class="form-control select2" data-msg="Required" name="status">
-                        <option value="1" @if(old_set('status', NULL, $paymentGateway) == 1) selected @endif>Enabled</option>
-                        <option value="0" @if(old_set('status', NULL, $paymentGateway) == 0) selected @endif>Disabled</option>
+                    <select class="form-control select2" data-msg="Required" name="is_active">
+                        <option value="1" @if(old_set('is_active', NULL, $paymentGateway) == 1) selected @endif>Enabled</option>
+                        <option value="0" @if(old_set('is_active', NULL, $paymentGateway) == 0) selected @endif>Disabled</option>
                     </select>
-                    <span class="input-note text-danger" id="error-status"> </span>
-                    @error('status')
+                    <span class="input-note text-danger" id="error-is_active"> </span>
+                    @error('is_active')
                     <span class="input-note text-danger">{{ $message }} </span>
                     @enderror
                 </div>
@@ -95,7 +95,7 @@
                     @enderror
                 </div>
                 <div class="form-group col-12">
-                    @include("shared.new-controls")
+                    @include("shared.save-button")
                 </div>
             </div>
         </div>
@@ -103,19 +103,15 @@
 </form>
 <script>
     $(function () {
-
         $('#requires_transaction_number').on('click', function () {
-
             if (this.checked) {
                 $('.reference_field_label').show();
             } else {
                 $('.reference_field_label').hide();
             }
-
         });
 
         $('#requires_uploading_attachment').on('click', function () {
-
             if (this.checked) {
                 $('.attachment_field_label').show();
             } else {

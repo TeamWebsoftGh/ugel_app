@@ -18,6 +18,7 @@ class Client extends Model
         'title',
         'first_name',
         'last_name',
+        'client_number',
         'other_names',
         'email',
         'email_cc',
@@ -76,6 +77,15 @@ class Client extends Model
             return ucwords(strtolower($this->business_name));
         }
         return ucwords(strtolower($this->title)).' ' . ucwords(strtolower($this->first_name)) . ' ' . ucwords(strtolower($this->last_name));
+    }
+
+    public function getNameAttribute()
+    {
+        if(isset($this->business_name))
+        {
+            return ucwords(strtolower($this->business_name));
+        }
+        return ucwords(strtolower($this->title)).' ' . ucwords(strtolower($this->first_name)) . ' ' . ucwords(strtolower($this->last_name)). ' (' . ucwords(strtolower($this->customer_number??$this->phone_number)).')';
     }
 
 

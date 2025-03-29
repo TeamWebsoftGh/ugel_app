@@ -32,9 +32,7 @@ Route::group(['prefix' => 'workflows', 'namespace' => 'App\Http\Controllers\Work
     Route::resource('position-types', 'PositionTypeController')->except(['update', 'show']);
 
     //Workflow Positions
-    Route::get('positions/detail/{id}', 'PositionController@show')->name('positions.detail');
-    Route::get('positions/{id}/delete', 'PositionController@destroy')->name('positions.destroy');
-    Route::resource('positions', 'PositionController')->except(['create', 'update', 'show']);
+    Route::resource('positions', 'WorkflowPositionController')->except(['update', 'show']);
 
     //Workflow Types
     Route::get('workflow-types/detail/{id}', 'WorkflowTypeController@show')->name('workflow-types.detail');

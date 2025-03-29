@@ -14,17 +14,18 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        $this->call(OrganizationSeeder::class);
-        $this->call(LogsSeeder::class);
-        $this->call(MaintenanceSeeder::class);
-        $this->call(CustomerTableSeeder::class);
-        $this->call(BanksTableSeeder::class);
-        $this->call(WorkflowSeeder::class);
-        $this->call(CountriesSeeder::class);
-        $this->call(CurrenciesSeeder::class);
-        $this->call(PropertyTableSeeder::class);
-        $this->call(ConfigurationsSeeder::class);
-        $this->call(PermissionsSeeder::class);
-        $this->call(UsersSeeder::class);
+//        $this->call(OrganizationSeeder::class);
+//        $this->call(LogsSeeder::class);
+        $this->call(PaymentGatewaysTableSeeder::class);
+//        $this->call(MaintenanceSeeder::class);
+//        $this->call(CustomerTableSeeder::class);
+//        $this->call(BanksTableSeeder::class);
+//        $this->call(WorkflowSeeder::class);
+//        $this->call(CountriesSeeder::class);
+//        $this->call(CurrenciesSeeder::class);
+//        $this->call(PropertyTableSeeder::class);
+//        $this->call(ConfigurationsSeeder::class);
+//        $this->call(PermissionsSeeder::class);
+//        $this->call(UsersSeeder::class);
     }
 }

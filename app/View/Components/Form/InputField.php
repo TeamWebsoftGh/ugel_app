@@ -13,15 +13,10 @@ class InputField extends Component
     public $label;
     public $value;
     public $placeholder;
-    public $readonly;
     public $class;
     public $options;
-    public $required;
-    public $disabled;
     public $id;
-    public $selectpicker;
     public $rows;
-    public $liveSearch;
 
     /**
      * Create a new component instance.
@@ -32,31 +27,21 @@ class InputField extends Component
         $label = null,
         $value = null,
         $placeholder = null,
-        $readonly = false,
         $class = 'col-md-4',
         $options = [],
-        $required = false,
-        $disabled = false,
-        $rows = 3,
         $id = null,
-        $selectpicker = true,
-        $liveSearch = true
+        $rows = 3
     )
     {
         $this->type = $type;
         $this->name = $name;
-        $this->label = $label ?? ucfirst($name);
+        $this->label = $label ?? ucfirst(str_replace('_', ' ', $name));
         $this->value = $value;
         $this->placeholder = $placeholder;
-        $this->readonly = $readonly;
         $this->class = $class;
         $this->options = $options;
-        $this->required = $required;
-        $this->disabled = $disabled;
-        $this->rows = $rows;
         $this->id = $id ?? $name;
-        $this->selectpicker = $selectpicker;
-        $this->liveSearch = $liveSearch;
+        $this->rows = $rows;
     }
 
     /**

@@ -13,7 +13,7 @@ use App\Http\Controllers\Api\Mobile\LoanRequirementController;
 use App\Http\Controllers\Api\Mobile\ParliamentaryCandidateController;
 use App\Http\Controllers\Api\Mobile\PaymentController;
 use App\Http\Controllers\Api\Mobile\PollingStationController;
-use App\Http\Controllers\Api\Mobile\PresidentialCandidateController;
+use App\Http\Controllers\Api\Mobile\BookingController;
 use App\Http\Controllers\Api\Mobile\VoterController;
 use Illuminate\Support\Facades\Route;
 
@@ -37,6 +37,6 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'ec'], function () {
     Route::get('parliamentary-candidates/create', [ParliamentaryCandidateController::class, 'create']);
     Route::apiResource('parliamentary-candidates', ParliamentaryCandidateController::class);
 
-    Route::get('presidential-candidates/create', [PresidentialCandidateController::class, 'create']);
-    Route::apiResource('presidential-candidates', PresidentialCandidateController::class);
+    Route::get('presidential-candidates/create', [BookingController::class, 'create']);
+    Route::apiResource('presidential-candidates', BookingController::class);
 });
