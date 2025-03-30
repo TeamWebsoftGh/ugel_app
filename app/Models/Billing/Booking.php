@@ -2,8 +2,11 @@
 
 namespace App\Models\Billing;
 
+use App\Abstracts\Model;
 use App\Models\Client\Client;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Property\Property;
+use App\Models\Property\PropertyUnit;
+use App\Models\Property\Room;
 
 class Booking extends Model
 {
@@ -22,6 +25,7 @@ class Booking extends Model
         'total_price',
         'sub_total',
         'total_paid',
+        'booking_date',
         'company_id',
         'created_by',
         'status'
@@ -31,6 +35,21 @@ class Booking extends Model
     public function client()
     {
         return $this->belongsTo(Client::class)->withDefault();
+    }
+
+    public function property()
+    {
+        return $this->belongsTo(Property::class)->withDefault();
+    }
+
+    public function propertyUnit()
+    {
+        return $this->belongsTo(PropertyUnit::class)->withDefault();
+    }
+
+    public function room()
+    {
+        return $this->belongsTo(Room::class)->withDefault();
     }
 
     public function bookingPeriod()

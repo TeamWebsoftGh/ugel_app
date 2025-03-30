@@ -7,13 +7,17 @@ use App\Models\Billing\Booking;
 use App\Models\Billing\BookingPeriod;
 use App\Models\Billing\Invoice;
 use App\Models\Common\NumberGenerator;
+use App\Models\Property\PropertyUnit;
+use App\Models\Property\Room;
 use App\Repositories\Billing\Interfaces\IBookingRepository;
 use App\Repositories\Billing\Interfaces\IInvoiceRepository;
 use App\Services\Billing\Interfaces\IBookingService;
 use App\Services\Helpers\PropertyHelper;
 use App\Services\Helpers\Response;
 use App\Services\ServiceBase;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class BookingService extends ServiceBase implements IBookingService
@@ -39,44 +43,74 @@ class BookingService extends ServiceBase implements IBookingService
     /**
      * Create a Booking
      */
-    public function createBooking(array $data): Response
+    public function createBooking(array $data)
     {
+        $isHostel = isset($data['room_id']);
+        $lockKey = $isHostel
+            ? "booking:room:{$data['room_id']}"
+            : "booking:unit:{$data['property_unit_id']}";
+
+        $lock = Cache::lock($lockKey, 5); // 10-second lock
+
+        if (!$lock->get()) {
+            return $this->errorResponse("Another booking is being processed. Please try again.");
+        }
+
         try {
-            // Check if booking already exists for the client and booking period
+            DB::beginTransaction();
+
+            if ($isHostel) {
+                $room = Room::where('id', $data['room_id'])
+                    ->where('is_active', 1)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$room || !PropertyHelper::isRoomAvailable($room->id, $data['lease_start_date'], $data['lease_end_date'])) {
+                    DB::rollBack();
+                    return $this->errorResponse("Room is no longer available.");
+                }
+            } else {
+                $unit = PropertyUnit::where('id', $data['property_unit_id'])
+                    ->where('status', 'active')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$unit || !PropertyHelper::isPropertyUnitAvailable($unit->id, $data['lease_start_date'], $data['lease_end_date'])) {
+                    DB::rollBack();
+                    return $this->errorResponse("Property unit is no longer available.");
+                }
+            }
+
             if ($this->bookingExists($data['client_id'], $data['booking_period_id'])) {
+                DB::rollBack();
                 return $this->errorResponse("You have already booked this property.");
             }
 
-            DB::beginTransaction();
-
-            // Generate Booking Number & Prepare Data
             $data['booking_number'] = NumberGenerator::gen(Booking::class);
             $data = $this->prepareBookingData($data);
 
-            // Create Booking
             $booking = $this->bookingRepo->createBooking($data);
-
             if (!$booking) {
                 DB::rollBack();
-                return $this->errorResponse("Failed to create booking. Please try again.");
+                return $this->errorResponse("Failed to create booking.");
             }
 
-            // Prepare & Create Invoice
             $invoiceData = $this->prepareInvoiceData($booking);
             $invoice = $this->invoiceRepo->create($invoiceData);
-
             if (!$invoice) {
                 DB::rollBack();
-                return $this->errorResponse("Failed to create invoice. Please try again.");
+                return $this->errorResponse("Failed to create invoice.");
             }
 
             DB::commit();
-            return $this->buildCreateResponse($booking);
+            return $this->buildCreateResponse($invoice);
 
         } catch (\Exception $ex) {
             DB::rollBack();
             log_error(format_exception($ex), new Booking(), 'create-booking-failed');
             return $this->errorResponse("An error occurred while creating the booking.");
+        } finally {
+            optional($lock)->release();
         }
     }
 
@@ -86,11 +120,47 @@ class BookingService extends ServiceBase implements IBookingService
      */
     public function updateBooking(array $data, Booking $booking): Response
     {
+        $isHostel = isset($data['room_id']);
+        $lockKey = $isHostel
+            ? "booking:room:{$data['room_id']}"
+            : "booking:unit:{$data['property_unit_id']}";
+
+        $lock = Cache::lock($lockKey, 5); // 10-second lock
+
+        if (!$lock->get()) {
+            return $this->errorResponse("Another booking is being processed. Please try again.");
+        }
         try {
             DB::beginTransaction();
+            if ($isHostel && $data['room_id'] != $booking->room_id) {
+                $room = Room::where('id', $data['room_id'])
+                    ->where('is_active', 1)
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$room || !PropertyHelper::isRoomAvailable($room->id, $data['lease_start_date'], $data['lease_end_date'])) {
+                    DB::rollBack();
+                    return $this->errorResponse("Room is no longer available.");
+                }
+            } else if($data['property_unit_id'] != $booking->property_unit_id)
+            {
+                $unit = PropertyUnit::where('id', $data['property_unit_id'])
+                    ->where('status', 'active')
+                    ->lockForUpdate()
+                    ->first();
+
+                if (!$unit || !PropertyHelper::isPropertyUnitAvailable($unit->id, $data['lease_start_date'], $data['lease_end_date'])) {
+                    DB::rollBack();
+                    return $this->errorResponse("Property unit is no longer available.");
+                }
+            }
+
 
             $data = $this->prepareBookingData($data, $booking);
             $result = $this->bookingRepo->updateBooking($data, $booking);
+
+            $invoiceData = $this->prepareInvoiceData($booking);
+            $booking->invoice()->updateOrCreate(['booking_id' => $booking->id], $invoiceData);
 
             DB::commit();
             return $this->buildUpdateResponse($booking, $result);
@@ -144,8 +214,8 @@ class BookingService extends ServiceBase implements IBookingService
     {
         if (isset($data['booking_period_id'])) {
             $period = BookingPeriod::find($data['booking_period_id']);
-            $data['lease_start_date'] = $period?->lease_start_date;
-            $data['lease_end_date'] = $period?->lease_end_date;
+            $data['lease_start_date'] = $data['lease_start_date']??$period?->lease_start_date;
+            $data['lease_end_date'] = $data['lease_end_date']??$period?->lease_end_date;
             $data['sub_total'] = PropertyHelper::getPropertyUnitPrice($data['property_unit_id'], $data['booking_period_id']);
             $data['total_price'] = $data['sub_total'];
         }
@@ -166,6 +236,7 @@ class BookingService extends ServiceBase implements IBookingService
             'sub_total_amount' => $booking->sub_total,
             'total_amount' => $booking->total_price,
             'created_by' => $booking->created_by,
+            'invoice_date' => $booking->booking_date,
             'company_id' => $booking->company_id,
         ];
     }

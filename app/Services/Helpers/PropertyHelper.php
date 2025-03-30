@@ -3,6 +3,7 @@
 namespace App\Services\Helpers;
 
 use App\Models\Auth\User;
+use App\Models\Billing\Booking;
 use App\Models\Billing\BookingPeriod;
 use App\Models\Billing\PropertyUnitPrice;
 use App\Models\Client\Client;
@@ -12,6 +13,7 @@ use App\Models\Property\PropertyCategory;
 use App\Models\Property\PropertyPurpose;
 use App\Models\Property\PropertyType;
 use App\Models\Property\PropertyUnit;
+use App\Models\Property\Room;
 use App\Models\Settings\City;
 use App\Models\Settings\Country;
 use App\Models\Settings\Region;
@@ -205,4 +207,47 @@ class PropertyHelper
             ->orderBy('name')
             ->get();
     }
+
+    public static function isRoomAvailable(int $roomId, string $startDate, string $endDate): bool
+    {
+        $room = Room::where('id', $roomId)->where('is_active', 1)->first();
+
+        if (!$room) {
+            return false; // Room not found or inactive
+        }
+
+        $existingBookings = Booking::where('room_id', $roomId)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('lease_start_date', [$startDate, $endDate])
+                    ->orWhereBetween('lease_end_date', [$startDate, $endDate])
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->where('lease_start_date', '<=', $startDate)
+                            ->where('lease_end_date', '>=', $endDate);
+                    });
+            })->count();
+
+        return $existingBookings < $room->bed_count;
+    }
+
+    public static function isPropertyUnitAvailable(int $unitId, string $startDate, string $endDate): bool
+    {
+        $unit = PropertyUnit::where('id', $unitId)->where('is_active', 1)->first();
+
+        if (!$unit) {
+            return false; // Room not found or inactive
+        }
+
+        $existingBookings = Booking::where('property_unit_id', $unit)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('lease_start_date', [$startDate, $endDate])
+                    ->orWhereBetween('lease_end_date', [$startDate, $endDate])
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->where('lease_start_date', '<=', $startDate)
+                            ->where('lease_end_date', '>=', $endDate);
+                    });
+            })->count();
+
+        return !$existingBookings;
+    }
+
 }

@@ -6,12 +6,9 @@ use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Http\Requests\ImportRequest;
 use App\Imports\AmenitiesImport;
-use App\Models\Billing\Booking;
-use App\Models\Property\Amenity;
-use App\Services\Billing\Interfaces\IBookingService;
+use App\Models\Billing\Invoice;
+use App\Services\Billing\Interfaces\IInvoiceService;
 use App\Services\Helpers\PropertyHelper;
-use App\Services\Properties\Interfaces\IAmenityService;
-use App\Services\Properties\Interfaces\IPropertyService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -20,16 +17,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-class BookingController extends Controller
+class InvoiceController extends Controller
 {
-    private IBookingService $bookingService;
-    private IPropertyService $propertyService;
+    private IInvoiceService $invoiceService;
 
-    public function __construct(IBookingService $bookingService, IPropertyService $propertyService)
+    public function __construct(IInvoiceService $invoiceService)
     {
         parent::__construct();
-        $this->bookingService = $bookingService;
-        $this->propertyService = $propertyService;
+        $this->invoiceService = $invoiceService;
     }
 
     /**
@@ -41,20 +36,21 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $amenities = $this->bookingService->listBookings($request->all(), 'updated_at');
+            $amenities = $this->invoiceService->listInvoices($request->all(), 'updated_at');
             return datatables()->of($amenities)
                 ->setRowId(fn($row) => $row->id)
                 ->addColumn('client_name', fn($row) => $row->client->fullname)
                 ->addColumn('client_number', fn($row) => $row->client->client_number)
-                ->addColumn('booking_type', fn($row) => $row->bookingPeriod->name)
-                ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
-                ->addColumn('updated_at', fn($row) => Carbon::parse($row->updated_at)->format(env('Date_Format')))
-                ->addColumn('action', fn($data) => $this->getActionButtons($data, "amenities"))
+                ->addColumn('property_name', fn($row) => $row->booking->property->property_name)
+                ->addColumn('property_unit_name', fn($row) => $row->booking->propertyUnit->unit_name)
+                ->addColumn('formatted_total', fn($row) => format_money($row->total_amount))
+                ->addColumn('formatted_paid', fn($row) => format_money($row->total_paid))
+                ->addColumn('action', fn($data) => $this->getActionButtons($data, "invoices"))
                 ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('billing.bookings.index');
+        return view('billing.invoices.index');
     }
 
     /**
@@ -64,17 +60,10 @@ class BookingController extends Controller
      */
     public function create()
     {
-        $item = new Booking();
-        $properties = $this->propertyService->listLeaseProperties(['filter_active' => 1]);
-        $booking_periods =PropertyHelper::getActiveBookingPeriods();
-
+        $item = new Invoice();
         $item->is_active = 1;
-        $item->booking_date = Carbon::now()->format('Y-m-d');
 
-        return request()->ajax()
-            ? view('billing.bookings.edit', compact('item', 'properties', 'booking_periods'))
-            : redirect()->route('bookings.index');
-
+        return view('billing.invoices.edit', compact('item'));
     }
 
     /**
@@ -86,25 +75,21 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'booking_period_id' => 'required|exists:booking_periods,id',
-            'property_id' => 'required|exists:properties,id',
-            'property_unit_id' => 'required|exists:property_units,id',
-            'room_id' => 'nullable|exists:rooms,id',
-            'client_id' => 'required|exists:clients,id',
-            'lease_start_date' => 'required|date',
-            'lease_end_date' => 'required|date|after_or_equal:lease_start_date',
+            'name' => 'required',
+            'short_name' => 'nullable',
+            'is_active' => 'sometimes|boolean',
         ]);
 
         $data = $request->except('_token', '_method', 'id');
         $result = $request->filled('id')
-            ? $this->bookingService->updateBooking($data, $this->bookingService->findBookingById($request->input('id')))
-            : $this->bookingService->createBooking($data);
+            ? $this->invoiceService->updateInvoice($data, $this->invoiceService->findInvoiceById($request->input('id')))
+            : $this->invoiceService->createInvoice($data);
 
         if ($request->ajax()) {
             return $this->responseJson($result);
         }
 
-        return $this->handleRedirect($result, 'bookings.index');
+        return $this->handleRedirect($result, 'invoices.index');
     }
 
     /**
@@ -115,15 +100,11 @@ class BookingController extends Controller
      */
     public function edit(int $id)
     {
-        $item = $this->bookingService->findBookingById($id);
-        $properties = $this->propertyService->listLeaseProperties(['filter_active' => 1]);
-        $booking_periods =PropertyHelper::getActiveBookingPeriods();
-
-        $item->is_active = 1;
+        $item = $this->invoiceService->findInvoiceById($id);
 
         return request()->ajax()
-            ? view('billing.bookings.edit', compact('item', 'properties', 'booking_periods'))
-            : redirect()->route('bookings.index');
+            ? view('billing.invoices.edit', compact('item'))
+            : redirect()->route('invoices.index');
     }
 
     /**
@@ -134,8 +115,8 @@ class BookingController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $amenity = $this->bookingService->findBookingById($id);
-        $result = $this->bookingService->deleteBooking($amenity);
+        $amenity = $this->invoiceService->findInvoiceById($id);
+        $result = $this->invoiceService->deleteInvoice($amenity);
 
         return $this->responseJson($result);
     }
@@ -148,7 +129,7 @@ class BookingController extends Controller
      */
     public function bulkDelete(Request $request): JsonResponse
     {
-        $result = $this->bookingService->deleteMultipleBookings($request->ids);
+        $result = $this->invoiceService->deleteMultipleInvoices($request->ids);
         return $this->responseJson($result);
     }
 
@@ -159,7 +140,7 @@ class BookingController extends Controller
      */
     public function import()
     {
-        return view('billing.bookings.import');
+        return view('billing.invoices.import');
     }
 
     /**
@@ -180,6 +161,6 @@ class BookingController extends Controller
             return $this->responseJson($result);
         }
 
-        return $this->handleRedirect($result, 'bookings.index');
+        return $this->handleRedirect($result, 'invoices.index');
     }
 }

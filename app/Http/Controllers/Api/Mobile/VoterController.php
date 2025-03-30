@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Mobile;
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\VoterResource;
+use App\Http\Resources\InvoiceResource;
 use App\Services\Interfaces\IDelegateService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -49,7 +49,7 @@ class VoterController extends MobileController
         $paginatedItems = $this->paginate($items, $perPage, $page);
 
         // Transform the items using a resource collection
-        $items = VoterResource::collection($paginatedItems);
+        $items = InvoiceResource::collection($paginatedItems);
 
         // Return the paginated response
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $items, $paginatedItems);
@@ -70,7 +70,7 @@ class VoterController extends MobileController
     public function show(string $id)
     {
         $item = $this->delegateService->findDelegateById($id);
-        $item = new VoterResource($item);
+        $item = new InvoiceResource($item);
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }

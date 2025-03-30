@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::group(['prefix' => '', 'namespace' => 'App\Http\Controllers\Billing'], function ()
+Route::group(['prefix' => 'billing', 'namespace' => 'App\Http\Controllers\Billing'], function ()
 {
     //Booking Periods
     Route::delete('booking-periods/delete/selected', 'BookingPeriodController@bulkDelete')->name('booking-periods.delete.selected');
@@ -35,5 +35,11 @@ Route::group(['prefix' => '', 'namespace' => 'App\Http\Controllers\Billing'], fu
     Route::get('bookings/import', 'BookingController@import')->name('bookings.import');
     Route::post('bookings/import', 'BookingController@importPost')->name('bookings.importPost');
     Route::resource('bookings', 'BookingController')->except(['update']);
+
+    //Invoice Items
+    Route::delete('invoices/delete/selected', 'InvoiceController@bulkDelete')->name('invoices.delete.selected');
+    Route::get('invoices/import', 'InvoiceController@import')->name('invoices.import');
+    Route::post('invoices/import', 'InvoiceController@importPost')->name('invoices.importPost');
+    Route::resource('invoices', 'InvoiceController')->except(['update']);
 
 });

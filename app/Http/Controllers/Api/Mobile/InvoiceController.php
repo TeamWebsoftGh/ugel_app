@@ -4,33 +4,32 @@ namespace App\Http\Controllers\Api\Mobile;
 
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
-use App\Http\Resources\BookingResource;
 use App\Http\Resources\InvoiceResource;
-use App\Services\Billing\Interfaces\IBookingService;
+use App\Services\Billing\Interfaces\IinvoiceService;
 use App\Services\Helpers\PropertyHelper;
 use Illuminate\Http\Request;
 
-class BookingController extends MobileController
+class InvoiceController extends MobileController
 {
     /**
-     * @var IBookingService
+     * @var IInvoiceService
      */
-    private IBookingService $bookingService;
+    private IInvoiceService $invoiceService;
 
-    public function __construct(IBookingService $bookingService)
+    public function __construct(IInvoiceService $invoiceService)
     {
         parent::__construct();
-        $this->bookingService = $bookingService;
+        $this->invoiceService = $invoiceService;
     }
 
     public function index(Request $request)
     {
         $data = $request->all();
-        $data['filter_client'] =  user()->client_id;
+        $data['filter_client'] = user()->client_id;
         // Manually paginate the collection
         $page = $request->input('page', 1);
         $perPage = $request->input('perPage', 25);
-        $query = $this->bookingService->listBookings($data);
+        $query = $this->invoiceService->listInvoices($data);
 
         if ($perPage < 0) {
             // Apply pagination if enabled
@@ -40,25 +39,20 @@ class BookingController extends MobileController
             $items = $query->get();
         }
 
-        $item = BookingResource::collection($items);
+        $item = InvoiceResource::collection($items);
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);    }
 
     public function create()
     {
         $data['hostels'] = PropertyHelper::getAllHostels();
-        $data['booking_periods'] = PropertyHelper::getActiveBookingPeriods();
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $data);
     }
 
     public function show($id)
     {
-        $item = $this->bookingService->findBookingById($id);
-        if($item->client_id !=  user()->client_id){
-            abort(404);
-        }
-
-        $item = new BookingResource($item);
+        $item = $this->invoiceService->findInvoiceById($id);
+        $item = new InvoiceResource($item);
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }
@@ -66,24 +60,22 @@ class BookingController extends MobileController
     public function update(Request $request)
     {
         $validatedData = $request->validate([
+            'invoice_id' => 'required|exists:invoices,id',
             'booking_id' => 'required|exists:bookings,id',
-            'booking_period_id' => 'required|exists:booking_periods,id',
           //  'property_id' => 'required|exists:properties,id',
-            'property_unit_id' => 'required|exists:property_units,id',
-            'room_id' => 'nullable|exists:rooms,id',
             // 'client_id' => 'required|exists:clients,id',
-            'lease_start_date' => 'required|date',
-            'lease_end_date' => 'required|date|after_or_equal:lease_start_date',
+         //   'lease_start_date' => 'required|date',
+          //  'lease_end_date' => 'required|date|after_or_equal:lease_start_date',
         ]);
 
-        $data = $request->except('_token', '_method', 'id', 'client_id');
-        $item = $this->bookingService->findBookingById($data['booking_id']);
+        $data = $request->except('_token', '_method', 'id', 'type');
+        $item = $this->invoiceService->findInvoiceById($data['invoice_id']);
 
-        $results = $this->bookingService->updateBooking($data, $item);
+        $results = $this->invoiceService->updateInvoice($data, $item);
 
         if(isset($results->data))
         {
-            $results->data = new BookingResource($results->data);
+            $results->data = new InvoiceResource($results->data);
         }
 
         return $this->apiResponseJson($results);
@@ -92,7 +84,7 @@ class BookingController extends MobileController
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'booking_period_id' => 'required|exists:booking_periods,id',
+            'invoice_period_id' => 'required|exists:invoice_periods,id',
             'property_id' => 'required|exists:properties,id',
             'property_unit_id' => 'required|exists:property_units,id',
             'room_id' => 'nullable|exists:rooms,id',
@@ -103,7 +95,7 @@ class BookingController extends MobileController
 
         $data = $request->except('_token', '_method', 'id');
         $data['client_id'] = user()->client_id;
-        $results = $this->bookingService->createBooking($data);
+        $results = $this->invoiceService->createInvoice($data);
 
         if(isset($results->data))
         {
@@ -115,8 +107,8 @@ class BookingController extends MobileController
 
     public function destroy(int $id)
     {
-        $booking = $this->bookingService->findBookingById($id);
-        $results = $this->bookingService->deleteBooking($booking);
+        $invoice = $this->invoiceService->findInvoiceById($id);
+        $results = $this->invoiceService->deleteInvoice($invoice);
 
         return $this->apiResponseJson($results);
     }

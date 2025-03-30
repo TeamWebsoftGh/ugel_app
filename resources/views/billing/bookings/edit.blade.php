@@ -48,7 +48,13 @@
             :options="[]"
             :value="$item->room_id"
         />
-
+        <x-form.input-field
+            name="booking_date"
+            label="Booking Date"
+            type="date"
+            :value="$item->booking_date"
+            required
+        />
         <!-- Lease Start Date -->
         <x-form.input-field
             name="sub_total"

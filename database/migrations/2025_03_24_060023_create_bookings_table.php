@@ -44,6 +44,7 @@ return new class extends Migration
             $table->foreignId('room_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('booking_period_id')->constrained()->onDelete('cascade');
             $table->string('booking_type');
+            $table->date('booking_date');
             $table->date('lease_start_date');
             $table->date('lease_end_date');
             $table->date('extension_date')->nullable();
@@ -68,6 +69,7 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->decimal('total_amount', 18, 2);
             $table->string('invoice_number')->unique();
+            $table->date('invoice_date');
             $table->date('due_date');
             $table->decimal('sub_total_amount', 18, 2);
             $table->string('status')->default('pending');

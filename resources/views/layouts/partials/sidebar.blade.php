@@ -123,19 +123,19 @@
            aria-expanded="false" aria-controls="sidebarAuth">
             <i class="ri-calculator-fill"></i> <span data-key="t-authentication">Billing Center</span>
         </a>
-        <div class="collapse menu-dropdown {{ (request()->is('*booking*')||request()->is('*invoice-*')||request()->is('*booking')|request()->is('*booking')) ? 'show' : '' }}" id="bookings">
+        <div class="collapse menu-dropdown {{ (request()->is('*booking*')||request()->is('*invoice*')||request()->is('*booking')|request()->is('*booking')) ? 'show' : '' }}" id="bookings">
             <ul class="nav nav-sm flex-column">
                 <li class="nav-item">
                     <a href="{{route("bookings.index")}}" class="nav-link" data-key="t-amenities">Bookings</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route("property-types.index")}}" class="nav-link" data-key="t-property-types"> Invoices</a>
+                    <a href="{{route("invoices.index")}}" class="nav-link" data-key="t-property-types"> Invoices</a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route("rooms.index")}}" class="nav-link" data-key="t-user_activity"> Transactions </a>
+                    <a href="{{route("invoices.index")}}" class="nav-link" data-key="t-user_activity"> Transactions </a>
                 </li>
                 <li class="nav-item">
-                    <a href="{{route("properties.index")}}" class="nav-link" data-key="t-user_activity"> Reviews </a>
+                    <a href="{{route("invoices.index")}}" class="nav-link" data-key="t-user_activity"> Reviews </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route("invoice-items.index")}}" class="nav-link" data-key="t-property_unit">Invoice Items </a>

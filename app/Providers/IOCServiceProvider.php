@@ -8,7 +8,9 @@ use App\Services\Billing\BookingService;
 use App\Services\Billing\Interfaces\IBookingPeriodService;
 use App\Services\Billing\Interfaces\IBookingService;
 use App\Services\Billing\Interfaces\IInvoiceItemService;
+use App\Services\Billing\Interfaces\IInvoiceService;
 use App\Services\Billing\InvoiceItemService;
+use App\Services\Billing\InvoiceService;
 use App\Services\BranchService;
 use App\Services\BulkSmsService;
 use App\Services\CategoryService;
@@ -164,6 +166,7 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(IBookingPeriodService::class, BookingPeriodService::class);
         $this->app->bind(IInvoiceItemService::class, InvoiceItemService::class);
         $this->app->bind(IBookingService::class, BookingService::class);
+        $this->app->bind(IInvoiceService::class, InvoiceService::class);
     }
 
     /**
