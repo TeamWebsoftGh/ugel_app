@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Auth;
 
 use App\Constants\Constants;
 use App\Constants\ResponseMessage;
@@ -10,10 +10,11 @@ use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use App\Models\Auth\UserOtp;
-use App\Repositories\Interfaces\IUserRepository;
-use App\Repositories\UserRepository;
+use App\Repositories\Auth\Interfaces\IUserRepository;
+use App\Repositories\Auth\UserRepository;
+use App\Services\Auth\Interfaces\IUserService;
 use App\Services\Helpers\Response;
-use App\Services\Interfaces\IUserService;
+use App\Services\ServiceBase;
 use App\Traits\SmsTrait;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;

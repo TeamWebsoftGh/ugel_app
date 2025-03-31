@@ -1,29 +1,29 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Auth;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
-use App\Models\Auth\Role;
-use App\Repositories\Interfaces\IRoleRepository;
-use App\Repositories\RoleRepository;
-use App\Services\Interfaces\IRoleService;
+use App\Models\Auth\Permission;
+use App\Repositories\Auth\Interfaces\IPermissionRepository;
+use App\Services\Auth\Interfaces\IPermissionService;
+use App\Services\Helpers;
+use App\Services\ServiceBase;
 use Illuminate\Support\Collection;
 
-class RoleService extends ServiceBase implements IRoleService
+class PermissionService extends ServiceBase implements IPermissionService
 {
-
-    private $roleRepo;
+    private IPermissionRepository $permissionRepo;
 
     /**
-     * RoleService constructor.
+     * UserService constructor.
      *
-     * @param IRoleRepository $roleRepository
+     * @param IPermissionRepository $permissionRepository
      */
-    public function __construct(IRoleRepository $roleRepository)
+    public function __construct(IPermissionRepository $permissionRepository)
     {
         parent::__construct();
-        $this->roleRepo = $roleRepository;
+        $this->permissionRepo = $permissionRepository;
     }
 
     /**
@@ -34,9 +34,9 @@ class RoleService extends ServiceBase implements IRoleService
      *
      * @return Collection
      */
-    public function listRoles(string $order = 'id', string $sort = 'desc'): Collection
+    public function listPermissions(string $order = 'id', string $sort = 'desc'): Collection
     {
-        return $this->roleRepo->listRoles();
+        return $this->permissionRepo->listPermissions();
     }
 
 
@@ -46,25 +46,20 @@ class RoleService extends ServiceBase implements IRoleService
      * @param array $data
      * @return Helpers\Response
      */
-    public function createRole(array $data): Helpers\Response
+    public function createPermission(array $data): Helpers\Response
     {
         //Declaration
-        $role = null;
+        $permission = null;
 
         //Process Request
         try {
-            $role = $this->roleRepo->createRole($data);
-            //Add Permissions
-            $roleRepo = new RoleRepository($role);
-            if (isset($data['permissions']))
-                $roleRepo->syncPermissions($data['permissions']);
-
+            $permission = $this->permissionRepo->createPermission($data);
         } catch (\Exception $e) {
-            log_error(format_exception($e), new Role(), 'create-role-failed');
+            log_error(format_exception($e), new Permission(), 'create-permission-failed');
         }
 
-        //Check if Role was created successfully
-        if (!$role)
+        //Check if permission was created successfully
+        if (!$permission)
         {
             $this->response->status = ResponseType::ERROR;
             $this->response->message = ResponseMessage::DEFAULT_ERR_CREATE;
@@ -73,13 +68,13 @@ class RoleService extends ServiceBase implements IRoleService
         }
 
         //Audit Trail
-        $logAction = 'create-role-successful';
+        $logAction = 'create-permission-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_CREATE;
 
-        log_activity($auditMessage, $role, $logAction);
+        log_activity($auditMessage, $permission, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
-        $this->response->data = $role;
+        $this->response->data = $permission;
 
         return $this->response;
     }
@@ -89,11 +84,11 @@ class RoleService extends ServiceBase implements IRoleService
      *
      * @param int $id
      *
-     * @return array
+     * @return Permission
      */
-    public function findRoleById(int $id)
+    public function findPermissionById(int $id)
     {
-        return $this->roleRepo->findRoleById($id);
+        return $this->permissionRepo->findPermissionById($id);
     }
 
     /**
@@ -104,21 +99,16 @@ class RoleService extends ServiceBase implements IRoleService
      * @param int $id
      * @return Helpers\Response
      */
-    public function updateRole(array $data, Role $role): Helpers\Response
+    public function updatePermission(array $data, Permission $permission): Helpers\Response
     {
         //Declaration
         $result = false;
 
         //Process Request
         try {
-            $result = $this->roleRepo->updateRole($data, $role->id);
-            //Add Permissions
-            $roleRepo = new RoleRepository($role);
-            if (isset($data['permissions']))
-                $roleRepo->syncPermissions($data['permissions']);
-
+            $result = $this->permissionRepo->updatePermission($data, $permission->id);
         } catch (\Exception $e) {
-            log_error(format_exception($e), $role, 'update-role-failed');
+            log_error(format_exception($e), $permission, 'update-permission-failed');
         }
 
         if (!$result)
@@ -130,10 +120,10 @@ class RoleService extends ServiceBase implements IRoleService
         }
 
         //Audit Trail
-        $logAction = 'update-role-successful';
+        $logAction = 'update-permission-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
 
-        log_activity($auditMessage, $role, $logAction);
+        log_activity($auditMessage, $permission, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
 
@@ -141,19 +131,10 @@ class RoleService extends ServiceBase implements IRoleService
     }
 
 
-    /**
-     * @return Collection
-     */
-    public function listPermissions():Collection
-    {
-        return $this->roleRepo->listPermissions();
-    }
-
-
-    public function deleteRole(Role $role)
+    public function deletePermission(Permission $permission)
     {
         //Declaration
-        $result = $this->roleRepo->delete($role->id);
+        $result = $this->permissionRepo->delete($permission->id);
 
         if (!$result)
         {
@@ -164,10 +145,10 @@ class RoleService extends ServiceBase implements IRoleService
         }
 
         //Audit Trail
-        $logAction = 'delete-role-successful';
+        $logAction = 'delete-permission-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
 
-        log_activity($auditMessage, $role, $logAction);
+        log_activity($auditMessage, $permission, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
 

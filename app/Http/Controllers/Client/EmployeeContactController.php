@@ -10,12 +10,8 @@ use App\Models\Employees\Employee;
 use App\Models\Employees\EmployeeContact;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IClientService;
-use App\Services\Interfaces\IUserService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class EmployeeContactController extends Controller
 {

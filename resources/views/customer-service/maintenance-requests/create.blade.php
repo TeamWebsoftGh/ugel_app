@@ -1,8 +1,8 @@
 @extends('layouts.main')
 @section('title', 'Open Ticket')
-@section('page-title', 'Support Tickets')
+@section('page-title', 'Maintenance Requests')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{route('support-tickets.index')}}">Support Tickets</a></li>
+    <li class="breadcrumb-item"><a href="{{route('support-tickets.index')}}">Maintenance Requests</a></li>
 @endsection
 
 @section('content')
@@ -13,7 +13,7 @@
                     <h4 class="card-title">Ticket Details</h4>
                     <p class="card-subtitle mb-4"></p>
                     <div id="product-content">
-                        @include("customer-service.support-tickets.edit")
+                        @include("customer-service.maintenance-requests.edit")
                     </div>
                 </div>
             </div> <!-- end card-body-->

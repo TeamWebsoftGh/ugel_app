@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Audit\ErrorLog;
 use App\Models\Audit\LogActivity;
 use App\Models\Auth\User;
+use App\Services\Auth\Interfaces\IUserService;
 use App\Services\Interfaces\IAuditService;
-use App\Services\Interfaces\IUserService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\View\View;
 

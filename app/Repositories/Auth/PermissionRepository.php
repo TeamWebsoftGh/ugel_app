@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Auth;
 
 use App\Models\Auth\Permission;
-use App\Repositories\Interfaces\IPermissionRepository;
+use App\Repositories\Auth\Interfaces\IPermissionRepository;
+use App\Repositories\BaseRepository;
 use Illuminate\Support\Collection;
 
 class PermissionRepository extends BaseRepository implements IPermissionRepository

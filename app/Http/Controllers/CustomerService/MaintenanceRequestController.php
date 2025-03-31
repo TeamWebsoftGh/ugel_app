@@ -98,56 +98,42 @@ class MaintenanceRequestController extends Controller
         return view("customer-service.maintenance-requests.index", compact("data"));
     }
 
-    public function myTickets()
+    public function myTickets(Request $request)
     {
         $user = user();
 
+        $data = $request->all();
         $data['filter_user'] = $user->id;
-        $tickets = $this->ticketService->listSupportTickets($data);
+        $data['filter_start_date'] = $request->get('filter_start_date', Carbon::now()->startOfYear()->format('Y-m-d'));
+        $data['filter_end_date'] = $request->get('filter_end_date', Carbon::now()->format('Y-m-d'));
+        $data['filter_category'] = $request->get('filter_category', '');
+        $data['filter_customer'] = $request->get('filter_customer', '');
+        $data['filter_client_type'] = $request->get('filter_client_type', '');
+        $data['filter_status'] = $request->get('filter_status', '');
+        $data['filter_priority'] = $request->get('filter_priority', '');
+        $data['categories'] = TaskUtil::getMaintenanceCategories();
+        $data['priorities'] = TaskUtil::getPriorities();
 
-        if (empty($data['filter_start_date']))
-        {
-            $data['start_date'] = Carbon::now()->startOfYear()->format(env('Date_Format'));
-            $data['filter_start_date'] = Carbon::now()->startOfYear()->format('Y-m-d');
-        }else{
-            $data['start_date'] = Carbon::parse($data['filter_start_date'])->format(env('Date_Format'));
-        }
 
-        if (empty($data['filter_end_date']))
-        {
-            $data['end_date'] = Carbon::now()->format(env('Date_Format'));
-            $data['filter_end_date'] = Carbon::now()->format('Y-m-d');
-        }else{
-            $data['end_date'] = Carbon::parse($data['filter_end_date'])->format(env('Date_Format'));
-        }
-
-        return view("customer-service.support-tickets.index", compact("tickets", "data", "user"));
+        return view("customer-service.maintenance-requests.index", compact("data"));
     }
 
-    public function assigned()
+    public function assigned(Request $request)
     {
         $user = user();
 
         $data['filter_assignee'] = $user->id;
-        $tickets = $this->ticketService->listSupportTickets($data);
+        $data['filter_start_date'] = $request->get('filter_start_date', Carbon::now()->startOfYear()->format('Y-m-d'));
+        $data['filter_end_date'] = $request->get('filter_end_date', Carbon::now()->format('Y-m-d'));
+        $data['filter_category'] = $request->get('filter_category', '');
+        $data['filter_customer'] = $request->get('filter_customer', '');
+        $data['filter_client_type'] = $request->get('filter_client_type', '');
+        $data['filter_status'] = $request->get('filter_status', '');
+        $data['filter_priority'] = $request->get('filter_priority', '');
+        $data['categories'] = TaskUtil::getMaintenanceCategories();
+        $data['priorities'] = TaskUtil::getPriorities();
 
-        if (empty($data['filter_start_date']))
-        {
-            $data['start_date'] = Carbon::now()->startOfYear()->format(env('Date_Format'));
-            $data['filter_start_date'] = Carbon::now()->startOfYear()->format('Y-m-d');
-        }else{
-            $data['start_date'] = Carbon::parse($data['filter_start_date'])->format(env('Date_Format'));
-        }
-
-        if (empty($data['filter_end_date']))
-        {
-            $data['end_date'] = Carbon::now()->format(env('Date_Format'));
-            $data['filter_end_date'] = Carbon::now()->format('Y-m-d');
-        }else{
-            $data['end_date'] = Carbon::parse($data['filter_end_date'])->format(env('Date_Format'));
-        }
-
-        return view("customer-service.support-tickets.index", compact("tickets", "data", "user"));
+        return view("customer-service.maintenance-requests.index", compact("data"));
     }
 
     /**

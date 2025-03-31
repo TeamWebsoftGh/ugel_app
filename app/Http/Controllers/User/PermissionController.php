@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Auth\Permission;
-use App\Services\Interfaces\IPermissionService;
+use App\Services\Auth\Interfaces\IPermissionService;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;

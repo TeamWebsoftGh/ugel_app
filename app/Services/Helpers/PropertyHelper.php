@@ -37,7 +37,7 @@ class PropertyHelper
     public static function getAll(?bool $exc_exit = null, ?int $company_id = null): Collection
     {
         return User::select('id', 'first_name', 'last_name', 'title')
-            ->when(!is_owner(), fn($query) => $query->where('company_id', user()->company_id))
+            ->when(!is_owner(), fn($query) => $query->where('company_id', user()->company_id))->whereNull('client_id')
             ->get();
     }
 

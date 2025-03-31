@@ -1,27 +1,31 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Auth;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
-use App\Models\Auth\Permission;
-use App\Repositories\Interfaces\IPermissionRepository;
-use App\Services\Interfaces\IPermissionService;
+use App\Models\Auth\Role;
+use App\Repositories\Auth\Interfaces\IRoleRepository;
+use App\Repositories\Auth\RoleRepository;
+use App\Services\Auth\Interfaces\IRoleService;
+use App\Services\Helpers;
+use App\Services\ServiceBase;
 use Illuminate\Support\Collection;
 
-class PermissionService extends ServiceBase implements IPermissionService
+class RoleService extends ServiceBase implements IRoleService
 {
-    private IPermissionRepository $permissionRepo;
+
+    private $roleRepo;
 
     /**
-     * UserService constructor.
+     * RoleService constructor.
      *
-     * @param IPermissionRepository $permissionRepository
+     * @param IRoleRepository $roleRepository
      */
-    public function __construct(IPermissionRepository $permissionRepository)
+    public function __construct(IRoleRepository $roleRepository)
     {
         parent::__construct();
-        $this->permissionRepo = $permissionRepository;
+        $this->roleRepo = $roleRepository;
     }
 
     /**
@@ -32,9 +36,9 @@ class PermissionService extends ServiceBase implements IPermissionService
      *
      * @return Collection
      */
-    public function listPermissions(string $order = 'id', string $sort = 'desc'): Collection
+    public function listRoles(string $order = 'id', string $sort = 'desc'): Collection
     {
-        return $this->permissionRepo->listPermissions();
+        return $this->roleRepo->listRoles();
     }
 
 
@@ -44,20 +48,25 @@ class PermissionService extends ServiceBase implements IPermissionService
      * @param array $data
      * @return Helpers\Response
      */
-    public function createPermission(array $data): Helpers\Response
+    public function createRole(array $data): Helpers\Response
     {
         //Declaration
-        $permission = null;
+        $role = null;
 
         //Process Request
         try {
-            $permission = $this->permissionRepo->createPermission($data);
+            $role = $this->roleRepo->createRole($data);
+            //Add Permissions
+            $roleRepo = new RoleRepository($role);
+            if (isset($data['permissions']))
+                $roleRepo->syncPermissions($data['permissions']);
+
         } catch (\Exception $e) {
-            log_error(format_exception($e), new Permission(), 'create-permission-failed');
+            log_error(format_exception($e), new Role(), 'create-role-failed');
         }
 
-        //Check if permission was created successfully
-        if (!$permission)
+        //Check if Role was created successfully
+        if (!$role)
         {
             $this->response->status = ResponseType::ERROR;
             $this->response->message = ResponseMessage::DEFAULT_ERR_CREATE;
@@ -66,13 +75,13 @@ class PermissionService extends ServiceBase implements IPermissionService
         }
 
         //Audit Trail
-        $logAction = 'create-permission-successful';
+        $logAction = 'create-role-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_CREATE;
 
-        log_activity($auditMessage, $permission, $logAction);
+        log_activity($auditMessage, $role, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
-        $this->response->data = $permission;
+        $this->response->data = $role;
 
         return $this->response;
     }
@@ -82,11 +91,11 @@ class PermissionService extends ServiceBase implements IPermissionService
      *
      * @param int $id
      *
-     * @return Permission
+     * @return array
      */
-    public function findPermissionById(int $id)
+    public function findRoleById(int $id)
     {
-        return $this->permissionRepo->findPermissionById($id);
+        return $this->roleRepo->findRoleById($id);
     }
 
     /**
@@ -97,16 +106,21 @@ class PermissionService extends ServiceBase implements IPermissionService
      * @param int $id
      * @return Helpers\Response
      */
-    public function updatePermission(array $data, Permission $permission): Helpers\Response
+    public function updateRole(array $data, Role $role): Helpers\Response
     {
         //Declaration
         $result = false;
 
         //Process Request
         try {
-            $result = $this->permissionRepo->updatePermission($data, $permission->id);
+            $result = $this->roleRepo->updateRole($data, $role->id);
+            //Add Permissions
+            $roleRepo = new RoleRepository($role);
+            if (isset($data['permissions']))
+                $roleRepo->syncPermissions($data['permissions']);
+
         } catch (\Exception $e) {
-            log_error(format_exception($e), $permission, 'update-permission-failed');
+            log_error(format_exception($e), $role, 'update-role-failed');
         }
 
         if (!$result)
@@ -118,10 +132,10 @@ class PermissionService extends ServiceBase implements IPermissionService
         }
 
         //Audit Trail
-        $logAction = 'update-permission-successful';
+        $logAction = 'update-role-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
 
-        log_activity($auditMessage, $permission, $logAction);
+        log_activity($auditMessage, $role, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
 
@@ -129,10 +143,19 @@ class PermissionService extends ServiceBase implements IPermissionService
     }
 
 
-    public function deletePermission(Permission $permission)
+    /**
+     * @return Collection
+     */
+    public function listPermissions():Collection
+    {
+        return $this->roleRepo->listPermissions();
+    }
+
+
+    public function deleteRole(Role $role)
     {
         //Declaration
-        $result = $this->permissionRepo->delete($permission->id);
+        $result = $this->roleRepo->delete($role->id);
 
         if (!$result)
         {
@@ -143,10 +166,10 @@ class PermissionService extends ServiceBase implements IPermissionService
         }
 
         //Audit Trail
-        $logAction = 'delete-permission-successful';
+        $logAction = 'delete-role-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
 
-        log_activity($auditMessage, $permission, $logAction);
+        log_activity($auditMessage, $role, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
 

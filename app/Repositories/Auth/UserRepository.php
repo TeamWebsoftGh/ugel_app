@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Auth;
 
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
-use App\Repositories\Interfaces\IUserRepository;
+use App\Repositories\Auth\Interfaces\IUserRepository;
+use App\Repositories\BaseRepository;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 
 class UserRepository extends BaseRepository implements IUserRepository
 {

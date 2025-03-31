@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\Auth\Interfaces;
 
 use App\Models\Auth\User;
+use App\Repositories\Interfaces\IBaseRepository;
 use Illuminate\Support\Collection;
 
 interface IUserRepository extends IBaseRepository

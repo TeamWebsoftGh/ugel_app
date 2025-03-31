@@ -8,10 +8,6 @@ use App\Models\Billing\Booking;
 use App\Models\Client\Client;
 use App\Models\Memo\Announcement;
 use App\Models\Property\Property;
-use App\Services\Billing\Interfaces\IBookingService;
-use App\Services\Interfaces\IUserService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
 
 class HomeController extends Controller
 {

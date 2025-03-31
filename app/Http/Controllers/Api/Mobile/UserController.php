@@ -7,7 +7,7 @@ use App\Constants\ResponseMessage;
 use App\Http\Resources\RoleResource;
 use App\Http\Resources\UserDetailResource;
 use App\Http\Resources\UserResource;
-use App\Services\Interfaces\IUserService;
+use App\Services\Auth\Interfaces\IUserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;

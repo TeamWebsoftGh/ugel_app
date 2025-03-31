@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Account;
 
 use App\Constants\ResponseType;
-use App\Services\Interfaces\IUserService;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\Auth\Interfaces\IUserService;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 
 

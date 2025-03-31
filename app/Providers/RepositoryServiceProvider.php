@@ -3,6 +3,14 @@
 namespace App\Providers;
 
 use App\Repositories\AuditRepository;
+use App\Repositories\Auth\Interfaces\IPermissionRepository;
+use App\Repositories\Auth\Interfaces\IRoleRepository;
+use App\Repositories\Auth\Interfaces\ITeamRepository;
+use App\Repositories\Auth\Interfaces\IUserRepository;
+use App\Repositories\Auth\PermissionRepository;
+use App\Repositories\Auth\RoleRepository;
+use App\Repositories\Auth\TeamRepository;
+use App\Repositories\Auth\UserRepository;
 use App\Repositories\Billing\BookingPeriodRepository;
 use App\Repositories\Billing\BookingRepository;
 use App\Repositories\Billing\Interfaces\IBookingPeriodRepository;
@@ -44,13 +52,10 @@ use App\Repositories\Interfaces\IMaintenanceRepository;
 use App\Repositories\Interfaces\IMeetingRepository;
 use App\Repositories\Interfaces\IPaymentGatewayRepository;
 use App\Repositories\Interfaces\IPaymentRepository;
-use App\Repositories\Interfaces\IPermissionRepository;
 use App\Repositories\Interfaces\IPublicationRepository;
-use App\Repositories\Interfaces\IRoleRepository;
 use App\Repositories\Interfaces\ISettingRepository;
 use App\Repositories\Interfaces\ISupportTicketRepository;
 use App\Repositories\Interfaces\ITaskRepository;
-use App\Repositories\Interfaces\IUserRepository;
 use App\Repositories\Interfaces\IVisitorLogRepository;
 use App\Repositories\Interfaces\IWorkflowPositionRepository;
 use App\Repositories\Interfaces\IWorkflowPositionTypeRepository;
@@ -62,7 +67,6 @@ use App\Repositories\MaintenanceRepository;
 use App\Repositories\MeetingRepository;
 use App\Repositories\PaymentGatewayRepository;
 use App\Repositories\PaymentRepository;
-use App\Repositories\PermissionRepository;
 use App\Repositories\Property\AmenityRepository;
 use App\Repositories\Property\Interfaces\IAmenityRepository;
 use App\Repositories\Property\Interfaces\IPropertyCategoryRepository;
@@ -76,16 +80,15 @@ use App\Repositories\Property\PropertyTypeRepository;
 use App\Repositories\Property\ReviewRepository;
 use App\Repositories\Property\RoomRepository;
 use App\Repositories\PublicationRepository;
-use App\Repositories\RoleRepository;
 use App\Repositories\SettingRepository;
 use App\Repositories\SupportTicketRepository;
 use App\Repositories\TaskRepository;
-use App\Repositories\UserRepository;
 use App\Repositories\VisitorLogRepository;
 use App\Repositories\WorkflowPositionRepository;
 use App\Repositories\WorkflowPositionTypeRepository;
 use App\Repositories\WorkflowRepository;
 use App\Repositories\WorkflowTypeRepository;
+use App\Services\Auth\Interfaces\ITeamService;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -101,6 +104,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IRoleRepository::class, RoleRepository::class);
         $this->app->bind(IPermissionRepository::class, PermissionRepository::class);
         $this->app->bind(IUserRepository::class, UserRepository::class);
+        $this->app->bind(ITeamRepository::class, TeamRepository::class);
+
         $this->app->bind(IAuditRepository::class, AuditRepository::class);
         $this->app->bind(ISettingRepository::class, SettingRepository::class);
         $this->app->bind(IClientRepository::class, ClientRepository::class);

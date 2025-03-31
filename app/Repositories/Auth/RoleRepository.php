@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Auth;
 
 use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
-use App\Repositories\Interfaces\IRoleRepository;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Repositories\Auth\Interfaces\IRoleRepository;
+use App\Repositories\BaseRepository;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
 

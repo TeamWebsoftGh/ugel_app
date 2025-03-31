@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Interfaces;
+namespace App\Services\Auth\Interfaces;
 
 use App\Models\Auth\User;
+use App\Services\Interfaces\IBaseService;
 use Illuminate\Support\Collection;
 
 interface IUserService extends IBaseService

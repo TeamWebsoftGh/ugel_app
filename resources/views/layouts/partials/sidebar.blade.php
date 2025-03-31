@@ -211,10 +211,10 @@
                     <div class="menu-dropdown collapse {{ (request()->is('*maintenance*')) ? 'show' : '' }}" id="maintenance" style="">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
-                                <a href="{{route("support-tickets.create")}}" class="nav-link" data-key="t-hub">Add a Request </a>
+                                <a href="{{route("maintenance-requests.create")}}" class="nav-link" data-key="t-hub">Add a Request </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route("support-tickets.assigned")}}" class="nav-link" data-key="t-calendar"> Assigned Issues </a>
+                                <a href="{{route("maintenance-requests.assigned")}}" class="nav-link" data-key="t-calendar"> Assigned Issues </a>
                             </li>
                             @if(user()->can('read-support-tickets'))
                                 <li class="nav-item">
@@ -334,11 +334,16 @@
                aria-expanded="false" aria-controls="sidebarAdvanceUI">
                 <i class="ri-user-settings-line"></i> <span data-key="t-advance-ui">Users</span>
             </a>
-            <div class="collapse menu-dropdown {{ (request()->is('*user-access*')) ? 'show' : '' }}" id="sidebarAdvanceUI">
+            <div class="collapse menu-dropdown {{ (request()->is('*user-access*'))? 'show' : '' }}" id="sidebarAdvanceUI">
                 <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                         <a href="{{route("admin.users.index")}}" class="nav-link {{ (request()->is('*users*')) ? 'active' : '' }}" data-key="t-users">Manage Users</a>
                     </li>
+                    @if(user()->can('read-teams'))
+                        <li class="nav-item">
+                            <a href="{{route("admin.teams.index")}}" class="nav-link {{ (request()->is('*teams*')) ? 'active' : '' }}" data-key="t-roles">Teams</a>
+                        </li>
+                    @endif
                     @if(user()->can('read-roles'))
                         <li class="nav-item">
                             <a href="{{route("admin.roles.index")}}" class="nav-link {{ (request()->is('*roles*')) ? 'active' : '' }}" data-key="t-roles">User Roles</a>

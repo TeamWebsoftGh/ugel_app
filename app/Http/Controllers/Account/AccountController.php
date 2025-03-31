@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Account;
 
 use App\Constants\ResponseType;
 use App\Http\Controllers\Controller;
-use App\Services\Interfaces\IUserService;
+use App\Services\Auth\Interfaces\IUserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 

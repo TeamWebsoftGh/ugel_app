@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\Auth\Interfaces;
 
 use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
+use App\Repositories\Interfaces\IBaseRepository;
 use Illuminate\Support\Collection;
 
 interface IRoleRepository extends IBaseRepository

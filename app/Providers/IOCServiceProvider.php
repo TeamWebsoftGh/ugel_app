@@ -3,6 +3,14 @@
 namespace App\Providers;
 
 use App\Services\AuditService;
+use App\Services\Auth\Interfaces\IPermissionService;
+use App\Services\Auth\Interfaces\IRoleService;
+use App\Services\Auth\Interfaces\ITeamService;
+use App\Services\Auth\Interfaces\IUserService;
+use App\Services\Auth\PermissionService;
+use App\Services\Auth\RoleService;
+use App\Services\Auth\TeamService;
+use App\Services\Auth\UserService;
 use App\Services\Billing\BookingPeriodService;
 use App\Services\Billing\BookingService;
 use App\Services\Billing\Interfaces\IBookingPeriodService;
@@ -45,16 +53,12 @@ use App\Services\Interfaces\IMeetingService;
 use App\Services\Interfaces\IPaymentGatewayService;
 use App\Services\Interfaces\IPaymentService;
 use App\Services\Interfaces\IPayRunService;
-use App\Services\Interfaces\IPermissionService;
 use App\Services\Interfaces\IPublicationService;
-use App\Services\Interfaces\IRoleService;
 use App\Services\Interfaces\IServiceTypeService;
 use App\Services\Interfaces\ISettingService;
 use App\Services\Interfaces\ISubsidiaryService;
 use App\Services\Interfaces\ISupportTicketService;
 use App\Services\Interfaces\ITaskService;
-use App\Services\Interfaces\ITaxReliefService;
-use App\Services\Interfaces\IUserService;
 use App\Services\Interfaces\IVisitorLogService;
 use App\Services\Interfaces\IWorkflowPositionService;
 use App\Services\Interfaces\IWorkflowPositionTypeService;
@@ -67,7 +71,6 @@ use App\Services\MeetingService;
 use App\Services\PaymentGatewayService;
 use App\Services\PaymentService;
 use App\Services\PayRunService;
-use App\Services\PermissionService;
 use App\Services\Properties\AmenityService;
 use App\Services\Properties\Interfaces\IAmenityService;
 use App\Services\Properties\Interfaces\IPropertyCategoryService;
@@ -83,14 +86,11 @@ use App\Services\Properties\PropertyUnitService;
 use App\Services\Properties\ReviewService;
 use App\Services\Properties\RoomService;
 use App\Services\PublicationService;
-use App\Services\RoleService;
 use App\Services\ServiceTypeService;
 use App\Services\SettingService;
 use App\Services\SubsidiaryService;
 use App\Services\SupportTicketService;
 use App\Services\TaskService;
-use App\Services\TaxReliefService;
-use App\Services\UserService;
 use App\Services\VisitorLogService;
 use App\Services\WorkflowPositionService;
 use App\Services\WorkflowPositionTypeService;
@@ -107,14 +107,11 @@ class IOCServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(IPermissionService::class, PermissionService::class);
-        $this->app->bind(IUserService::class, UserService::class);
         $this->app->bind(IAuditService::class, AuditService::class);
         $this->app->bind(ISettingService::class, SettingService::class);
         $this->app->bind(IServiceTypeService::class, ServiceTypeService::class);
         $this->app->bind(IFinancialYearService::class, FinancialYearService::class);
         $this->app->bind(IPaymentService::class, PaymentService::class);
-        $this->app->bind(ITaxReliefService::class, TaxReliefService::class);
         $this->app->bind(IPayRunService::class, PayRunService::class);
         $this->app->bind(IClientTypeService::class, ClientTypeService::class);
         $this->app->bind(IClientService::class, ClientService::class);
@@ -132,8 +129,13 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(IWorkflowTypeService::class, WorkflowTypeService::class);
         $this->app->bind(IWorkflowService::class, WorkflowService::class);
 
-        //Configurations
+        //User
+        $this->app->bind(IPermissionService::class, PermissionService::class);
+        $this->app->bind(IUserService::class, UserService::class);
+        $this->app->bind(ITeamService::class, TeamService::class);
         $this->app->bind(IRoleService::class, RoleService::class);
+
+        //Configurations
         $this->app->bind(ICurrencyService::class, CurrencyService::class);
         $this->app->bind(IPaymentGatewayService::class, PaymentGatewayService::class);
 

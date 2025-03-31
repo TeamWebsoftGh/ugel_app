@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\Auth\Interfaces;
 
 use App\Models\Auth\Permission;
+use App\Repositories\Interfaces\IBaseRepository;
 use Illuminate\Support\Collection;
 
 interface IPermissionRepository extends IBaseRepository
