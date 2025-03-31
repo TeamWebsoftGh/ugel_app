@@ -4,10 +4,10 @@
         <tr>
             <th>#</th>
             <th width="15%">Title</th>
-            <th>Gender</th>
-            <th>Constituency</th>
-            <th>Electoral Area</th>
-            <th>Polling Station</th>
+            <th>Short Message</th>
+            <th>Property type</th>
+            <th>Property</th>
+            <th>Client Type</th>
             <th>Start Date</th>
             <th>End Date</th>
             <th>Action</th>
@@ -19,10 +19,10 @@
             <tr>
                 <td>{{$i++}}</td>
                 <td>{{$announcement->title}}</td>
-                <td>{{$announcement->gender??"All"}}</td>
-                <td>{{$announcement->constituency->name??"All"}}</td>
-                <td>{{$announcement->electoral_area->name??"All"}}</td>
-                <td>{{$announcement->polling_station->name??"All"}}</td>
+                <td>{{$announcement->short_message}}</td>
+                <td>{{$announcement->property_type->name??"All"}}</td>
+                <td>{{$announcement->property->property_name??"All"}}</td>
+                <td>{{$announcement->client_type->name??"All"}}</td>
                 <td>{{$announcement->start_date??"All"}}</td>
                 <td>{{$announcement->end_date??"All"}}</td>
                 <td class="table-action">
