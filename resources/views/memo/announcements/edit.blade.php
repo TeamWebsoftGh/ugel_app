@@ -30,85 +30,29 @@
                     @enderror
                     <span class="input-note text-danger" id="error-end_date"> </span>
                 </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Select Gender </label>
-                    <select name="gender" id="gender" data-live-search="true" class="form-control selectpicker constituency">
-                        <option selected value="">All</option>
-                        @foreach(\App\Constants\Constants::GENDER as $gender)
-                            <option @if($announcement->gender == $gender) selected="selected" @endif value="{{ $gender }}">{{ $gender }}</option>
-                        @endforeach
-                    </select>
-                    @error('gender')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-gender"> </span>
-                </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Select Constituency </label>
-                    <select name="constituency_id" id="constituency_id" data-live-search="true" class="form-control selectpicker constituency">
-                        <option selected value="">All</option>
-                        @foreach($constituencies as $constituency)
-                            <option @if($announcement->constituency_id == $constituency->id) selected="selected" @endif value="{{ $constituency->id }}">{{ $constituency->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('constituency_id')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-constituency_id"> </span>
-                </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Select Electoral Area </label>
-                    <select name="electoral_area_id" id="electoral_area_id" data-live-search="true" class="form-control selectpicker electoral_area">
-                        <option selected value="">All</option>
-                        @foreach($electoral_areas as $department)
-                            <option @if($announcement->electoral_area_id == $department->id) selected="selected" @endif value="{{ $department->id }}">{{ $department->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('electoral_area_id')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-electoral_area_id"> </span>
-                </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Select Polling Station </label>
-                    <select name="polling_station_id" id="polling_station_id" data-live-search="true" class="form-control selectpicker polling_station">
-                        <option selected value="">All</option>
-                        @foreach($polling_stations as $branch)
-                            <option @if($announcement->polling_station_id == $branch->id) selected="selected" @endif value="{{ $branch->id }}">{{ $branch->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('polling_station_id')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-polling_station_id"> </span>
-                </div>
-                <div class="form-group col-6 col-md-4">
-                    <label for="name" class="control-label">Min Age </label>
-                    <input type="text" id="min_age" name="min_age" value="{{old('min_age', $announcement->min_age)}}" class="form-control">
-                    @error('min_age')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-min_age"> </span>
-                </div>
-                <div class="form-group col-6 col-md-4">
-                    <label for="max_age" class="control-label">Max Age </label>
-                    <input type="text" id="max_age" name="max_age" value="{{old('max_age', $announcement->max_age)}}" class="form-control">
-                    @error('max_age')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-max_age"> </span>
-                </div>
-                <div class="form-group col-6 col-md-4">
-                    <label>Status</label>
-                    <select name="is_active" id="is_active" class="form-control selectpicker">
-                        <option value="0" @if($announcement->is_active == 0) selected="selected" @endif>Disable</option>
-                        <option value="1" @if($announcement->is_active == 1) selected="selected" @endif>Enable</option>
-                    </select>
-                    <span class="input-note text-danger" id="error-status"> </span>
-                    @error('status')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                </div>
+                <x-form.input-field name="property_type_id" label="Property Type" type="select" :options="$property_types->pluck('name', 'id')" :value="$announcement->property_type_id" />
+                <x-form.input-field
+                    name="property_id"
+                    label="Property"
+                    type="select"
+                    :options="[]"
+                    :value="$announcement->property_id"
+                />
+                <x-form.input-field
+                    name="client_type_id"
+                    label="Client Type"
+                    type="select"
+                    :options="$client_types->pluck('name', 'id')"
+                    :value="$announcement->client_type_id"
+                />
+                <x-form.input-field
+                    name="is_active"
+                    label="Status"
+                    type="select"
+                    :options="['1' => 'Active', '0' => 'Inactive']"
+                    :value="$announcement->is_active"
+                    required
+                />
                 <div class="form-group col-12">
                     <label for="short_message" class="control-label">Short Message <span class="text-danger">*</span></label>
                     <textarea class="form-control" rows="3" maxlength="160" name="short_message" id="short_message">{!! $announcement->short_message  !!}</textarea>
@@ -134,48 +78,53 @@
             todayHighlight: true
         }); // flatpickr
     });
-    $('#status').selectpicker('val', '{{$announcement->status}}');
-    $('#constituency_id').selectpicker('val', '{{$announcement->constituency_id}}');
-    $('#electoral_area_id').selectpicker('val', '{{$announcement->electoral_area_id}}');
-    $('#polling_station_id').selectpicker('val', '{{$announcement->polling_station_id}}');
 </script>
 
 <script>
-    $('.constituency').change(function () {
-        if ($(this).val() !== '') {
-            let value = $(this).val();
-            let _token = $('input[name="_token"]').val();
-            $.ajax({
-                url: "{{ route('ajax.electoralAreas') }}",
-                method: "POST",
-                data: {value: value, _token: _token},
-                success: function (result) {
-                    $('select').selectpicker("destroy");
-                    var allOption = '<option selected value="">All</option>';
-                    var updatedResult = allOption + result;
-                    $('#electoral_area_id').html(updatedResult);
-                    $('select').selectpicker();
+    function updateDropdown(url, targetDropdown, defaultOption = 'Select an option', selectedValue = null) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(response) {
+                if (response.status_code === '000') {
+                    let dropdown = $('#' + targetDropdown);
+                    dropdown.empty();
+                    dropdown.append(`<option value="">${defaultOption}</option>`);
+
+                    $.each(response.data, function(index, item) {
+                        let isSelected = selectedValue && selectedValue == item.id ? 'selected' : '';
+                        dropdown.append(`<option value="${item.id}" ${isSelected}>${item.name}</option>`);
+                    });
+
+                    dropdown.selectpicker('refresh');
+                } else {
+                    console.error("Error fetching data:", response.message);
                 }
-            });
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        let property = $('#property_id').val();
+
+        // Load dropdowns with existing values on page load
+        if ($('#property_type_id').val()) {
+            updateDropdown(
+                `/api/clients/common/properties?filter_property_type=${$('#property_type_id').val()}`,
+                'property_id',
+                'Select Property',
+                property
+            );
         }
+
+        // Update dropdowns dynamically when user changes selection
+        $('#property_type_id').change(function() {
+            let typeId = $(this).val();
+            updateDropdown(`/api/clients/common/properties?filter_property_type=${typeId}`, 'property_id', 'Select Property');
+        });
     });
 
-    $('.electoral_area').change(function () {
-        if ($(this).val() !== '') {
-            let value = $(this).val();
-            let _token = $('input[name="_token"]').val();
-            $.ajax({
-                url: "{{ route('ajax.pollingStations') }}",
-                method: "POST",
-                data: {value: value, _token: _token},
-                success: function (result) {
-                    $('select').selectpicker("destroy");
-                    var allOption = '<option selected value="">All</option>';
-                    var updatedResult = allOption + result;
-                    $('#polling_station_id').html(updatedResult);
-                    $('select').selectpicker();
-                }
-            });
-        }
-    });
 </script>

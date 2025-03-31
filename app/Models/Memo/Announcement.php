@@ -3,10 +3,9 @@
 namespace App\Models\Memo;
 
 use App\Abstracts\Model;
-use App\Models\Delegate\Constituency;
-use App\Models\Delegate\ElectoralArea;
-use App\Models\Delegate\PollingStation;
-use Carbon\Carbon;
+use App\Models\Client\ClientType;
+use App\Models\Property\Property;
+use App\Models\Property\PropertyType;
 
 class Announcement extends Model
 {
@@ -17,9 +16,9 @@ class Announcement extends Model
         'short_message',
         'message',
         'is_notify',
-        'electoral_area_id',
-        'constituency_id',
-        'polling_station_id',
+        'property_id',
+        'property_type_id',
+        'client_type_id',
         'is_sent',
         'created_by',
         'created_from',
@@ -34,38 +33,18 @@ class Announcement extends Model
         'max_age',
 	];
 
-	public function constituencies()
+	public function property()
     {
-		return $this->belongsTo(Constituency::class)->withDefault();
+		return $this->belongsTo(Property::class)->withDefault();
 	}
 
-    public function electoral_area()
+    public function property_type()
     {
-        return $this->belongsTo(ElectoralArea::class)->withDefault();
+        return $this->belongsTo(PropertyType::class)->withDefault();
     }
 
-    public function polling_station()
+    public function client_type()
     {
-        return $this->belongsTo(PollingStation::class)->withDefault();
+        return $this->belongsTo(ClientType::class)->withDefault();
     }
-
-	public function setStartDateAttribute($value)
-	{
-		$this->attributes['start_date'] = Carbon::createFromFormat(env('Date_Format'), $value)->format('Y-m-d');
-	}
-
-	public function getStartDateAttribute($value)
-	{
-		return Carbon::parse($value)->format(env('Date_Format'));
-	}
-
-	public function setEndDateAttribute($value)
-	{
-		$this->attributes['end_date'] = Carbon::createFromFormat(env('Date_Format'), $value)->format('Y-m-d');
-	}
-
-	public function getEndDateAttribute($value)
-	{
-		return Carbon::parse($value)->format(env('Date_Format'));
-	}
 }

@@ -63,7 +63,7 @@ class AnnouncementRepository extends BaseRepository implements IAnnouncementRepo
      *
      * @return Announcement
      */
-    public function createAnnouncement(array $data): Announcement
+    public function createAnnouncement(array $data)
     {
         return $this->create($data);
     }
@@ -75,7 +75,7 @@ class AnnouncementRepository extends BaseRepository implements IAnnouncementRepo
      *
      * @return Announcement
      */
-    public function findAnnouncementById(int $id): Announcement
+    public function findAnnouncementById(int $id)
     {
         return $this->findOneOrFail($id);
     }

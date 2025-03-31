@@ -13,18 +13,18 @@
             <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
                 <label>Constituencies</label>
                 <select name="filter_subsidiary" id="filter_subsidiary" data-live-search="true" class="form-control selectpicker">
-                    <option selected value="">All Constituencies</option>
-                    @foreach($constituencies as $subsidiary)
-                        <option @if($subsidiary->id == request()->filter_subsidiary) selected="selected" @endif value="{{ $subsidiary->id }}">{{ $subsidiary->name }}</option>
+                    <option selected value="">All Property Types</option>
+                    @foreach($property_types as $property_type)
+                        <option @if($property_type->id == request()->filter_subsidiary) selected="selected" @endif value="{{ $property_type->id }}">{{ $property_type->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
                 <label>Electoral Area</label>
-                <select name="filter_department" id="filter_department" data-live-search="true" class="form-control selectpicker">
-                    <option selected value="">All Electoral Areas</option>
-                    @foreach($electoral_areas as $department)
-                        <option @if($department->id == request()->filter_department) selected="selected" @endif value="{{ $department->id }}">{{ $department->name }}</option>
+                <select name="filter_property" id="filter_property" data-live-search="true" class="form-control selectpicker">
+                    <option selected value="">All Properties</option>
+                    @foreach($property_types as $property)
+                        <option @if($property->id == request()->filter_property) selected="selected" @endif value="{{ $property->id }}">{{ $property->property_name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -32,7 +32,7 @@
                 <label>Polling Station</label>
                 <select name="filter_branch" id="filter_branch" data-live-search="true" class="form-control selectpicker">
                     <option selected value="">All Polling Stations</option>
-                    @foreach($polling_stations as $loc)
+                    @foreach($client_types as $loc)
                         <option @if($loc->id == request()->filter_branch) selected="selected" @endif value="{{ $loc->id }}">{{ $loc->name }}</option>
                     @endforeach
                 </select>

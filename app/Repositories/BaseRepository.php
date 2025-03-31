@@ -52,10 +52,10 @@ abstract class BaseRepository implements IBaseRepository
             $message = "{$modelName} record has been {$action}d successfully.";
             log_activity($message, $model, $logAction);
         } else {
-            $errorDetails = $exception ? format_exception($exception) : 'Unknown error occurred.';
+            $errorDetails = $exception ? $exception->getMessage() : 'Unknown error occurred.';
             $message = "{$modelName} record {$action} failed. Error: {$errorDetails}";
             log_activity($message, $model, $logAction);
-            log_error($exception, $model, $logAction);
+            log_error(format_exception($exception), $model, $logAction);
         }
     }
 
