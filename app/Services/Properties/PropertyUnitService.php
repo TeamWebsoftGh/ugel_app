@@ -4,7 +4,7 @@ namespace App\Services\Properties;
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Property\Propertyunit;
-use App\Repositories\PropertyUnitRepository;
+use App\Repositories\Property\PropertyUnitRepository;
 use App\Services\Helpers\Response;
 use App\Services\Properties\Interfaces\IPropertyUnitService;
 use App\Services\ServiceBase;

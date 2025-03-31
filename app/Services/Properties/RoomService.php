@@ -5,7 +5,7 @@ namespace App\Services\Properties;
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Property\Room;
-use App\Repositories\Interfaces\IRoomRepository;
+use App\Repositories\Property\Interfaces\IRoomRepository;
 use App\Services\Helpers\Response;
 use App\Services\Properties\Interfaces\IRoomService;
 use App\Services\ServiceBase;

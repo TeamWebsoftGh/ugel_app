@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Mobile;
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
 use App\Http\Resources\ClientResource;
+use App\Http\Resources\PropertyDetailResource;
 use App\Http\Resources\PropertyResource;
 use App\Http\Resources\PropertyUnitResource;
 use App\Http\Resources\RoomResource;
@@ -63,7 +64,7 @@ class PropertyController extends MobileController
     public function show(Request $request, $id)
     {
         $property = $this->propertyService->findPropertyById($id);
-        $item = new PropertyResource($property);
+        $item = new PropertyDetailResource($property);
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }
 

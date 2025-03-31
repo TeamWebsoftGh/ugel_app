@@ -38,6 +38,8 @@ Route::group(['prefix' => '', 'namespace' => 'App\Http\Controllers\Property'], f
     //Property Units
     Route::resource('property-units', 'PropertyUnitController')->except(['update']);
     Route::resource('rooms', 'RoomController')->except(['update']);
+    Route::delete('reviews/delete/selected', 'ReviewController@bulkDelete')->name('reviews.delete.selected');
+    Route::resource('reviews', 'ReviewController')->except(['update']);
 
     //service-types
     Route::get('companies/kyc', 'AmenityController@kyc')->name('companies.kyc');

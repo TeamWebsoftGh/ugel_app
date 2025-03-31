@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Property;
 
 use App\Models\Property\Amenity;
-use App\Repositories\Interfaces\IAmenityRepository;
+use App\Repositories\BaseRepository;
+use App\Repositories\Property\Interfaces\IAmenityRepository;
 
 class AmenityRepository extends BaseRepository implements IAmenityRepository
 {

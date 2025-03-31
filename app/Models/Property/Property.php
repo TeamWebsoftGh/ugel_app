@@ -49,6 +49,12 @@ class Property extends Model
         return $this->hasMany(PropertyUnit::class);
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+
     public function amenities()
     {
         return $this->morphMany(Amenity::class, 'amenitable');

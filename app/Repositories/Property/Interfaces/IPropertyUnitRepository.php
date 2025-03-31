@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\Property\Interfaces;
 
 use App\Models\Property\PropertyUnit;
-use Illuminate\Support\Collection;
+use App\Repositories\Interfaces\IBaseRepository;
 
 interface IPropertyUnitRepository extends IBaseRepository
 {

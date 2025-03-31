@@ -6,7 +6,7 @@ use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Common\NumberGenerator;
 use App\Models\Property\Property;
-use App\Repositories\Interfaces\IPropertyRepository;
+use App\Repositories\Property\Interfaces\IPropertyRepository;
 use App\Services\Helpers\Response;
 use App\Services\Properties\Interfaces\IPropertyService;
 use App\Services\ServiceBase;

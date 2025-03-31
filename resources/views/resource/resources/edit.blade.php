@@ -29,11 +29,11 @@
                     <span class="input-note text-danger" id="error-category_id"> </span>
                 </div>
                 <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Select Subsidiary </label>
+                    <label for="name" class="control-label">Select Property Types </label>
                     <select name="subsidiary_id" id="subsidiary_id" required class="form-control selectpicker">
                         <option value="">All</option>
-                        @foreach($constituencies as $subsidiary)
-                            <option value="{{ $subsidiary->id }}">{{ $subsidiary->name }}</option>
+                        @foreach($property_types as $property_type)
+                            <option value="{{ $property_type->id }}">{{ $property_type->name }}</option>
                         @endforeach
                     </select>
                     @error('subsidiary_id')
@@ -45,7 +45,7 @@
                     <label for="name" class="control-label">Select Department </label>
                     <select name="department_id" id="department_id" required class="form-control selectpicker">
                         <option value="">All</option>
-                        @foreach($electoral_areas as $department)
+                        @foreach($client_types as $department)
                             <option value="{{ $department->id }}">{{ $department->name }}</option>
                         @endforeach
                     </select>

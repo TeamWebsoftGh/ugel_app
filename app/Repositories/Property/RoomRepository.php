@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Property;
 
 use App\Models\Property\Room;
-use App\Repositories\Interfaces\IRoomRepository;
+use App\Repositories\BaseRepository;
+use App\Repositories\Property\Interfaces\IRoomRepository;
 
 class RoomRepository extends BaseRepository implements IRoomRepository
 {

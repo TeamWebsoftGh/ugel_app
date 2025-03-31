@@ -1,7 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\Mobile\CommonController;
-use App\Http\Controllers\Api\Mobile\MaintenanceController;
+use App\Http\Controllers\Api\Mobile\CustomerService\MaintenanceController;
 use Illuminate\Support\Facades\Route;
 
 /*

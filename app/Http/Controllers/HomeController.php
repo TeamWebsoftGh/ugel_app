@@ -4,24 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Models\Audit\LogActivity;
 use App\Models\Auth\User;
+use App\Models\Billing\Booking;
+use App\Models\Client\Client;
 use App\Models\Memo\Announcement;
 use App\Models\Property\Property;
+use App\Services\Billing\Interfaces\IBookingService;
 use App\Services\Interfaces\IUserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class HomeController extends Controller
 {
-    private IUserService $userService;
-
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct(IUserService $user)
+    public function __construct()
     {
-        $this->userService = $user;
     }
     /**
      * Show the application dashboard.
@@ -32,15 +32,16 @@ class HomeController extends Controller
     {
         $start_date = \Carbon\Carbon::now()->format('Y-m-d');
         $activities = LogActivity::getLatest();
-        $employees = User::where('is_active', '=', 1)->orderByDesc('id')->get();
+        $customers = Client::where('is_active', '=', 1)->orderByDesc('id')->get();
+        $bookings = Booking::where('is_active', '=', 1)->orderByDesc('id');
 
-        $p_employees_count = $employees->where('confirmed_date', '==', null)->count();
+        $p_customer_count = $customers->count();
 
         $birthdays = User::where('date_of_birth', '<=', $start_date)
             ->orderByRaw('DATE_FORMAT(date_of_birth, "%m-%d")')
             ->get();
 
-        $departments = $employees->groupBy('company_id');
+        $departments = $customers->groupBy('client_type_id');
 
         $dept_count_array = [];
         $dept_name_array = [];
@@ -61,15 +62,15 @@ class HomeController extends Controller
                 $dept_count_array[] = $dept->count();
                 if ($key == null)
                 {
-                    $dept_name_array[] = __('No Company');
+                    $dept_name_array[] = __('No Clients');
                 } else
                 {
-                    $dept_name_array[] = $dept->first()?->company?->company_name;
+                    $dept_name_array[] = $dept->first()?->clientType?->name;
                 }
             }
         }
 
-        $designations = $employees->groupBy('branch_id');
+        $designations = $customers->groupBy('branch_id');
 
         $desig_count_array = [];
         $desig_name_array = [];
@@ -120,11 +121,11 @@ class HomeController extends Controller
 
         $ticket_count = 1;//SupportTicket::where('ticket_status', 'open')->count();
 
-        return view('home', compact('employees', 'attendance_count',
+        return view('home', compact('customers', 'attendance_count',
             'leave_count', 'dept_count_array', 'dept_name_array', 'dept_bgcolor_array', 'dept_hover_bgcolor_array',
             'desig_count_array', 'desig_name_array', 'desig_bgcolor_array', 'desig_hover_bgcolor_array',
-            'p_employees_count', 'birthdays', 'projects','activities', 'project_count_array', 'project_name_array',
-            'completed_projects', 'announcements', 'ticket_count'));
+            'p_customer_count', 'birthdays', 'projects','activities', 'project_count_array', 'project_name_array',
+            'completed_projects', 'announcements', 'ticket_count','bookings'));
     }
 
 }

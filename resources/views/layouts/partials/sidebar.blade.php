@@ -115,6 +115,9 @@
                 <li class="nav-item">
                     <a href="{{route("amenities.index")}}" class="nav-link" data-key="t-amenities">Amenities</a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{route("reviews.index")}}" class="nav-link" data-key="t-user_activity"> Reviews </a>
+                </li>
             </ul>
         </div>
     </li>
@@ -133,9 +136,6 @@
                 </li>
                 <li class="nav-item">
                     <a href="{{route("invoices.index")}}" class="nav-link" data-key="t-user_activity"> Transactions </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{route("invoices.index")}}" class="nav-link" data-key="t-user_activity"> Reviews </a>
                 </li>
                 <li class="nav-item">
                     <a href="{{route("invoice-items.index")}}" class="nav-link" data-key="t-property_unit">Invoice Items </a>

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\Property\Interfaces;
 
 use App\Models\Property\Amenity;
+use App\Repositories\Interfaces\IBaseRepository;
 
 interface IAmenityRepository extends IBaseRepository
 {

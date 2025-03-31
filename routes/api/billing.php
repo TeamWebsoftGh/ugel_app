@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\Mobile\BookingController;
+use App\Http\Controllers\Api\Mobile\CustomerService\MaintenanceController;
 use App\Http\Controllers\Api\Mobile\InvoiceController;
-use App\Http\Controllers\Api\Mobile\MaintenanceController;
 use Illuminate\Support\Facades\Route;
 
 /*

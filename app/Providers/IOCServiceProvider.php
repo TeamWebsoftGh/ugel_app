@@ -74,11 +74,13 @@ use App\Services\Properties\Interfaces\IPropertyCategoryService;
 use App\Services\Properties\Interfaces\IPropertyService;
 use App\Services\Properties\Interfaces\IPropertyTypeService;
 use App\Services\Properties\Interfaces\IPropertyUnitService;
+use App\Services\Properties\Interfaces\IReviewService;
 use App\Services\Properties\Interfaces\IRoomService;
 use App\Services\Properties\PropertyCategoryService;
 use App\Services\Properties\PropertyService;
 use App\Services\Properties\PropertyTypeService;
 use App\Services\Properties\PropertyUnitService;
+use App\Services\Properties\ReviewService;
 use App\Services\Properties\RoomService;
 use App\Services\PublicationService;
 use App\Services\RoleService;
@@ -109,7 +111,6 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(IUserService::class, UserService::class);
         $this->app->bind(IAuditService::class, AuditService::class);
         $this->app->bind(ISettingService::class, SettingService::class);
-        $this->app->bind(IContactService::class, ContactService::class);
         $this->app->bind(IServiceTypeService::class, ServiceTypeService::class);
         $this->app->bind(IFinancialYearService::class, FinancialYearService::class);
         $this->app->bind(IPaymentService::class, PaymentService::class);
@@ -123,6 +124,7 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(IBulkSmsService::class, BulkSmsService::class);
         $this->app->bind(IEventService::class, EventService::class);
         $this->app->bind(IMeetingService::class, MeetingService::class);
+        $this->app->bind(IContactService::class, ContactService::class);
 
         //Workflow
         $this->app->bind(IWorkflowPositionService::class, WorkflowPositionService::class);
@@ -161,6 +163,7 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(IPropertyService::class, PropertyService::class);
         $this->app->bind(IPropertyUnitService::class, PropertyUnitService::class);
         $this->app->bind(IRoomService::class, RoomService::class);
+        $this->app->bind(IReviewService::class, ReviewService::class);
 
         //Billing
         $this->app->bind(IBookingPeriodService::class, BookingPeriodService::class);

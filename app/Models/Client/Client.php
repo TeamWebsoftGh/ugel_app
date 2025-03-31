@@ -85,7 +85,7 @@ class Client extends Model
         {
             return ucwords(strtolower($this->business_name));
         }
-        return ucwords(strtolower($this->title)).' ' . ucwords(strtolower($this->first_name)) . ' ' . ucwords(strtolower($this->last_name)). ' (' . ucwords(strtolower($this->customer_number??$this->phone_number)).')';
+        return ucwords(strtolower($this->title)).' ' . ucwords(strtolower($this->first_name)) . ' ' . ucwords(strtolower($this->last_name)). ' (' . ucwords(strtolower($this->client_number??$this->phone_number)).')';
     }
 
 

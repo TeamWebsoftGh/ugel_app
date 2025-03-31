@@ -5,7 +5,7 @@ namespace App\Services\Properties;
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Property\PropertyType;
-use App\Repositories\Interfaces\IPropertyTypeRepository;
+use App\Repositories\Property\Interfaces\IPropertyTypeRepository;
 use App\Services\Helpers\Response;
 use App\Services\Properties\Interfaces\IPropertyTypeService;
 use App\Services\ServiceBase;

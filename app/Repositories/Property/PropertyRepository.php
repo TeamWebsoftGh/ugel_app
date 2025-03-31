@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Property;
 
 
 use App\Models\Property\Property;
-use App\Repositories\Interfaces\IPropertyRepository;
-use Illuminate\Support\Collection;
+use App\Repositories\BaseRepository;
+use App\Repositories\Property\Interfaces\IPropertyRepository;
 
 class PropertyRepository extends BaseRepository implements IPropertyRepository
 {

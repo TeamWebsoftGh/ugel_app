@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Api\Mobile;
+namespace App\Http\Controllers\Api\Mobile\CustomerService;
 
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
 use App\Http\Requests\ElectionResultRequest;
 use App\Http\Resources\MaintenanceCategoryResource;
-use App\Services\Helpers\DelegteHelper;
-use App\Services\Interfaces\IElectionResultService;
 use App\Services\Interfaces\IMaintenanceCategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
