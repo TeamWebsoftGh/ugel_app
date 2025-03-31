@@ -69,4 +69,9 @@ class Property extends Model
     {
         return $this->attributes['property_name'];
     }
+
+    public function getRatingAttribute()
+    {
+        return $this->reviews()->avg('rating') ?? 0;
+    }
 }
