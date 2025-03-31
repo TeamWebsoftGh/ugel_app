@@ -31,12 +31,10 @@ return new class extends Migration
             $table->string('gender')->nullable();
             $table->string('min_age')->nullable();
             $table->string('max_age')->nullable();
+            $table->string('category')->nullable();
             $table->string('file')->nullable();
             $table->string('media_id')->nullable();
             $table->string('media_url')->nullable();
-
-            $table->unsignedBigInteger('company_id')->nullable()->index();
-            $table->foreign('company_id')->references('id')->on('companies');
 
             $this->extracted($table);
         });
@@ -145,7 +143,6 @@ return new class extends Migration
             $table->unsignedBigInteger('company_id')->nullable()->index();
             $table->foreign('company_id')->references('id')->on('companies');
 
-
             $table->string('created_from', 100)->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedBigInteger('import_id')->nullable();
@@ -180,10 +177,15 @@ return new class extends Migration
         $table->unsignedInteger('created_by')->nullable();
         $table->unsignedBigInteger('import_id')->nullable();
 
-        $table->unsignedBigInteger('electoral_area_id')->nullable()->index();
-        $table->unsignedBigInteger('constituency_id')->nullable()->index();
+        $table->unsignedBigInteger('property_type_id')->nullable()->index();
+        $table->unsignedBigInteger('property_id')->nullable()->index();
+        $table->unsignedBigInteger('property_unit_id')->nullable()->index();
 
-        $table->unsignedBigInteger('polling_station_id')->nullable()->index();
+        $table->unsignedBigInteger('client_type_id')->nullable()->index();
+
+        $table->unsignedBigInteger('company_id')->nullable()->index();
+        $table->foreign('company_id')->references('id')->on('companies');
+
         $table->timestamps();
         $table->softDeletes();
     }
