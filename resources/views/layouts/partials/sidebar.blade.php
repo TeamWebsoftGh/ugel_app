@@ -35,25 +35,6 @@
                         </div>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link menu-link " href="#voice" data-bs-toggle="collapse" role="button"
-                           aria-expanded="false" aria-controls="voice">
-                            <span data-key="t-my-requests">Voice</span>
-                        </a>
-                        <div class="collapse menu-dropdown {{ request()->is('*bulk-voice*') ? 'show' : '' }}" id="voice">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="{{route("bulk-voice.quick")}}" class="nav-link {{ request()->is('*quick-bulk-voice*') ? 'active' : '' }}" data-key="t-login_activity">Quick Voice </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route("bulk-voice.create")}}" class="nav-link {{ request()->is('*bulk-voice/create*') ? 'active' : '' }}" data-key="t-login_activity"> Send Voice </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route("bulk-voice.index")}}" class="nav-link {{ request()->is('*bulk-voice') ? 'active' : '' }}" data-key="t-login_activity">All Messages </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link menu-link" href="#whatsapp" data-bs-toggle="collapse" role="button"
                            aria-expanded="false" aria-controls="whatsapp">
                             <span data-key="t-my-requests">WhatsApp</span>
