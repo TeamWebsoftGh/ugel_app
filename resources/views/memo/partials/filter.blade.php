@@ -11,7 +11,7 @@
                 </div>
             </div>
             <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
-                <label>Constituencies</label>
+                <label>Property Types</label>
                 <select name="filter_subsidiary" id="filter_subsidiary" data-live-search="true" class="form-control selectpicker">
                     <option selected value="">All Property Types</option>
                     @foreach($property_types as $property_type)
@@ -20,7 +20,7 @@
                 </select>
             </div>
             <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
-                <label>Electoral Area</label>
+                <label>Properties</label>
                 <select name="filter_property" id="filter_property" data-live-search="true" class="form-control selectpicker">
                     <option selected value="">All Properties</option>
                     @foreach($property_types as $property)
@@ -29,9 +29,9 @@
                 </select>
             </div>
             <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
-                <label>Polling Station</label>
+                <label>Client Types</label>
                 <select name="filter_branch" id="filter_branch" data-live-search="true" class="form-control selectpicker">
-                    <option selected value="">All Polling Stations</option>
+                    <option selected value="">All Client Type</option>
                     @foreach($client_types as $loc)
                         <option @if($loc->id == request()->filter_branch) selected="selected" @endif value="{{ $loc->id }}">{{ $loc->name }}</option>
                     @endforeach
