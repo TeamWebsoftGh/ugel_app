@@ -77,7 +77,7 @@ class PropertyHelper
             ->get(['id', 'name', 'type', 'booking_start_date', 'booking_end_date']);
     }
 
-    public static function getAllProperties($propertyTypeId): Collection
+    public static function getAllProperties($propertyTypeId = null): Collection
     {
         return Property::select('id', 'property_name', 'property_type_id')
             ->where('is_active', 1)

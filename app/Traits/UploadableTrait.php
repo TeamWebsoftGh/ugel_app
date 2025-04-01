@@ -68,6 +68,7 @@ trait UploadableTrait
                     'file_type' => $file->getClientOriginalExtension(),
                     'file_size' => $size,
                     'created_by' => user()->id,
+                    'company_id' => company_id(),
                     'type' => $type,
                 ]);
                 $document->save();

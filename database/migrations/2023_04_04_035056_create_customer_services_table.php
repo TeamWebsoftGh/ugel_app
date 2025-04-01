@@ -125,13 +125,14 @@ return new class extends Migration
 
         // Many-to-Many Pivot Table
         Schema::create('maintenance_category_maintenance_requests', function (Blueprint $table) {
-            $table->id();
+          //  $table->id();
             $table->foreignId('maintenance_id')->constrained('maintenance_requests')->onDelete('cascade');
-            $table->string('other_issue')->nullable();
+          //  $table->string('other_issue')->nullable();
             // Shortened Foreign Key Name
             $table->foreignId('maintenance_category_id')
                 ->constrained('maintenance_categories', 'id', 'fk_maint_category_request')
-                ->onDelete('cascade');        });
+                ->onDelete('cascade');
+        });
 
         Schema::create('maintenance_requests_users', function (Blueprint $table) {
             $table->unsignedBigInteger('maintenance_requests_id')->index();

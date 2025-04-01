@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\Mobile\CustomerService\MaintenanceController;
+use App\Http\Controllers\Api\Mobile\CustomerService\MaintenanceRequestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['namespace' => 'Mobile\CustomerService', 'prefix' => 'customer-service'], function () {
-    Route::resource('enquiries', 'EnquiryController')->except(['update']);
-    Route::get('maintenance-categories', [MaintenanceController::class, 'categories']);
+    Route::apiResource('enquiries', 'EnquiryController')->except(['update']);
+    Route::get('maintenance-categories', [MaintenanceRequestController::class, 'categories']);
+    Route::get('maintenance-requests/lookup', [MaintenanceRequestController::class, 'lookup'])->name('maintenance-requests.lookup');
+    Route::post('maintenance-requests/update', [MaintenanceRequestController::class, 'update'])->name('maintenance-requests.update');
+    Route::apiResource('maintenance-requests', MaintenanceRequestController::class)->except(['update']);
 });

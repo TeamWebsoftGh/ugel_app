@@ -59,11 +59,6 @@ class SupportTicket extends Model
         return $this->hasMany(Comment::class);
     }
 
-    public function documents()
-    {
-        return $this->morphMany(DocumentUpload::class, 'documentable');
-    }
-
     public function getDateCreatedAttribute($value)
     {
         return Carbon::parse($this->created_at)->format(env('Date_Format'). ' h:i A');

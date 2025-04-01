@@ -4,6 +4,7 @@ namespace App\Models\Client;
 
 use App\Abstracts\Model;
 use App\Models\Auth\User;
+use App\Models\Billing\Booking;
 use App\Models\Settings\Country;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -64,6 +65,12 @@ class Client extends Model
     {
         return $this->belongsTo(Country::class);
     }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
 
     public function users()
     {

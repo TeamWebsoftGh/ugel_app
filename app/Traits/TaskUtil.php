@@ -77,7 +77,7 @@ class TaskUtil
          */
 
         return MaintenanceCategory::select('id', 'name')
-            ->where(['is_active' => 1])->get();
+            ->where(['is_active' => 1])->whereNull('parent_id')->get();
     }
 
 

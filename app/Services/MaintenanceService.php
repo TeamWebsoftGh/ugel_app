@@ -57,41 +57,22 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
      */
     public function createMaintenance(array $params)
     {
-        //Declaration
-        $maintenance = null;
+        $params['reference'] = NumberGenerator::gen(MaintenanceRequest::class);
+        // $params['user_id'] = user()->id;
+        $params['status'] = 'opened';
+        $maintenance = $this->maintenanceRepo->createMaintenance($params);
 
-        //Process Request
-        try {
-            $params['reference'] = NumberGenerator::gen(MaintenanceRequest::class);
-           // $params['user_id'] = user()->id;
-            $params['status'] = 'opened';
-            $maintenance = $this->maintenanceRepo->createMaintenance($params);
-
-            send_mail(TicketStatusChangeMail::class, $maintenance, $maintenance->user);
-        } catch (\Exception $e) {
-            log_error(format_exception($e), new MaintenanceRequest(), 'create-maintenance-failed');
-        }
-
-        //Check if Maintenance was created successfully
-        if (!$maintenance)
+        if (isset($params['maintenance_subcategory_id']))
         {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERR_CREATE;
-
-            return $this->response;
+            $maintenance->categories()->sync($params['maintenance_subcategory_id']);
         }
 
-        $this->addWorkflowRequest($maintenance, $maintenance->user);
-        //Audit Trail
-        $logAction = 'create-maintenance-successful';
-        $auditMessage = 'You have successfully added a new maintenance request: '.$maintenance->reference;
+        if (isset($params['assignee_ids']))
+        {
+            $maintenance->users()->sync($params['assignee_ids']);
+        }
 
-        log_activity($auditMessage, $maintenance, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-        $this->response->data = $maintenance;
-
-        return $this->response;
+        return $this->buildCreateResponse($maintenance);
     }
 
     /**
@@ -119,35 +100,23 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
         $result = false;
         $oldStatus = $maintenance->status;
 
-        //Process Request
-        try {
-            $result = $this->maintenanceRepo->updateMaintenance($params, $maintenance);
+        $result = $this->maintenanceRepo->updateMaintenance($params, $maintenance);
 
-            if($oldStatus != $params['status']){
-                event(new TicketStatusChangeEvent($maintenance));
-            }
-        } catch (\Exception $e) {
-            log_error(format_exception($e), $maintenance, 'update-maintenance-failed');
-        }
-
-        if (!$result)
+        if (isset($params['maintenance_subcategory_id']))
         {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERR_UPDATE;
-
-            return $this->response;
+            $maintenance->categories()->sync($params['maintenance_subcategory_id']);
         }
-        $this->addWorkflowRequest($maintenance, $maintenance->user);
-        //Audit Trail
-        $logAction = 'update-maintenance-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
 
-        log_activity($auditMessage, $maintenance, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-        $this->response->data = $maintenance;
+        if (isset($params['assignee_ids']))
+        {
+            $maintenance->users()->sync($params['assignee_ids']);
+        }
 
-        return $this->response;
+        if($oldStatus != $params['status']){
+          //  event(new TicketStatusChangeEvent($maintenance));
+        }
+        //$this->addWorkflowRequest($maintenance, $maintenance->user);
+        return $this->buildUpdateResponse($maintenance, $result);
     }
 
     /**
@@ -197,6 +166,7 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
             'categories' => TaskUtil::getMaintenanceCategories(),
             'maintenance' => $task,
             'statuses' => TaskUtil::getAllStatuses(),
+            'properties' => PropertyHelper::getAllProperties(),
         ];
     }
 

@@ -47,6 +47,10 @@ class TeamService extends ServiceBase implements ITeamService
     public function createTeam(array $params)
     {
         $team = $this->teamRepo->create($params);
+
+        if(isset($params['assigned_users'])){
+            $team->users()->sync($params['assigned_users']);
+        }
         return $this->buildCreateResponse($team);
     }
 
@@ -75,6 +79,9 @@ class TeamService extends ServiceBase implements ITeamService
     public function updateTeam(array $params, Team $team)
     {
         $result = $this->teamRepo->update($params, $team->id);
+        if(isset($params['assigned_users'])){
+            $team->users()->sync($params['assigned_users']);
+        }
         return $this->buildUpdateResponse($team, $result);
     }
 

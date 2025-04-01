@@ -5,6 +5,7 @@ namespace App\Http\Controllers\CustomerService;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Helpers\MaintenanceHelper;
+use App\Http\Requests\MaintenanceRequestRequest;
 use App\Models\Audit\LogActivity;
 use App\Services\Interfaces\IMaintenanceService;
 use App\Traits\TaskUtil;
@@ -56,7 +57,7 @@ class MaintenanceRequestController extends Controller
                 ->addIndexColumn()
                 ->addColumn('client_name', function ($row)
                 {
-                    return $row->client->name;
+                    return $row->client->fullname;
                 })
                 ->addColumn('client_type', function ($row)
                 {
@@ -68,7 +69,11 @@ class MaintenanceRequestController extends Controller
                 })
                 ->addColumn('category_name', function ($row)
                 {
-                    return $row->category->name??"N/A";
+                    return $row->maintenanceCategory->name??"N/A";
+                })
+                ->addColumn('property_name', function ($row)
+                {
+                    return $row->property->property_name??"N/A";
                 })
                 ->addColumn('priority_name', function ($row)
                 {
@@ -157,29 +162,16 @@ class MaintenanceRequestController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return RedirectResponse|JsonResponse
      */
-    public function store(Request $request)
+    public function store(MaintenanceRequestRequest $request)
     {
         $data = $request->except('_token', '_method', 'id');
 
-        if(!$request->has('update_request')){
-            $validatedData = $request->validate([
-                'subject' => 'required',
-                'ticket_note' => 'required',
-                'priority_id' => 'required',
-            ]);
-        }else{
-            $validatedData = $request->validate([
-                'status' => 'required',
-                'remarks' => 'required',
-            ]);
-        }
-
         if ($request->has("id") && $request->input("id") != null)
         {
-            $task = $this->ticketService->findSupportTicketById($request->input("id"));
-            $results = $this->ticketService->updateSupportTicket($data, $task);
+            $task = $this->maintenanceService->findMaintenanceById($request->input("id"));
+            $results = $this->maintenanceService->updateMaintenance($data, $task);
         }else{
-            $results = $this->ticketService->createSupportTicket($data);
+            $results = $this->maintenanceService->createMaintenance($data);
         }
 
         if ($request->ajax()){
@@ -192,7 +184,7 @@ class MaintenanceRequestController extends Controller
         }
         request()->session()->flash('message', $results->message);
 
-        return redirect()->route('support-tickets.show', $results->data->id);
+        return redirect()->route('maintenance-requests.show', $results->data->id);
     }
 
     /**
@@ -220,15 +212,18 @@ class MaintenanceRequestController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return Response
+     * @return Factory|\Illuminate\Foundation\Application|object|View
      */
     public function edit($id)
     {
-        $ticket = $this->ticketService->findSupportTicketById($id);
+        $ticket = $this->maintenanceService->findMaintenanceById($id);
 
-        $data = $this->ticketService->getCreateTicket();
-        $data['ticket'] = $ticket;
-        return view("customer-service.support-tickets.create", $data);
+        $data = $this->maintenanceService->getCreateMaintenance();
+        $data['maintenance'] = $ticket;
+        if (request()->ajax()){
+            return view('customer-service.maintenance-requests.edit', $data);
+        }
+        return view("customer-service.maintenance-requests.create", $data);
     }
 
     public function postComment(Request $request)

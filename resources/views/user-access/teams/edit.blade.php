@@ -26,6 +26,14 @@
         />
 
         <x-form.input-field
+            name="team_lead_id"
+            label="Team Lead"
+            type="select"
+            :options="$users->pluck('fullname', 'id')"
+            :value="$item->team_lead_id"
+        />
+
+        <x-form.input-field
             name="is_active"
             label="Status"
             type="select"
@@ -41,14 +49,31 @@
             placeholder="Enter a description"
             :value="$item->description"
         />
+
         <hr/>
 
         <!-- Hostels & Prices -->
         <div class="form-group col-12">
-            <h5>Assign Users</h5>
+            <h5>Assign Users <span class="text-danger">*</span></h5>
 
+            <div class="row">
+                @foreach ($users as $user)
+                    <div class="col-md-4">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   name="assigned_users[]"
+                                   id="user_{{ $user->id }}"
+                                   value="{{ $user->id }}"
+                                {{ in_array($user->id, old('assigned_users', $item->users->pluck('id')->toArray() ?? [])) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="user_{{ $user->id }}">
+                                {{ $user->fullname }}
+                            </label>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
-
         <!-- Save Button -->
         <div class="form-group col-12">
             @include("shared.save-button")

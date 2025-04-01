@@ -2,9 +2,9 @@
 
 namespace App\Models\Common;
 
-use App\Abstracts\Model;
 use App\Models\Auth\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Comment extends Model

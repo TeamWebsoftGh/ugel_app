@@ -27,13 +27,13 @@
                             <th class="not-exported">
                                 <div class="form-check"><input type="checkbox" class="form-check-input fs-15 select-all"><label></label></div>
                             </th>
-                            <th width="15%">Title</th>
-                            <th width="25%">Description</th>
-                            <th>Subsidiary</th>
-                            <th>Department</th>
-                            <th>Branch</th>
-                            <th>Start Date</th>
-                            <th>End Date</th>
+                            <th width="15%">Client Name</th>
+                            <th>Client Phone</th>
+                            <th>Maintenance Category</th>
+                            <th>Property Name</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Request Date</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -54,13 +54,13 @@
                 var cols =
                     [
                         { data: "id" },
-                        { data: "title" },
-                        { data: "description" },
-                        { data: "subsidiary_name" },
-                        { data: "department_name" },
-                        { data: "branch_name" },
-                        { data: "start_date" },
-                        { data: "end_date" },
+                        { data: "client_name" },
+                        { data: "client_phone" },
+                        { data: "category_name" },
+                        { data: "property_name" },
+                        { data: "priority_name" },
+                        { data: "status" },
+                        { data: "created_at" },
                         { data: "action", orderable: false, searchable: false }
                     ];
                 loadDataAndInitializeDataTable("maintenance_request", "{{ route('maintenance-requests.index') }}", cols);

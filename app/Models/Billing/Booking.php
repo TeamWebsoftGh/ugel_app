@@ -61,4 +61,11 @@ class Booking extends Model
     {
         return $this->hasOne(Invoice::class)->withDefault();
     }
+
+    public function scopeActive($query)
+    {
+        return $query->whereDate('lease_start_date', '<=', now())
+            ->whereDate('lease_end_date', '>=', now());
+    }
+
 }

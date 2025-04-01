@@ -102,29 +102,6 @@
 
 <!-- jQuery Handling -->
 <script>
-    function updateDropdown(url, targetId, placeholder = 'Select an option', selected = null) {
-        const dropdown = $('#' + targetId);
-
-        $.get(url)
-            .done(function(response) {
-                if (response.status_code === '000') {
-                    dropdown.empty().append(`<option value="">${placeholder}</option>`);
-                    response.data.forEach(item => {
-                        const isSelected = selected && selected == item.id ? 'selected' : '';
-                        dropdown.append(`<option value="${item.id}" ${isSelected}>${item.name}</option>`);
-                    });
-                } else {
-                    console.warn(`Warning: ${response.message}`);
-                }
-            })
-            .fail(function(xhr) {
-                console.error("Failed to load dropdown:", xhr.responseText);
-            })
-            .always(function() {
-                dropdown.selectpicker?.('refresh');
-            });
-    }
-
     $(document).ready(function () {
         const propertyId = $('#property_id').val();
         const selectedUnitId = "{{ $item->property_unit_id }}";

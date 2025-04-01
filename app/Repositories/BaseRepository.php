@@ -180,7 +180,7 @@ abstract class BaseRepository implements IBaseRepository
         if ($files) {
             $files = is_array($files) ? $files : [$files];
             foreach ($files as $file) {
-                $this->saveDocuments(collect([$file]), $model, $model->id, $model->employee_id);
+                $this->saveDocuments(collect([$file]), $model, $model->id, $model->client_id);
             }
         }
     }

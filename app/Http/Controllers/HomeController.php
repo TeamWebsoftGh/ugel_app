@@ -6,8 +6,10 @@ use App\Models\Audit\LogActivity;
 use App\Models\Auth\User;
 use App\Models\Billing\Booking;
 use App\Models\Client\Client;
+use App\Models\Common\DocumentUpload;
 use App\Models\Memo\Announcement;
 use App\Models\Property\Property;
+use Illuminate\Support\Facades\Storage;
 
 class HomeController extends Controller
 {
@@ -124,4 +126,12 @@ class HomeController extends Controller
             'completed_projects', 'announcements', 'ticket_count','bookings'));
     }
 
+    public function deleteAttachment($id)
+    {
+        $attachment = DocumentUpload::findOrFail($id);
+        Storage::delete($attachment->file_path); // if stored in local disk
+        $attachment->delete();
+
+        return back()->with('success', 'Attachment deleted.');
+    }
 }
