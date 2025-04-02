@@ -19,7 +19,6 @@ use App\Repositories\Billing\Interfaces\IInvoiceItemRepository;
 use App\Repositories\Billing\Interfaces\IInvoiceRepository;
 use App\Repositories\Billing\InvoiceItemRepository;
 use App\Repositories\Billing\InvoiceRepository;
-use App\Repositories\BranchRepository;
 use App\Repositories\BulkSmsRepository;
 use App\Repositories\CategoryRepository;
 use App\Repositories\ClientRepository;
@@ -33,7 +32,6 @@ use App\Repositories\EnquiryRepository;
 use App\Repositories\EventRepository;
 use App\Repositories\FinancialYearRepository;
 use App\Repositories\Interfaces\IAuditRepository;
-use App\Repositories\Interfaces\IBranchRepository;
 use App\Repositories\Interfaces\IBulkSmsRepository;
 use App\Repositories\Interfaces\ICategoryRepository;
 use App\Repositories\Interfaces\IClientRepository;
@@ -57,11 +55,11 @@ use App\Repositories\Interfaces\ISettingRepository;
 use App\Repositories\Interfaces\ISupportTicketRepository;
 use App\Repositories\Interfaces\ITaskRepository;
 use App\Repositories\Interfaces\IVisitorLogRepository;
-use App\Repositories\Interfaces\IWorkflowPositionRepository;
-use App\Repositories\Interfaces\IWorkflowPositionTypeRepository;
-use App\Repositories\Interfaces\IWorkflowRepository;
-use App\Repositories\Interfaces\IWorkflowTypeRepository;
 use App\Repositories\KnowledgeBaseRepository;
+use App\Repositories\Legal\CourtCaseRepository;
+use App\Repositories\Legal\CourtHearingRepository;
+use App\Repositories\Legal\Interfaces\ICourtCaseRepository;
+use App\Repositories\Legal\Interfaces\ICourtHearingRepository;
 use App\Repositories\MaintenanceCategoryRepository;
 use App\Repositories\MaintenanceRepository;
 use App\Repositories\MeetingRepository;
@@ -84,11 +82,14 @@ use App\Repositories\SettingRepository;
 use App\Repositories\SupportTicketRepository;
 use App\Repositories\TaskRepository;
 use App\Repositories\VisitorLogRepository;
-use App\Repositories\WorkflowPositionRepository;
-use App\Repositories\WorkflowPositionTypeRepository;
-use App\Repositories\WorkflowRepository;
-use App\Repositories\WorkflowTypeRepository;
-use App\Services\Auth\Interfaces\ITeamService;
+use App\Repositories\Workflow\Interfaces\IWorkflowPositionRepository;
+use App\Repositories\Workflow\Interfaces\IWorkflowPositionTypeRepository;
+use App\Repositories\Workflow\Interfaces\IWorkflowRepository;
+use App\Repositories\Workflow\Interfaces\IWorkflowTypeRepository;
+use App\Repositories\Workflow\WorkflowPositionRepository;
+use App\Repositories\Workflow\WorkflowPositionTypeRepository;
+use App\Repositories\Workflow\WorkflowRepository;
+use App\Repositories\Workflow\WorkflowTypeRepository;
 use Illuminate\Support\ServiceProvider;
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -106,15 +107,16 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IUserRepository::class, UserRepository::class);
         $this->app->bind(ITeamRepository::class, TeamRepository::class);
 
-        $this->app->bind(IAuditRepository::class, AuditRepository::class);
-        $this->app->bind(ISettingRepository::class, SettingRepository::class);
+        //Customer
         $this->app->bind(IClientRepository::class, ClientRepository::class);
         $this->app->bind(IClientTypeRepository::class, ClientTypeRepository::class);
-        $this->app->bind(IFinancialYearRepository::class, FinancialYearRepository::class);
-        $this->app->bind(ICurrencyRepository::class, CurrencyRepository::class);
-        $this->app->bind(ITaskRepository::class, TaskRepository::class);
 
         //Common
+        $this->app->bind(IAuditRepository::class, AuditRepository::class);
+        $this->app->bind(IFinancialYearRepository::class, FinancialYearRepository::class);
+        $this->app->bind(ITaskRepository::class, TaskRepository::class);
+
+        //Communication
         $this->app->bind(IBulkSmsRepository::class, BulkSmsRepository::class);
         $this->app->bind(IEventRepository::class, EventRepository::class);
         $this->app->bind(IMeetingRepository::class, MeetingRepository::class);
@@ -131,7 +133,6 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IPaymentRepository::class, PaymentRepository::class);
         $this->app->bind(IDepartmentRepository::class, DepartmentRepository::class);
         $this->app->bind(IDesignationRepository::class, DesignationRepository::class);
-        $this->app->bind(IBranchRepository::class, BranchRepository::class);
 
         //Resources
         $this->app->bind(ICategoryRepository::class, CategoryRepository::class);
@@ -161,6 +162,13 @@ class RepositoryServiceProvider extends ServiceProvider
 
         //Configurations
         $this->app->bind(IPaymentGatewayRepository::class, PaymentGatewayRepository::class);
+        $this->app->bind(ICurrencyRepository::class, CurrencyRepository::class);
+        $this->app->bind(ISettingRepository::class, SettingRepository::class);
+
+        //Legal
+        $this->app->bind(ICourtCaseRepository::class, CourtCaseRepository::class);
+        $this->app->bind(ICourtHearingRepository::class, CourtHearingRepository::class);
+
     }
 
     /**

@@ -4,9 +4,9 @@ namespace App\Http\Controllers\CustomerService;
 
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
-use App\Helpers\MaintenanceHelper;
 use App\Http\Requests\MaintenanceRequestRequest;
 use App\Models\Audit\LogActivity;
+use App\Services\Helpers\PropertyHelper;
 use App\Services\Interfaces\IMaintenanceService;
 use App\Traits\TaskUtil;
 use Carbon\Carbon;
@@ -43,8 +43,10 @@ class MaintenanceRequestController extends Controller
         $data['filter_client_type'] = $request->get('filter_client_type', '');
         $data['filter_status'] = $request->get('filter_status', '');
         $data['filter_priority'] = $request->get('filter_priority', '');
+        $data['filter_property'] = $request->get('filter_property', '');
         $data['categories'] = TaskUtil::getMaintenanceCategories();
         $data['priorities'] = TaskUtil::getPriorities();
+        $data['properties'] = PropertyHelper::getAllProperties();
 
         if (request()->ajax())
         {
@@ -58,10 +60,6 @@ class MaintenanceRequestController extends Controller
                 ->addColumn('client_name', function ($row)
                 {
                     return $row->client->fullname;
-                })
-                ->addColumn('client_type', function ($row)
-                {
-                    return $row->client->clientType->name;
                 })
                 ->addColumn('client_phone', function ($row)
                 {
@@ -108,7 +106,6 @@ class MaintenanceRequestController extends Controller
         $user = user();
 
         $data = $request->all();
-        $data['filter_user'] = $user->id;
         $data['filter_start_date'] = $request->get('filter_start_date', Carbon::now()->startOfYear()->format('Y-m-d'));
         $data['filter_end_date'] = $request->get('filter_end_date', Carbon::now()->format('Y-m-d'));
         $data['filter_category'] = $request->get('filter_category', '');
@@ -116,9 +113,10 @@ class MaintenanceRequestController extends Controller
         $data['filter_client_type'] = $request->get('filter_client_type', '');
         $data['filter_status'] = $request->get('filter_status', '');
         $data['filter_priority'] = $request->get('filter_priority', '');
+        $data['filter_property'] = $request->get('filter_property', '');
         $data['categories'] = TaskUtil::getMaintenanceCategories();
         $data['priorities'] = TaskUtil::getPriorities();
-
+        $data['properties'] = PropertyHelper::getAllProperties();
 
         return view("customer-service.maintenance-requests.index", compact("data"));
     }
@@ -135,8 +133,10 @@ class MaintenanceRequestController extends Controller
         $data['filter_client_type'] = $request->get('filter_client_type', '');
         $data['filter_status'] = $request->get('filter_status', '');
         $data['filter_priority'] = $request->get('filter_priority', '');
+        $data['filter_property'] = $request->get('filter_property', '');
         $data['categories'] = TaskUtil::getMaintenanceCategories();
         $data['priorities'] = TaskUtil::getPriorities();
+        $data['properties'] = PropertyHelper::getAllProperties();
 
         return view("customer-service.maintenance-requests.index", compact("data"));
     }
@@ -304,4 +304,24 @@ class MaintenanceRequestController extends Controller
         return $this->responseJson($result);
     }
 
+
+    public function destroy($id)
+    {
+        $task = $this->maintenanceService->findMaintenanceById($id);
+        $result = $this->maintenanceService->deleteMaintenance($task);
+
+        return $this->responseJson($result);
+    }
+
+    /**
+     * Bulk delete resources from storage.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $result = $this->maintenanceService->deleteMultipleRequests($request->ids);
+        return $this->responseJson($result);
+    }
 }

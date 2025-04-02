@@ -1,6 +1,6 @@
 var token = $('meta[name="csrf-token"]').attr('content');
 
-function loadDataAndInitializeDataTable(tabId, url, columns) {
+function loadDataAndInitializeDataTable(tabId, url, columns, filterContainerSelector = '#filter_form') {
     var table = $('#' + tabId + '-table').DataTable({
         processing: true,
         serverSide: true,
@@ -8,18 +8,17 @@ function loadDataAndInitializeDataTable(tabId, url, columns) {
             url: url,
             type: 'GET',
             data: function (d) {
-                // Optional: Add custom filters here
-                // d.filter_constituency  = $("#filter_constituency").val();
-                // d.filter_electoral_area  = $('#filter_electoral_area').val();
-                // d.filter_polling_station = $('#filter_polling_station').val();
-                // d.filter_region = $('#filter_region').val();
+                // Merge filter data from the specified container into the AJAX request
+                if (filterContainerSelector) {
+                    $.extend(d, getFilterData(filterContainerSelector));
+                }
             }
         },
         columns: columns,
         order: [],
         pageLength: 25,
         lengthChange: true,
-        lengthMenu: [ [25, 50, 100, 500, -1], [25, 50, 100, 500, "All"] ],  // Options for page length select
+        lengthMenu: [ [25, 50, 100, 500, -1], [25, 50, 100, 500, "All"]],  // Options for page length select
         select: {
             style: 'multi'  // Multiple row selection
         },
@@ -276,7 +275,7 @@ function dtDeleteItem(id, url, tabId)
                 },
                 success: function (data) {
                     Swal.fire({
-                        icon: data.status,
+                        icon: data.status.toLowerCase(),
                         title: '',
                         text: data.message,
                     });
@@ -316,7 +315,7 @@ function dtMultiDeleteItem(ids, url, tabId)
                 },
                 success: function (data) {
                     Swal.fire({
-                        icon: data.status,
+                        icon: data.status.toLowerCase(),
                         title: '',
                         text: data.message,
                     });
@@ -398,4 +397,18 @@ function updateSelectAllCheckbox(table) {
         headerCheckbox.prop('checked', false);  // Uncheck the header checkbox
     }
 }
+
+function getFilterData(containerSelector = '#filter_form') {
+    var filterData = {};
+    $(containerSelector).find('input[name], select[name], textarea[name]').each(function() {
+        var $this = $(this);
+        // For checkboxes and radio buttons, include only if checked
+        if (($this.is(':checkbox') || $this.is(':radio')) && !$this.is(':checked')) {
+            return;
+        }
+        filterData[$this.attr('name')] = $this.val();
+    });
+    return filterData;
+}
+
 

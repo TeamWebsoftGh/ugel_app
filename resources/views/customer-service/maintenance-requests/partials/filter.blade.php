@@ -14,7 +14,7 @@
             </div>
 
             <!-- Subsidiary Filter -->
-            <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
+            <div class="col-md-3 col-xl-2 col-lg-2 col-sm-4 col-xs-6 mb-3">
                 <label>Maintenance Category</label>
                 <select name="filter_category" id="filter_category" class="form-control selectpicker">
                     <option value="">All Categories</option>
@@ -27,7 +27,7 @@
             </div>
 
             <!-- Department Filter -->
-            <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
+            <div class="col-md-3 col-xl-2 col-lg-2 col-sm-4 col-xs-6 mb-3">
                 <label>Priority</label>
                 <select name="filter_priority" id="filter_priority" class="form-control selectpicker">
                     <option value="">All Priorities</option>
@@ -40,13 +40,26 @@
             </div>
 
             <!-- Branch Filter -->
-            <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
+            <div class="col-md-3 col-xl-2 col-lg-2 col-sm-4 col-xs-6 mb-3">
                 <label>Customers</label>
                 <select name="filter_customer" id="filter_customer" class="form-control selectpicker">
                     <option value="">All Customers</option>
                     @foreach($customers as $cus)
                         <option value="{{ $cus->id }}" {{ $cus->id == $data['filter_customer'] ? 'selected' : '' }}>
                             {{ $cus->full_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Branch Filter -->
+            <div class="col-md-3 col-xl-2 col-lg-2 col-sm-4 col-xs-6 mb-3">
+                <label>Properties</label>
+                <select name="filter_property" id="filter_property" class="form-control selectpicker">
+                    <option value="">All Properties</option>
+                    @foreach($data['properties'] as $pro)
+                        <option value="{{ $pro->id }}" {{ $pro->id == $data['filter_property'] ? 'selected' : '' }}>
+                            {{ $pro->property_name }}
                         </option>
                     @endforeach
                 </select>

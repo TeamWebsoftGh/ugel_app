@@ -7,10 +7,10 @@ use App\Constants\ResponseType;
 use App\Models\Organization\Branch;
 use App\Models\Organization\Department;
 use App\Models\Workflow\Workflow;
-use App\Traits\UploadableTrait;
-use App\Repositories\Interfaces\IWorkflowRepository;
+use App\Repositories\Workflow\Interfaces\IWorkflowRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IWorkflowService;
+use App\Traits\UploadableTrait;
 use Illuminate\Support\Collection;
 
 class WorkflowService extends ServiceBase implements IWorkflowService

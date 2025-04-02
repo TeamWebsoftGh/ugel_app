@@ -34,7 +34,7 @@ class GlobalViewServiceProvider extends ServiceProvider
         );
 
         View::composer(
-            ['property.*', 'settings.*', 'client.*', 'report.*', 'employee.*', 'billing.*','memo.*','resource.*',
+            ['property.*', 'settings.*', 'client.*', 'report.*', 'legal.*', 'billing.*','memo.*','resource.*',
                 'organization.*', 'workflow.*','offers.*', 'workflow-requests.*', 'customer-service.*', 'tasks.*',
                 'user-access.teams.*'],
             PropertyComposer::class

@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\ActivityTriggered;
+use App\Events\NewMaintenanceRequestEvent;
 use App\Listeners\LogActivityListener;
+use App\Listeners\NewMaintenanceRequestListener;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -55,6 +57,11 @@ class AppServiceProvider extends ServiceProvider
         Event::listen(
             ActivityTriggered::class,
             LogActivityListener::class,
+        );
+
+        Event::listen(
+            NewMaintenanceRequestEvent::class,
+            NewMaintenanceRequestListener::class,
         );
 //
 //        Event::listen(

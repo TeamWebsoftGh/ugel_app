@@ -6,11 +6,11 @@ use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Organization\Branch;
 use App\Models\Organization\Department;
-use App\Traits\UploadableTrait;
 use App\Models\Workflow\WorkflowType;
-use App\Repositories\Interfaces\IWorkflowTypeRepository;
+use App\Repositories\Workflow\Interfaces\IWorkflowTypeRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IWorkflowTypeService;
+use App\Traits\UploadableTrait;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 

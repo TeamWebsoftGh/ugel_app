@@ -10,7 +10,7 @@
     <li class="nav-item">
         <a class="nav-link menu-link" href="#announcement" data-bs-toggle="collapse" role="button"
            aria-expanded="false" aria-controls="sidebarAuth">
-            <i class="ri-notification-2-fill"></i> <span data-key="t-authentication">Communication</span>
+            <i class="ri-notification-2-line"></i> <span data-key="t-authentication">Communication</span>
         </a>
         <div class="collapse menu-dropdown {{ (request()->is('*communication*')||request()->is('*popups*')) ? 'show' : '' }}" id="announcement">
             <ul class="nav nav-sm flex-column">
@@ -68,7 +68,7 @@
     <li class="nav-item">
         <a class="nav-link menu-link" href="#operations" data-bs-toggle="collapse" role="button"
            aria-expanded="false" aria-controls="sidebarAuth">
-            <i class="ri-calculator-fill"></i> <span data-key="t-authentication">Properties</span>
+            <i class="ri-building-2-line"></i> <span data-key="t-authentication">Properties</span>
         </a>
         <div class="collapse menu-dropdown {{ (request()->is('*properties*')||request()->is('*property-*')||request()->is('*amenities')|request()->is('*rooms')) ? 'show' : '' }}" id="operations">
             <ul class="nav nav-sm flex-column">
@@ -105,7 +105,7 @@
     <li class="nav-item">
         <a class="nav-link menu-link" href="#bookings" data-bs-toggle="collapse" role="button"
            aria-expanded="false" aria-controls="sidebarAuth">
-            <i class="ri-calculator-fill"></i> <span data-key="t-authentication">Billing Center</span>
+            <i class="ri-wallet-2-line"></i> <span data-key="t-bookings">Billing Center</span>
         </a>
         <div class="collapse menu-dropdown {{ (request()->is('*booking*')||request()->is('*invoice*')||request()->is('*booking')|request()->is('*booking')) ? 'show' : '' }}" id="bookings">
             <ul class="nav nav-sm flex-column">
@@ -130,7 +130,7 @@
     <li class="nav-item">
         <a class="nav-link menu-link" href="#customers" data-bs-toggle="collapse" role="button"
            aria-expanded="false" aria-controls="sidebarAuth">
-            <i class="ri-calculator-fill"></i> <span data-key="t-authentication">Customers</span>
+            <i class="ri-group-2-line"></i> <span data-key="t-authentication">Customers</span>
         </a>
         <div class="collapse menu-dropdown {{ (request()->is('*cs*')) ? 'show' : '' }}" id="customers">
             <ul class="nav nav-sm flex-column">
@@ -159,7 +159,7 @@
         <li class="nav-item">
             <a class="nav-link menu-link" href="#requests" data-bs-toggle="collapse" role="button"
                aria-expanded="false" aria-controls="sidebarAuth">
-                <i class="ri-message-2-fill"></i> <span data-key="t-authentication">Requests</span>
+                <i class="ri-message-2-line"></i> <span data-key="t-authentication">Requests</span>
             </a>
             <div class="collapse menu-dropdown {{ (request()->is('*workflow-requests*')) ? 'show' : '' }}" id="requests">
                 <ul class="nav nav-sm flex-column">
@@ -181,7 +181,7 @@
     <li class="nav-item">
         <a class="nav-link menu-link" href="#customerService" data-bs-toggle="collapse" role="button"
            aria-expanded="false" aria-controls="sidebarAuth">
-            <i class="ri-ticket-2-fill"></i> <span data-key="t-authentication">Customer Service</span>
+            <i class="ri-customer-service-2-line"></i> <span data-key="t-authentication">Customer Service</span>
         </a>
         <div class="collapse menu-dropdown {{ (request()->is('*customer-service*')) ? 'show' : '' }}" id="customerService">
             <ul class="nav nav-sm flex-column">
@@ -216,7 +216,7 @@
                             <li class="nav-item">
                                 <a href="{{route("maintenance-requests.assigned")}}" class="nav-link" data-key="t-calendar"> Assigned Issues </a>
                             </li>
-                            @if(user()->can('read-support-tickets'))
+                            @if(user()->can('read-maintenance-requests'))
                                 <li class="nav-item">
                                     <a href="{{route("maintenance-requests.index")}}" class="nav-link" data-key="t-calendar"> All Issues </a>
                                 </li>
@@ -236,7 +236,7 @@
     <li class="nav-item">
         <a class="nav-link menu-link" href="#resources" data-bs-toggle="collapse" role="button"
            aria-expanded="false" aria-controls="sidebarAuth">
-            <i class="ri-book-2-fill"></i> <span data-key="t-authentication">Resources</span>
+            <i class="ri-book-2-line"></i> <span data-key="t-authentication">Resources</span>
         </a>
         <div class="collapse menu-dropdown {{ (request()->is('*resource*')) ? 'show' : '' }}" id="resources">
             <ul class="nav nav-sm flex-column">
@@ -262,6 +262,25 @@
             </ul>
         </div>
     </li>
+    <li class="nav-item">
+        <a class="nav-link menu-link" href="#legal" data-bs-toggle="collapse" role="button"
+           aria-expanded="false" aria-controls="legal">
+            <i class="ri-scales-line"></i> <span data-key="t-legal">Legal</span>
+        </a>
+        <div class="collapse menu-dropdown {{ (request()->is('*legal*')) ? 'show' : '' }}" id="legal">
+            <ul class="nav nav-sm flex-column">
+                <li class="nav-item">
+                    <a href="{{route("court-cases.index")}}" class="nav-link" data-key="t-user_activity"> Court Cases </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route("court-hearings.index")}}" class="nav-link" data-key="t-hearings"> Hearings </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{route("court-cases.active")}}" class="nav-link" data-key="t-calendar"> Active Cases </a>
+                </li>
+            </ul>
+        </div>
+    </li>
     @canany(['read-payroll-reports', 'read-property-reports', 'read-logs'])
         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Audit & Report</span></li>
     @endcanany
@@ -269,7 +288,7 @@
         <li class="nav-item">
             <a class="nav-link menu-link" href="#sidebarAuth" data-bs-toggle="collapse" role="button"
                aria-expanded="false" aria-controls="sidebarAuth">
-                <i class="ri-eye-2-fill"></i> <span data-key="t-authentication">Audit</span>
+                <i class="ri-eye-2-line"></i> <span data-key="t-authentication">Audit</span>
             </a>
             <div class="collapse menu-dropdown {{ (request()->is('*audit*')) ? 'show' : '' }}" id="sidebarAuth">
                 <ul class="nav nav-sm flex-column">
@@ -292,7 +311,7 @@
         <li class="nav-item">
             <a class="nav-link menu-link" href="#sidebarPages" data-bs-toggle="collapse" role="button"
                aria-expanded="false" aria-controls="sidebarPages">
-                <i class="ri-bar-chart-2-fill"></i> <span data-key="t-pages">Report</span>
+                <i class="ri-bar-chart-2-line"></i> <span data-key="t-pages">Report</span>
             </a>
             <div class="collapse menu-dropdown {{ (request()->is('*reports*')) ? 'show' : '' }}" id="sidebarPages">
                 <ul class="nav nav-sm flex-column">

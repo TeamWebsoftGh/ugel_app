@@ -15,8 +15,6 @@ use App\Services\Billing\Interfaces\IBookingService;
 use App\Services\Helpers\PropertyHelper;
 use App\Services\Helpers\Response;
 use App\Services\ServiceBase;
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -241,14 +239,5 @@ class BookingService extends ServiceBase implements IBookingService
         ];
     }
 
-    /**
-     * Build error response
-     */
-    private function errorResponse(string $message): Response
-    {
-        $this->response->status = ResponseType::ERROR;
-        $this->response->message = $message;
 
-        return $this->response;
-    }
 }

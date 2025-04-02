@@ -8,7 +8,6 @@ use App\Http\Requests\MaintenanceRequestRequest;
 use App\Http\Resources\MaintenanceCategoryResource;
 use App\Http\Resources\MaintenanceRequestDetailsResource;
 use App\Http\Resources\MaintenanceRequestResource;
-use App\Http\Resources\MaintenanceResource;
 use App\Models\Client\Client;
 use App\Services\Helpers\PropertyHelper;
 use App\Services\Interfaces\IMaintenanceCategoryService;
@@ -103,6 +102,7 @@ class MaintenanceRequestController extends MobileController
     {
         $data = $request->except('_token', '_method', 'id');
 
+        $data['client_id'] =  user()->client_id;
         $results = $this->maintenanceService->createMaintenance($data);
 
         if(isset($results->data))

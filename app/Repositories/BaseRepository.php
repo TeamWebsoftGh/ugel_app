@@ -55,7 +55,9 @@ abstract class BaseRepository implements IBaseRepository
             $errorDetails = $exception ? $exception->getMessage() : 'Unknown error occurred.';
             $message = "{$modelName} record {$action} failed. Error: {$errorDetails}";
             log_activity($message, $model, $logAction);
-            log_error(format_exception($exception), $model, $logAction);
+            if(isset($exception)){
+                log_error(format_exception($exception), $model, $logAction);
+            }
         }
     }
 
@@ -163,10 +165,10 @@ abstract class BaseRepository implements IBaseRepository
     {
         try {
             $deleted = $this->model->destroy($ids);
-            $this->logActivity('delete-multiple', 'success');
+            $this->logActivity('delete-multiple', $this->model, $deleted);
             return $deleted;
         } catch (\Exception $e) {
-            $this->logActivity('delete-multiple', 'failed', null, $e);
+            $this->logActivity('delete-multiple', $this->model, false, $e);
             return 0;
         }
     }

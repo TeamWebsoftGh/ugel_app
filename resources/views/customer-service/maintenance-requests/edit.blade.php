@@ -1,4 +1,4 @@
-<form method="POST" action="{{route('maintenance-requests.store')}}" enctype="multipart/form-data" novalidate>
+<form method="POST" action="{{route('maintenance-requests.store')}}" enctype="multipart/form-data" id="maintenance_request">
     <p>All fields with <span class="text-danger">*</span> are required.</p>
     @csrf
     <input type="hidden" id="_id" name="id" value="{{$maintenance->id}}">

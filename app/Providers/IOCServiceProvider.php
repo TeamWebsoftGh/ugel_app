@@ -19,7 +19,6 @@ use App\Services\Billing\Interfaces\IInvoiceItemService;
 use App\Services\Billing\Interfaces\IInvoiceService;
 use App\Services\Billing\InvoiceItemService;
 use App\Services\Billing\InvoiceService;
-use App\Services\BranchService;
 use App\Services\BulkSmsService;
 use App\Services\CategoryService;
 use App\Services\ClientService;
@@ -33,7 +32,6 @@ use App\Services\EnquiryService;
 use App\Services\EventService;
 use App\Services\FinancialYearService;
 use App\Services\Interfaces\IAuditService;
-use App\Services\Interfaces\IBranchService;
 use App\Services\Interfaces\IBulkSmsService;
 use App\Services\Interfaces\ICategoryService;
 use App\Services\Interfaces\IClientService;
@@ -65,6 +63,10 @@ use App\Services\Interfaces\IWorkflowPositionTypeService;
 use App\Services\Interfaces\IWorkflowService;
 use App\Services\Interfaces\IWorkflowTypeService;
 use App\Services\KnowledgeBaseService;
+use App\Services\Legal\CourtCaseService;
+use App\Services\Legal\CourtHearingService;
+use App\Services\Legal\Interfaces\ICourtCaseService;
+use App\Services\Legal\Interfaces\ICourtHearingService;
 use App\Services\MaintenanceCategoryService;
 use App\Services\MaintenanceService;
 use App\Services\MeetingService;
@@ -144,7 +146,7 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(ISubsidiaryService::class, SubsidiaryService::class);
         $this->app->bind(IDepartmentService::class, DepartmentService::class);
         $this->app->bind(IDesignationService::class, DesignationService::class);
-        $this->app->bind(IBranchService::class, BranchService::class);
+        $this->app->bind(ICourtCaseService::class, CourtCaseService::class);
 
         //Resource
         $this->app->bind(ICategoryService::class, CategoryService::class);
@@ -172,6 +174,11 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(IInvoiceItemService::class, InvoiceItemService::class);
         $this->app->bind(IBookingService::class, BookingService::class);
         $this->app->bind(IInvoiceService::class, InvoiceService::class);
+
+        //Legal
+        $this->app->bind(ICourtCaseService::class, CourtCaseService::class);
+        $this->app->bind(ICourtHearingService::class, CourtHearingService::class);
+
     }
 
     /**

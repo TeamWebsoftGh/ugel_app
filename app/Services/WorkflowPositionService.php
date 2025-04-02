@@ -5,15 +5,14 @@ namespace App\Services;
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Auth\Team;
-use App\Models\Organization\Branch;
 use App\Models\Organization\Company;
 use App\Models\Organization\Department;
-use App\Traits\UploadableTrait;
 use App\Models\Workflow\WorkflowPosition;
 use App\Models\Workflow\WorkflowPositionType;
-use App\Repositories\Interfaces\IWorkflowPositionRepository;
+use App\Repositories\Workflow\Interfaces\IWorkflowPositionRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IWorkflowPositionService;
+use App\Traits\UploadableTrait;
 use Illuminate\Support\Collection;
 
 class WorkflowPositionService extends ServiceBase implements IWorkflowPositionService

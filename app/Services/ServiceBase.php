@@ -176,4 +176,14 @@ class ServiceBase implements IBaseService
         return $this->response;
     }
 
+    /**
+     * Build error response
+     */
+    public function errorResponse(string $message): Response
+    {
+        $this->response->status = ResponseType::ERROR;
+        $this->response->message = $message;
+
+        return $this->response;
+    }
 }

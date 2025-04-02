@@ -5,86 +5,52 @@ namespace App\Traits;
 use App\Constants\ResponseType;
 use App\Events\WorkflowRequestEvent;
 use App\Events\WorkflowStatusChanged;
-use App\Models\Auth\User;
-use App\Models\Client\Client;
-use App\Models\Common\Company;
-use App\Models\Organization\Branch;
-use App\Models\Organization\Department;
-use App\Models\Workflow\Workflow;
-use App\Models\Workflow\WorkflowPosition;
-use App\Models\Workflow\WorkflowPositionType;
+use App\Models\Workflow;
 use App\Models\Workflow\WorkflowRequest;
 use App\Models\Workflow\WorkflowRequestDetail;
 use App\Models\Workflow\WorkflowType;
 use App\Services\Helpers\Response;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 Trait WorkflowUtil
 {
-    public function sendNextWorkflowRequest($workflowRequest, $employee, $data)
-    {
-        if(!$this->HasPendingRequests($workflowRequest))
-        {
-            $workflow = $this->getNextWorkflow($workflowRequest);
-
-            if($workflow)
-            {
-                $workflowRequestDetail =  new WorkflowRequestDetail();
-                $workflowRequestDetail->workflow_position_type_id = $workflow->workflow_position_type_id;
-                $workflowRequestDetail->implementor_id = optional($this->getImplementorFromWorkflow($workflow, $employee, $workflowRequest->workflow_requestable))->id;
-                $workflowRequestDetail->company_id = $workflowRequest->company_id;
-                $workflowRequestDetail->employee_id = $employee->id;
-                $workflowRequestDetail->workflow_id = $workflow->id;
-                $workflowRequestDetail->status = 'pending';
-                $workflowRequestDetail->workflow_request_id = $workflowRequest->id;
-                $workflowRequestDetail->save();
-
-                $workflowRequest->current_flow_sequence = $workflow->flow_sequence;
-                $workflowRequest->workflow_id = $workflow->id;
-                $workflowRequest->save();
-
-                event(new WorkflowRequestEvent($workflowRequestDetail));
-            }else{
-                $workflowRequest->status = $data['status'];
-                $workflowRequest->is_completed = 1;
-                $workflowRequest->approved_at = $data['approved_at'] ?? Carbon::now();
-                $workflowRequest->save();
-
-                $workflowRequest->workflow_requestable->status = $data['status'];
-                $workflowRequest->workflow_requestable->save();
-            }
-        }
-    }
-
     /**
      * Returns Walk In Customer for a Business
      *
-     * @param int $business_id
-     *
-     * @return array/false
+     * @param $class
+     * @param $employee
+     * @param null $routeName
+     * @return void/false
      */
-    public function addWorkflowRequest($class, $user)
+    public function addWorkflowRequest($class, $user, $routeName = null)
     {
+        // Check if the workflow feature is enabled and if the class status allows for workflow processing
+        if (!config('app.enable_workflow', true) || in_array($class->status ?? '', ['approved', 'declined', 'rejected'], true)) {
+            return;
+        }
+
         try {
             $workflowType = WorkflowType::firstWhere('subject_type', get_class($class));
-
             $workflowRequest = WorkflowRequest::firstOrCreate([
                 'workflow_requestable_id' => $class->id,
                 'workflow_requestable_type' => get_class($class),
-                'employee_id' => $user->id
+                'user_id' => $user->id
             ], [
                 'workflow_requestable_id' => $class->id,
                 'workflow_requestable_type' => get_class($class),
-                'employee_id' => $user->id,
+                'user_id' => $user->id,
+                'action_type' => "approve",
                 'current_flow_sequence' => 0,
                 'workflow_type_id' => $workflowType->id,
-                'company_id' => user()->company_id,
+                'company_id' => $user->company_id,
                 'status' => 'pending',
             ]);
 
             $data['class'] = $class;
             $data['status'] = "approved";
+            $data['route'] = $routeName;
             $data["approved_at"] = Carbon::now();
 
             $this->sendNextWorkflowRequest($workflowRequest, $user, $data);
@@ -93,7 +59,179 @@ Trait WorkflowUtil
         }
     }
 
-    public function UpdateWorkflowRequest(WorkflowRequestDetail $detail, array $data)
+    public function hasPendingRequests($workflowRequest)
+    {
+        // Initialize the query on workflowRequestDetails.
+        $wf_req_details_query = $workflowRequest->workflowRequestDetails();
+
+        // Check if there are any workflow request details at all
+        if ($wf_req_details_query->count() === 0) {
+            return false; // or true, depending on your definition of "pending" when there are no records
+        }
+
+        // Narrow down the query if flow_sequence is set.
+        $wf_req_details_query = $wf_req_details_query->where('flow_sequence', $workflowRequest->current_flow_sequence);
+
+        // If all_required is true or flow_sequence is not set, check for any pending requests.
+        if ($workflowRequest->all_required)
+        {
+            // Check if there are any details with 'pending' status directly.
+            $hasPending = $wf_req_details_query->where('status', 'pending')->exists();
+        } else {
+            // If not all_required and flow_sequence is set, check if all details are either approved or rejected.
+            // This means, if there's none that are approved or rejected, it implies there are pending requests.
+            $hasNonPending = $wf_req_details_query->whereIn('status', ['approved', 'rejected', 'declined'])->exists();
+            // If there are non-pending (approved/rejected/declined) requests, then there's no pending request.
+            $hasPending = !$hasNonPending;
+
+        }
+        return $hasPending;
+    }
+
+    public function sendNextWorkflowRequest($workflowRequest, $user, $data)
+    {
+        if(!$this->hasPendingRequests($workflowRequest))
+        {
+            $workflows = $this->getNextWorkflow($workflowRequest);
+
+            if ($workflows)
+            {
+                foreach($workflows as $workflow)
+                {
+                    $this->sendWorkflow($workflow, $user, $workflowRequest, $data);
+                }
+            }
+            else
+            {
+                $workflowRequest->status = $data['status'];
+                $workflowRequest->is_completed = 1;
+                $workflowRequest->approved_at = $data['approved_at'] ?? Carbon::now();
+                $workflowRequest->save();
+
+                $workflowRequest->workflow_requestable->status = $data['status'];
+                $workflowRequest->workflow_requestable->save();
+
+            }
+        }
+    }
+
+    //to support multiple workflow for one sequence
+    public function getNextWorkflow($workflowRequest)
+    {
+        // First, determine the next smallest sequence greater than the current
+        $nextSmallestSequence = Workflow::where('workflow_type_id', $workflowRequest->workflow_type_id)
+            ->where('is_active', 1)
+            ->where('flow_sequence', '>', $workflowRequest->current_flow_sequence)
+            ->where('action', 'approve')
+            ->min('flow_sequence'); // Get the minimum sequence that is greater
+
+        if (is_null($nextSmallestSequence)) {
+            return null; // No next workflow available
+        }
+
+        // Now retrieve all workflows with this sequence
+        return Workflow::where('workflow_type_id', $workflowRequest->workflow_type_id)
+            ->where('is_active', 1)
+            ->where('flow_sequence', $nextSmallestSequence)
+            ->where('action', 'approve')
+            ->get(); // Get all records with the smallest next sequence
+    }
+
+    public function getImplementorsFromWorkflow($workflow, $employee, $class = null)
+    {
+        $wf_position_type = WorkflowPositionType::find($workflow->workflow_position_type_id);
+
+        return $this->getGeneralPositions($wf_position_type->code, $employee, $class);
+    }
+
+    public function getGeneralPositions($code, $employee, $class = null)
+    {
+        $subjectTypesToCodes = ['hod', 'division-head', 'branch-manager', 'unit-head', 'country-manager']; // Define which codes require special handling
+
+        // Direct handling for specific codes without needing to loop or check multiple conditions.
+        if ($code == "reliever" && $class !== null) {
+            return Employee::where('id', $class->reliever_id)->get();
+        } elseif ($code == "supervisor") {
+            return collect([$this->getSupervisor($employee->id)]); // Ensure it returns a collection
+        }
+
+
+        if(in_array($code, $subjectTypesToCodes)) {
+            $subjectType = $this->getSubjectTypeFromCode($code);
+
+            // Assume we also have a way to get the subject_id based on the employee and code
+            $subjectId = $this->getSubjectIdFromEmployeeAndCode($employee, $code);
+
+            $workflows = WorkflowPosition::where('subject_type', $subjectType)
+                ->where(['subject_id' => $subjectId, 'is_active' => 1])
+                ->get();
+        } else {
+            // Fallback or default handling if the code is not in the special array
+            $workflows = WorkflowPosition::whereHas('workflowPositionType', function ($query) use ($code) {
+                $query->where('code', '=', $code);
+            })->where('is_active', 1)->get();
+        }
+
+        // Extract employee_ids from the workflows
+        $employeeIds = $workflows->pluck('employee_id')->unique()->toArray();
+
+        // Fetch all Employees matching the employee_ids
+        $employees = Employee::whereNull('exit_date')->whereIn('id', $employeeIds)->get();
+
+        return $employees;
+    }
+
+    public function getSubjectIdFromEmployeeAndCode($employee, $code)
+    {
+        // Placeholder logic: adjust based on your application's needs
+        switch ($code) {
+            case 'hod':
+                return $employee->department_id;
+            case 'country-manager':
+                return $employee->company_id;
+            case 'division-head':
+                return $employee->subsidiary_id;
+            case 'branch-manager':
+                return $employee->location_id;
+            case 'unit-head':
+                return $employee->department_unit_id;
+            default:
+                return null;
+        }
+    }
+
+    public function getSubjectTypeFromCode($code)
+    {
+        // Example mapping, adjust according to your application's logic
+        Log::info($code);
+        $mapping = [
+            'hod' => Department::class,
+            'country-manager' => Company::class,
+            'division-head' => Subsidiary::class,
+            'unit-head' => DepartmentUnit::class,
+            'branch-manager' => Location::class,
+        ];
+
+        return $mapping[$code] ?? null;
+    }
+
+    public function getSupervisor($employee_id)
+    {
+        $employee = Employee::find($employee_id);
+        $supervisor = Employee::find($employee->supervisor_id);
+        if (!$supervisor || $supervisor->id == $employee->id) {
+            $unitHead = $this->getGeneralPositions("unit-head", $employee)->first();
+            $hod = $this->getGeneralPositions("hod", $employee)->first();
+            $hrManager = $this->getGeneralPositions("hr-manager", $employee)->first();
+
+            $supervisor = $unitHead ?: $hod ?: $hrManager;
+
+            Log::info("Sequence: $supervisor?->fullname");
+        }
+        return $supervisor; // Ensure a collection is returned, filtering out nulls.
+    }
+
+    public function updateWorkflowRequest(WorkflowRequestDetail $detail, array $data)
     {
         $result = new Response();
         $result->status = ResponseType::SUCCESS;
@@ -114,8 +252,11 @@ Trait WorkflowUtil
             $data['approved_at'] = $detail->approved_at;
             if($data['status'] == "approved")
             {
+                $data['route'] = $detail->approval_route;
                 $this->sendNextWorkflowRequest($workflowRequest, $employee, $data);
-            }else{
+            }
+            else
+            {
                 $detail->workflowRequest->status = $data['status'];
                 $detail->workflowRequest->is_completed = 1;
                 $detail->workflowRequest->approved_at = $data['approved_at'] ?? Carbon::now();;
@@ -123,6 +264,11 @@ Trait WorkflowUtil
 
                 $workflowRequest->workflow_requestable->status = $data['status'];
                 $workflowRequest->workflow_requestable->save();
+
+                if (company_code() == 'nicktc') {
+                    $sms = "Hello {{$employee->firstname}}! Your leave request has been approved";
+                    $this->sendSMSViaTwilio($sms, $employee->contact_no);
+                }
             }
         }catch (\Exception $ex){
             log_error(format_exception($ex), $detail->workflow_requestable, 'workflow-request-failed');
@@ -130,7 +276,6 @@ Trait WorkflowUtil
 
         return $result;
     }
-
 
     public function resendWorkflowRequest(WorkflowRequest $workflowRequest)
     {
@@ -142,24 +287,18 @@ Trait WorkflowUtil
             $wf_req_detail =  $workflowRequest->workflowRequestDetails()
                 ->whereIn('status', ['pending'])->get();
 
+            if(count($wf_req_detail)>0)
+            {
+                foreach ($wf_req_detail as $workflowRequestDetail)
+                {
+                    event(new WorkflowRequestEvent($workflowRequestDetail, false));
+                }
+            }else{
+                $data['status'] = "approved";
+                $data["approved_at"] = Carbon::now();
 
-           if(count($wf_req_detail)>0)
-           {
-               foreach ($wf_req_detail as $workflowRequestDetail){
-                   $workflow = $workflowRequestDetail->workflow;
-                   $workflowRequestDetail->workflow_position_type_id = $workflow->workflow_position_type_id;
-                   $workflowRequestDetail->implementor_id = optional($this->getImplementorFromWorkflow($workflow, $employee, $workflowRequest->workflow_requestable))->id;
-                   $workflowRequestDetail->company_id = $workflowRequest->company_id;
-                   $workflowRequestDetail->save();
-
-                   event(new WorkflowRequestEvent($workflowRequestDetail));
-               }
-           }else{
-               $data['status'] = "approved";
-               $data["approved_at"] = Carbon::now();
-
-               $this->sendNextWorkflowRequest($workflowRequest, $employee, $data);
-           }
+                $this->sendNextWorkflowRequest($workflowRequest, $employee, $data);
+            }
             $result->status = ResponseType::SUCCESS;
             $result->message = "Operation successful";
         }catch (\Exception $ex){
@@ -171,204 +310,74 @@ Trait WorkflowUtil
         return $result;
     }
 
-
-    /**
-     * Returns the customer group
-     *
-     * @param int $business_id
-     * @param int $customer_id
-     *
-     * @return object
-     */
-    public function getSupervisor($employee_id)
+    public function canAccessItem($employee_id, $exempt = null)
     {
-        $employee = Client::find($employee_id);
-        $supervisor = Client::find($employee->supervisor_id);
-
-        if(!$supervisor || optional($supervisor)->id == $employee_id)
-        {
-            $supervisor = $this->getHod($employee_id);
+        if($employee_id == user()->id){
+            return true;
         }
 
-        if(!$supervisor || optional($supervisor)->id == $employee_id)
-        {
-            $supervisor = $this->getGeneralManager($employee_id);
+        if($exempt == user()->id){
+            return true;
         }
 
-        if(!$supervisor || optional($supervisor)->id == $employee_id)
-        {
-            $supervisor = $this->getHR();
+        if(user()->hasRole('developer|admin|it-admin')){
+            return true;
         }
 
-        return $supervisor;
-    }
-
-    /**
-     * Returns the contact info
-     *
-     * @param int $business_id
-     * @param int $contact_id
-     *
-     * @return array
-     */
-    public function getHod($employee_id)
-    {
-        $employee = Client::find($employee_id);
-
-        $workflow =  WorkflowPosition::where('subject_type', Department::class)
-            ->where(['subject_id' => $employee->department_id, 'is_active' => 1])
-            ->select('*')->first();
-        return Client::find(optional($workflow)->employee_id);
-    }
-
-    public function getBranchManager($employee_id)
-    {
-        $employee = Client::find($employee_id);
-
-        $workflow =  WorkflowPosition::where('subject_type', Branch::class)
-            ->where(['subject_id' => $employee->location_id, 'is_active' => 1])
-            ->select('*')->first();
-        return Client::find(optional($workflow)->employee_id);
-    }
-
-    public function getGeneralManager($employee_id)
-    {
         $employee = User::find($employee_id);
 
-        $workflow =  WorkflowPosition::where('subject_type', Company::class)
-            ->where(['subject_id' => $employee->company_id, 'is_active' => 1])
-            ->select('*')->first();
-        return Client::find(optional($workflow)->employee_id);
-    }
+        $result = WorkflowPosition::where('is_active', 1);
 
-    public function getHR()
-    {
-        $workflow = WorkflowPosition::whereHas('workflowPositionType', function ($query) {
-            return $query->where('code', '=', 'hr-manager');
-        })->where('is_active', 1)->first();
+        $result = $result->where(function ($query) use ($employee){
+            return $query->where(['subject_type' => Subsidiary::class, 'subject_id' => $employee->subsidiary_id]);
+        })->orWhere(function ($query) use ($employee){
+            return $query->where(['subject_type' => Department::class, 'subject_id' => $employee->department_id]);
+        })->orWhere(function ($query) use ($employee){
+            return $query->where(['subject_type' => DepartmentUnit::class, 'subject_id' => $employee->unit_id]);
+        })->orWhere(function ($query) use ($employee){
+            return $query->whereHas('workflowPositionType', function ($query) {
+                return $query->whereIn('code', ['ceo', 'hr-manager', 'finance-manager']);
+            });
+        })->pluck('employee_id')->toArray();
 
-        return Client::find(optional($workflow)->employee_id);
-    }
-
-    public function getCeo()
-    {
-        $workflow = WorkflowPosition::whereHas('workflowPositionType', function ($query) {
-            return $query->where('code', '=', 'ceo');
-        })->where('is_active', 1)->first();
-
-        return Client::find(optional($workflow)->employee_id);
-    }
-
-    public function checkIfWorkflowIsComplete($workflowRequest)
-    {
-        //TODO Check if last request is approved.
-        if($workflowRequest->is_completed){
+        if(in_array(user()->id, $result))
             return true;
-        }
-
-        if(count($workflows) > 0)
-        {
-            return false;
-        }else{
-            $workflowRequest->is_completed = 1;
-            $workflowRequest->approved_at = Carbon::now();
-            $workflowRequest->save();
-            return true;
-        }
-    }
-
-    public function getNextWorkflow($workflowRequest)
-    {
-        return Workflow::firstWhere(['workflow_type_id' => $workflowRequest->workflow_type_id, 'is_active' => 1, 'flow_sequence' => $workflowRequest->current_flow_sequence+1, 'action' => 'approve']);
-    }
-
-    public function HasPendingRequests($workflowRequest)
-    {
-        $wf_req_detail =  $workflowRequest->workflowRequestDetails()
-            ->whereIn('status', ['pending'])->get();
-        if(count($wf_req_detail)>0){
-            return true;
-        }
 
         return false;
     }
 
-
-    public function getImplementorFromWorkflow($workflow, $employee, $class = null)
+    /**
+     * @param $workflow
+     * @param $employee
+     * @param $workflowRequest
+     * @param $data
+     * @return void
+     */
+    public function sendWorkflow($workflow, $user, $workflowRequest, $data): void
     {
-        $wf_position_type = WorkflowPositionType::find($workflow->workflow_position_type_id);
-        if($wf_position_type->code == 'supervisor')
+        $implementors = $this->getImplementorsFromWorkflow($workflow, $employee, $workflowRequest->workflow_requestable);
+
+        foreach ($implementors as $implementor) {
+            $workflowRequestDetail = new WorkflowRequestDetail();
+            $workflowRequestDetail->workflow_position_type_id = $workflow->workflow_position_type_id;
+            $workflowRequestDetail->implementor_id = $implementor->id;
+            $workflowRequestDetail->company_id = $workflowRequest->company_id;
+            $workflowRequestDetail->employee_id = $employee->id;
+            $workflowRequestDetail->workflow_id = $workflow->id;
+            $workflowRequestDetail->flow_sequence = $workflow->flow_sequence;
+            $workflowRequestDetail->approval_route = $data['route'] ?? null;
+            $workflowRequestDetail->status = 'pending';
+            $workflowRequestDetail->workflow_request_id = $workflowRequest->id;
+            $workflowRequestDetail->save();
+
+            event(new WorkflowRequestEvent($workflowRequestDetail));
+        }
+
+        if (count($implementors) > 0)
         {
-            return $this->getSupervisor($employee->id);
+            $workflowRequest->current_flow_sequence = $workflow->flow_sequence;
+            $workflowRequest->workflow_id = $workflow->id;
+            $workflowRequest->save();
         }
-
-        if($wf_position_type->code == 'hod')
-        {
-
-            return $this->getHod($employee->id);
-        }
-
-        if($wf_position_type->code == 'branch-manager')
-        {
-            return $this->getBranchManager($employee->id);
-        }
-
-        if($wf_position_type->code == 'country-manager')
-        {
-            return $this->getGeneralManager($employee->id);
-        }
-
-        if($wf_position_type->code == 'reliever')
-        {
-            return Client::find(optional($class)->reliever_id);
-        }
-
-        $wf_positions = WorkflowPosition::firstWhere(['workflow_position_type_id' => $wf_position_type->id, 'is_active' => 1]);
-
-        return optional($wf_positions)->employee;
-    }
-
-    public function getContactQuery($business_id, $type, $contact_ids = [])
-    {
-        $query = Contact::leftjoin('transactions AS t', 'contacts.id', '=', 't.contact_id')
-            ->leftjoin('customer_groups AS cg', 'contacts.customer_group_id', '=', 'cg.id')
-            ->where('contacts.business_id', $business_id);
-
-        if ($type == 'supplier') {
-            $query->onlySuppliers();
-        } elseif ($type == 'customer') {
-            $query->onlyCustomers();
-        }
-        if (!empty($contact_ids)) {
-            $query->whereIn('contacts.id', $contact_ids);
-        }
-
-        $query->select([
-            'contacts.*',
-            'cg.name as customer_group',
-            DB::raw("SUM(IF(t.type = 'opening_balance', final_total, 0)) as opening_balance"),
-            DB::raw("SUM(IF(t.type = 'opening_balance', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as opening_balance_paid")
-        ]);
-
-        if (in_array($type, ['supplier', 'both'])) {
-            $query->addSelect([
-                DB::raw("SUM(IF(t.type = 'purchase', final_total, 0)) as total_purchase"),
-                DB::raw("SUM(IF(t.type = 'purchase', (SELECT SUM(amount) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as purchase_paid"),
-                DB::raw("SUM(IF(t.type = 'purchase_return', final_total, 0)) as total_purchase_return"),
-                DB::raw("SUM(IF(t.type = 'purchase_return', (SELECT SUM(amount) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as purchase_return_paid")
-            ]);
-        }
-
-        if (in_array($type, ['customer', 'both'])) {
-            $query->addSelect([
-                DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', final_total, 0)) as total_invoice"),
-                DB::raw("SUM(IF(t.type = 'sell' AND t.status = 'final', (SELECT SUM(IF(is_return = 1,-1*amount,amount)) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as invoice_received"),
-                DB::raw("SUM(IF(t.type = 'sell_return', final_total, 0)) as total_sell_return"),
-                DB::raw("SUM(IF(t.type = 'sell_return', (SELECT SUM(amount) FROM transaction_payments WHERE transaction_payments.transaction_id=t.id), 0)) as sell_return_paid")
-            ]);
-        }
-        $query->groupBy('contacts.id');
-
-        return $query;
     }
 }

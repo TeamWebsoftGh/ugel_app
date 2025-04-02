@@ -6,8 +6,8 @@ use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Organization\Branch;
 use App\Models\Settings\Region;
+use App\Services\Legal\Interfaces\ICourtCaseService;
 use App\Traits\JsonResponseTrait;
-use App\Services\Interfaces\IBranchService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use function datatables;
@@ -19,16 +19,16 @@ class BranchController extends Controller
 {
     use JsonResponseTrait;
     /**
-     * @var IBranchService
+     * @var ICourtCaseService
      */
-    private IBranchService $branchService;
+    private ICourtCaseService $branchService;
 
     /**
      * CategoryController constructor.
      *
-     * @param IBranchService $branchService
+     * @param ICourtCaseService $branchService
      */
-    public function __construct(IBranchService $branchService)
+    public function __construct(ICourtCaseService $branchService)
     {
         parent::__construct();
         $this->branchService = $branchService;

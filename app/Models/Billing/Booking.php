@@ -24,6 +24,7 @@ class Booking extends Model
         'extension_date',
         'total_price',
         'sub_total',
+        'is_active',
         'total_paid',
         'booking_date',
         'company_id',

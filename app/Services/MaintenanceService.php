@@ -4,8 +4,10 @@ namespace App\Services;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
+use App\Events\NewMaintenanceRequestEvent;
 use App\Events\NewTicketCommentEvent;
 use App\Events\TicketStatusChangeEvent;
+use App\Mail\CustomerService\NewMaintenanceRequestMail;
 use App\Mail\Tickets\TicketStatusChangeMail;
 use App\Models\Common\Comment;
 use App\Models\Common\DocumentUpload;
@@ -72,6 +74,7 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
             $maintenance->users()->sync($params['assignee_ids']);
         }
 
+        event(new NewMaintenanceRequestEvent($maintenance));
         return $this->buildCreateResponse($maintenance);
     }
 
@@ -125,33 +128,13 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
      */
     public function deleteMaintenance(MaintenanceRequest $maintenance)
     {
-        //Declaration
-        $result = false;
-        try{
-
-            $result = $this->maintenanceRepo->deleteMaintenance($maintenance);
-        }catch (\Exception $ex)
+        if(!in_array($maintenance->status, ['pending', 'draft']))
         {
-            log_error(format_exception($ex), $maintenance, 'delete-maintenance-failed');
+            return $this->errorResponse(ResponseMessage::DEFAULT_CANNOT_DELETE);
         }
+        $result = $this->maintenanceRepo->deleteMaintenance($maintenance);
 
-        if (!$result)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERR_DELETE;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'delete-maintenance-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
-
-        log_activity($auditMessage, $maintenance, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-
-        return $this->response;
+        return $this->buildDeleteResponse($result);
     }
 
     /**
@@ -327,4 +310,10 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
         return $this->response;
     }
 
+    public function deleteMultipleRequests(array $ids)
+    {
+        //Declaration
+        $result = $this->maintenanceRepo->deleteMultipleById($ids);
+        return $this->buildDeleteResponse($result, "Records deleted successfully.");
+    }
 }

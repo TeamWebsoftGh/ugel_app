@@ -25,63 +25,66 @@ class MaintenanceRepository extends BaseRepository implements IMaintenanceReposi
      * @param string $order
      * @param string $sort
      *
-     * @return Collection $maintenances
+     * @return \Illuminate\Database\Eloquent\Builder $maintenances
      */
     public function listMaintenances(array $filter = [], string $order = 'updated_at', string $sort = 'desc')
     {
-        $result = MaintenanceRequest::query();
+        $query = MaintenanceRequest::query();
 
-        if(!user()->can('read-maintenance'))
-        {
-            $result = $result->where(function ($query) {
-                return $query->whereHas('assignees', function ($query) {
-                    return $query->where('user_id', user()->id);
+        // Restrict based on permissions if the user doesn't have the "read-maintenance" ability
+        if (!user()->can('read-maintenance')) {
+            $query->where(function ($query) {
+                $query->whereHas('assignees', function ($q) {
+                    $q->where('user_id', user()->id);
                 })->orWhere('user_id', user()->id);
             });
         }
+//
+//        $query->when(!empty($filter['filter_subsidiary']), function ($q) use ($filter) {
+//            $q->whereHas('user', function ($query) use ($filter) {
+//                $query->where('subsidiary_id', $filter['filter_subsidiary']);
+//            });
+//        });
 
-        if (!empty($params['filter_department']))
-        {
-            $result = $result->whereHas('user', function ($query) use($params) {
-                return $query->where('department_id', '=', $params['filter_department']);
+        $query->when(!empty($filter['filter_status']), function ($q) use ($filter) {
+            $q->where('status_id', $filter['filter_status']);
+        });
+
+        $query->when(!empty($filter['filter_assignee']), function ($q) use ($filter) {
+            $q->whereHas('assignees', function ($query) use ($filter) {
+                $query->where('id', $filter['filter_assignee']);
             });
-        }
+        });
 
-        if (!empty($params['filter_subsidiary']))
-        {
-            $result = $result->whereHas('user', function ($query) use($params) {
-                return $query->where('subsidiary_id', '=', $params['filter_subsidiary']);
-            });
-        }
+        $query->when(!empty($filter['filter_user']), function ($q) use ($filter) {
+            $q->where('user_id', $filter['filter_user']);
+        });
 
-        if (!empty($params['filter_status']))
-        {
-            $result = $result->where('status_id', $params['filter_status']);
-        }
+        $query->when(!empty($filter['filter_property']), function ($q) use ($filter) {
+            $q->where('property_id', $filter['filter_property']);
+        });
 
-        if (!empty($params['filter_assignee']))
-        {
-            $result = $result->whereHas('assignees', function ($query) use ($params) {
-                return $query->where('id', $params['filter_assignee']);
-            });
-        }
+        $query->when(!empty($filter['filter_customer']), function ($q) use ($filter) {
+            $q->where('client_id', $filter['filter_customer']);
+        });
 
-        if (!empty($params['filter_user']))
-        {
-            $result = $result->where('user_id', $params['filter_user']);
-        }
+        $query->when(!empty($filter['filter_priority']), function ($q) use ($filter) {
+            $q->where('priority_id', $filter['filter_priority']);
+        });
 
-        if (!empty($params['filter_start_date']))
-        {
-            $result = $result->where('created_at', '>=', $params['filter_start_date']);
-        }
+        $query->when(!empty($filter['filter_category']), function ($q) use ($filter) {
+            $q->where('maintenance_category_id', $filter['filter_category']);
+        });
 
-        if (!empty($params['filter_end_date']))
-        {
-            $result = $result->where('created_at', '<=', $params['filter_end_date']);
-        }
+        $query->when(!empty($filter['filter_start_date']), function ($q) use ($filter) {
+            $q->whereDate('created_at', '>=', $filter['filter_start_date']);
+        });
 
-        return $result->orderBy($order, $sort);
+        $query->when(!empty($filter['filter_end_date']), function ($q) use ($filter) {
+            $q->whereDate('created_at', '<=', $filter['filter_end_date']);
+        });
+
+        return $query->orderBy($order, $sort);
     }
 
     /**

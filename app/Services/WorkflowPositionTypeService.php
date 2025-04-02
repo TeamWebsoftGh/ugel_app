@@ -7,11 +7,11 @@ use App\Constants\ResponseType;
 use App\Models\Organization\Branch;
 use App\Models\Organization\Department;
 use App\Models\Organization\Subsidiary;
-use App\Traits\UploadableTrait;
 use App\Models\Workflow\WorkflowPositionType;
-use App\Repositories\Interfaces\IWorkflowPositionTypeRepository;
+use App\Repositories\Workflow\Interfaces\IWorkflowPositionTypeRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IWorkflowPositionTypeService;
+use App\Traits\UploadableTrait;
 use Illuminate\Support\Collection;
 
 class WorkflowPositionTypeService extends ServiceBase implements IWorkflowPositionTypeService

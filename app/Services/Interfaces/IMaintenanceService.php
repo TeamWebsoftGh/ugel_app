@@ -17,4 +17,6 @@ interface IMaintenanceService extends IBaseService
     public function deleteMaintenance(MaintenanceRequest $maintenance);
 
     public function getCreateMaintenance();
+
+    public function deleteMultipleRequests(array $ids);
 }
