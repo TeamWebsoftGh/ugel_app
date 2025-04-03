@@ -34,67 +34,6 @@ class CategoryRepository extends BaseRepository implements ICategoryRepository
         return $this->model->orderBy($order, $sort)->get()->except($except);
     }
 
-    /**
-     * Create the category
-     *
-     * @param array $params
-     *
-     * @return Category
-     */
-    public function createCategory(array $params) : Category
-    {
-        $category = new Category($params);
-
-        if (isset($params['parent'])) {
-            $parent = $this->findCategoryById($params['parent']);
-            $category->parent()->associate($parent);
-        }
-
-        $category->save();
-
-        return $category;
-    }
-
-    /**
-     * Update the category
-     *
-     * @param array $params
-     *
-     * @param Category $category
-     * @return Category
-     */
-    public function updateCategory(array $params, Category $category) : Category
-    {
-        if (isset($params['parent'])) {
-            $parent = $this->findCategoryById($params['parent']);
-            $category->parent()->associate($parent);
-        }
-
-        $category->update($params);
-        return $category;
-    }
-
-    /**
-     * @param int $id
-     * @return Category
-     * @throws ModelNotFoundException
-     */
-    public function findCategoryById(int $id) : Category
-    {
-        return $this->findOneOrFail($id);
-    }
-
-    /**
-     * Delete a category
-     *
-     * @param Category $category
-     * @return bool
-     * @throws Exception
-     */
-    public function deleteCategory(Category $category) : bool
-    {
-        return $category->delete();
-    }
 
     /**
      * @param $file

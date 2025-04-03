@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['as' => 'resource.', 'namespace' => 'App\Http\Controllers\Resource', 'prefix' => 'resource'], function () {
-    Route::get('categories/detail/{id}', 'CategoryController@edit')->name('categories.detail');
     Route::resource('categories', 'CategoryController');
 
     Route::delete('knowledge-base/delete-file/{topic_id}/{id}', 'KnowledgeBaseController@deleteDocument')->name('knowledge-base.delete-file');

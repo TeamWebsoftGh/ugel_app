@@ -21,6 +21,7 @@ class Constants
     const ITEMS_PER_PAGE = 25;
     const NOTIFICATIONS_MEDIUM = ['mail'];
     const BONUS_AMOUNT = 10;
+    const PAYSLIP_COLOR = "#297ff9";
     const DEVELOPER = "Websoft";
     const DEFAULT_CSS = "/public/css/style.red.css";
     const COMPANY_LOGO  = "/logo/logo.png";

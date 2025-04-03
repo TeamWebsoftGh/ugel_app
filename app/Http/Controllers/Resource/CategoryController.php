@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\Resource;
 
+use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
-use App\Http\Controllers\Controller;
 use App\Models\Resource\Category;
-use App\Traits\JsonResponseTrait;
 use App\Services\Interfaces\ICategoryService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class CategoryController extends Controller
+class   CategoryController extends Controller
 {
-    use JsonResponseTrait;
     /**
      * @var ICategoryService
      */
@@ -28,11 +26,19 @@ class CategoryController extends Controller
         $this->categoryService = $categoryService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $categories = $this->categoryService->listCategories('created_at', 'asc');
-        $category = new Category();
-        return view('resource.categories.create', compact('categories', 'category'));
+        if ($request->ajax()) {
+            $amenities = $this->categoryService->listCategories();
+            return datatables()->of($amenities)
+                ->setRowId(fn($row) => $row->id)
+                ->addColumn('parent_name', fn($row) => $row->parent->name ?? 'Main Category')
+                ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
+                ->addColumn('action', fn($data) => $this->getActionButtons($data, "booking-periods"))
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+        return view('resource.categories.index');
     }
 
     public function edit(Request $request, $id)
@@ -40,25 +46,26 @@ class CategoryController extends Controller
         $categories = $this->categoryService->listMainCategories();
         $category = $this->categoryService->findCategoryById($id);
 
-        if ($request->ajax()){
-            return view('resource.categories.edit', compact('categories', 'category'));
-        }
-
-        return view('resource.categories.index', compact('categories'));
+        return request()->ajax()
+            ? view('resource.categories.edit', compact('category', 'categories'))
+            : redirect()->route('resource.categories.index');
     }
 
     public function create()
     {
         $categories = $this->categoryService->listCategories('created_at', 'asc', 1);
         $category = new Category();
-        return view('resource.categories.create', compact('categories', 'category'));
+        $category->is_active = 1;
+
+        return request()->ajax()
+            ? view('resource.categories.edit', compact('category', 'categories'))
+            : redirect()->route('resource.categories.index');
     }
 
-    public function Store(Request $request)
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required',
-            'status' => 'required',
         ]);
 
         $data = $request->except('_token', '_method', 'id');
@@ -96,6 +103,18 @@ class CategoryController extends Controller
         $writer = $this->categoryService->findCategoryById($id);
         $result = $this->categoryService->deleteCategory($writer);
 
+        return $this->responseJson($result);
+    }
+
+    /**
+     * Bulk delete resources from storage.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $result = $this->categoryService->deleteMultipleCategories($request->ids);
         return $this->responseJson($result);
     }
 }

@@ -2,7 +2,8 @@
 
 namespace App\Models\Resource;
 
-use Illuminate\Database\Eloquent\Model;
+
+use App\Abstracts\Model;
 
 class Category extends Model
 {

@@ -38,7 +38,7 @@ class CategoryService extends ServiceBase implements ICategoryService
      * @param array $except
      * @return Collection
      */
-    public function listCategories(string $order = 'id', string $sort = 'desc', $except = []): Collection
+    public function listCategories(string $order = 'updated_at', string $sort = 'desc', $except = []): Collection
     {
         return $this->categoryRepo->listCategories($order, $sort, $except);
     }
@@ -68,7 +68,7 @@ class CategoryService extends ServiceBase implements ICategoryService
      */
     public function listMainCategories(string $order = 'id', string $sort = 'desc', $except = []): Collection
     {
-        return $this->categoryRepo->listCategories($order, $sort, $except)->whereIn('parent_id', [1, 0])->where('status', 1);
+        return $this->categoryRepo->listCategories($order, $sort, $except)->whereIn('parent_id', [1, 0])->where('is_active', 1);
     }
 
     /**
@@ -96,31 +96,14 @@ class CategoryService extends ServiceBase implements ICategoryService
             $collection = collect($params);
             $merge = $collection->merge(compact('cover'));
 
-            $category = $this->categoryRepo->createCategory($merge->all());
+            $category = $this->categoryRepo->create($merge->all());
         } catch (\Exception $e) {
             log_error(format_exception($e), new Category(), 'create-category-failed');
         }
 
-        //Check if Category was created successfully
-        if (!$category)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERROR;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'create-category-successful';
-        $auditMessage = 'You have successfully added a new category: '.$category->name;
-
-        log_activity($auditMessage, $category, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-        $this->response->data = $category;
-
-        return $this->response;
+        return $this->buildCreateResponse($category);
     }
+
 
 
     /**
@@ -132,7 +115,7 @@ class CategoryService extends ServiceBase implements ICategoryService
      */
     public function findCategoryById(int $id)
     {
-        return $this->categoryRepo->findCategoryById($id);
+        return $this->categoryRepo->findOneOrFail($id);
     }
 
     /**
@@ -162,6 +145,7 @@ class CategoryService extends ServiceBase implements ICategoryService
         $collection = collect($params);
         $slug = Str::slug($params['name']);
         $cover = "";
+        $result = false;
 
         //Process Request
         try {
@@ -173,20 +157,12 @@ class CategoryService extends ServiceBase implements ICategoryService
 
             $merge = $collection->merge(compact('slug', 'cover'));
 
-            $this->categoryRepo->updateCategory($merge->all(), $category);
+            $result = $this->categoryRepo->update($merge->all(), $category->id);
         } catch (\Exception $e) {
             log_error(format_exception($e), $category, 'update-category-failed');
         }
 
-        //Audit Trail
-        $logAction = 'update-category-successful';
-        $auditMessage = 'You have successfully updated a category with name: '.$category->name;
-
-        log_activity($auditMessage, $category, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-
-        return $this->response;
+        return $this->buildUpdateResponse($category, $result);
     }
 
     /**
@@ -210,7 +186,7 @@ class CategoryService extends ServiceBase implements ICategoryService
         $result = false;
 
         try{
-            $result = $this->categoryRepo->deleteCategory($category);
+            $result = $this->categoryRepo->delete($category->id);
 
         }catch (\Exception $ex){
             log_error(format_exception($ex), $category, 'create-category-failed');
@@ -234,5 +210,12 @@ class CategoryService extends ServiceBase implements ICategoryService
         $this->response->message = $auditMessage;
 
         return $this->response;
+    }
+
+    public function deleteMultipleCategories(array $ids)
+    {
+        //Declaration
+        $result = $this->categoryRepo->deleteMultipleById($ids);
+        return $this->buildDeleteResponse($result, "Records deleted successfully.");
     }
 }

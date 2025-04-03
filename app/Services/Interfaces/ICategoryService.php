@@ -23,4 +23,6 @@ interface ICategoryService extends IBaseService
 
     public function findCategoryBySlug(string $slug);
 
+    public function deleteMultipleCategories(array $ids);
+
 }

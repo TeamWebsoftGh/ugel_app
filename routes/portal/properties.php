@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::group(['prefix' => '', 'namespace' => 'App\Http\Controllers\Property'], function ()
+Route::group(['prefix' => 'facilities', 'namespace' => 'App\Http\Controllers\Property'], function ()
 {
     //Amenities
     Route::delete('amenities/delete/selected', 'AmenityController@bulkDelete')->name('amenities.delete.selected');

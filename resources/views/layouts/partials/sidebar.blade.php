@@ -70,7 +70,7 @@
            aria-expanded="false" aria-controls="sidebarAuth">
             <i class="ri-building-2-line"></i> <span data-key="t-authentication">Properties</span>
         </a>
-        <div class="collapse menu-dropdown {{ (request()->is('*properties*')||request()->is('*property-*')||request()->is('*amenities')|request()->is('*rooms')) ? 'show' : '' }}" id="operations">
+        <div class="collapse menu-dropdown {{ (request()->is('*properties*')||request()->is('*property-*')||request()->is('*amenities')|request()->is('*facilities*')) ? 'show' : '' }}" id="operations">
             <ul class="nav nav-sm flex-column">
 {{--                <li class="nav-item">--}}
 {{--                    <a href="{{route("properties.create")}}" class="nav-link" data-key="t-login_activity"> Add New Property </a>--}}
@@ -334,11 +334,6 @@
             </a>
             <div class="menu-dropdown collapse" id="organization" style="">
                 <ul class="nav nav-sm flex-column">
-                    @can('read-companies')
-                        <li class="nav-item">
-                            <a href="{{route('companies.kyc')}}" class="nav-link" data-key="t-site-settings">KYC</a>
-                        </li>
-                    @endcan
                     <li class="nav-item">
                         <a href="{{route('organization.companies.index')}}" class="nav-link" data-key="t-site-settings">Companies</a>
                     </li>
