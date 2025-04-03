@@ -22,18 +22,18 @@
             </div>
             <div class="row">
                 <div class="form-group col-6 col-md-6">
-                    <label for="last_name" class="control-label">Last Name <span class="text-danger">*</span></label>
-                    <input type="text" name="last_name" value="{{old('last_name', $client->last_name)}}" class="form-control">
-                    <span class="input-note text-danger" id="error-last_name"> </span>
-                    @error('last_name')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                </div>
-                <div class="form-group col-6 col-md-6">
                     <label for="name" class="control-label">First Name <span class="text-danger">*</span></label>
                     <input type="text" name="first_name" value="{{old('first_name', $client->first_name)}}" class="form-control">
                     <span class="input-note text-danger" id="error-first_name"> </span>
                     @error('first_name')
+                    <span class="input-note text-danger">{{ $message }} </span>
+                    @enderror
+                </div>
+                <div class="form-group col-6 col-md-6">
+                    <label for="last_name" class="control-label">Last Name <span class="text-danger">*</span></label>
+                    <input type="text" name="last_name" value="{{old('last_name', $client->last_name)}}" class="form-control">
+                    <span class="input-note text-danger" id="error-last_name"> </span>
+                    @error('last_name')
                     <span class="input-note text-danger">{{ $message }} </span>
                     @enderror
                 </div>

@@ -1,4 +1,5 @@
-<?php
+?"<?php
+
 
 use App\Traits\CommonMigrationTrait;
 use Illuminate\Database\Migrations\Migration;

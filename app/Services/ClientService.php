@@ -70,7 +70,7 @@ class ClientService extends ServiceBase implements IClientService
             $data['is_active'] = 1;
 
             DB::beginTransaction();
-            $client = $this->clientRepo->createClient($data);
+            $client = $this->clientRepo->create($data);
 
             if(!isset($data['password'])){
                 $data['password'] = $password;
@@ -129,7 +129,7 @@ class ClientService extends ServiceBase implements IClientService
      */
     public function findClientById(int $id): Client
     {
-        return $this->clientRepo->findClientById($id);
+        return $this->clientRepo->findOneOrFail($id);
     }
 
     /**
@@ -148,7 +148,7 @@ class ClientService extends ServiceBase implements IClientService
         try {
 
             DB::beginTransaction();
-            $result = $this->clientRepo->updateClient($data, $client);
+            $result = $this->clientRepo->update($data, $client->id);
 
             if(!$result)
             {

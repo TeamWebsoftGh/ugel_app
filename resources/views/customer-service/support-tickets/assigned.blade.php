@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
-@section('title', 'Support Tickets')
-@section('page-title', 'Support Tickets')
+@section('title', 'Assigned Support Tickets')
+@section('page-title', 'Assigned Support Tickets')
 
 @section('content')
     <div class="row">
@@ -20,18 +20,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="card-header d-flex align-items-center">
-                        <h5 class="card-title mb-0 flex-grow-1">@yield("title")</h5>
-                        <div>
-                            @if(user()->can(['create-'.get_permission_name()]))
-                                <a class="btn btn-primary ms-auto" href="{{route("support-tickets.create")}}">Add New</a>
-{{--                                @isset($import)--}}
-{{--                                    <a href="{{url()->current()}}/import" class="btn btn-soft-info ms-auto">Import</a>--}}
-{{--                                @endisset--}}
-                            @endif
-                        </div>
-                    </div>
-
+                    @include("layouts.partials.dt-header")
                     <table id="support_ticket-table" class="table dt-responsive">
                         <thead>
                         <tr>

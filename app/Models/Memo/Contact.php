@@ -31,26 +31,6 @@ class Contact extends Model
         return $this->belongsTo(ContactGroup::class)->withDefault(['name' => 'N/A']);
     }
 
-    public function getDateOfBirthAttribute($value)
-    {
-        if($value !== null & $value !== '')
-        {
-            return Carbon::parse($value)->format(env('Date_Format'));
-        }else{
-            return null;
-        }
-    }
-
-
-    public function setDateOfBirthAttribute($value)
-    {
-        if($value !== null & $value !== '')
-        {
-            $this->attributes['date_of_birth'] = Carbon::createFromFormat(env('Date_Format'), $value)->format('Y-m-d');
-        }else{
-            $this->attributes['date_of_birth'] = null;
-        }
-    }
 
     public function getFullNameAttribute()
     {

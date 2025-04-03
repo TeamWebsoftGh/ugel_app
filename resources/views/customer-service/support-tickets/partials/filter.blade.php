@@ -1,47 +1,73 @@
 <form class="form-horizontal" id="filter_form" method="GET">
-    <input class="form-control" id="filter_start_date" type="hidden" name="filter_start_date" value="{{request()->filter_start_date}}">
-    <input class="form-control" id="filter_end_date" type="hidden" name="filter_end_date" value="{{request()->filter_end_date}}">
+
     <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-xs-12 ml-2">
         <div class="row mt-3">
+            <!-- Date Range Filter -->
             <div class="col-md-12 col-xl-3 col-lg-4 col-sm-12 col-xs-12 mb-3">
                 <label>Date range</label>
                 <div class="input-group">
                     <div class="input-group-text"><i class="las la-calendar"></i></div>
-                    <input type="text" class="form-control date" />
+                    <input type="text" id="date_range" class="form-control" placeholder="Select date range" />
+                    <input type="hidden" id="filter_start_date" name="filter_start_date" value="{{ old('filter_start_date', $data['filter_start_date'] ?? '') }}">
+                    <input type="hidden" id="filter_end_date" name="filter_end_date" value="{{ old('filter_end_date', $data['filter_end_date'] ?? '') }}">
                 </div>
             </div>
-            @if(!isset($user))
-                <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
-                    <label>Company</label>
-                    <select name="filter_subsidiary" id="filter_subsidiary" data-live-search="true" class="form-control selectpicker">
-                        <option selected value="">All Companies</option>
-                        @foreach($companies as $subsidiary)
-                            <option @if($subsidiary->id == request()->filter_company) selected="selected" @endif value="{{ $subsidiary->id }}">{{ $subsidiary->company_name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
-                    <label>User</label>
-                    <select class="form-control selectpicker" data-live-search="true" name="filter_assignee" id="filter_assignee">
-                        <option selected value="">All Users</option>
-                        @foreach($users as $employee)
-                            <option @if($employee->id == request()->filter_assignee) selected="selected" @endif value="{{ $employee->id }}">{{ $employee->fullname }}</option>
-                        @endforeach
-                    </select>
-                </div>
-            @endif
-            <div class="col-md-12 col-xl-2 col-lg-2 col-sm-12 col-xs-12 mb-3">
-                <label>Status</label>
-                <select class="form-control selectpicker" data-live-search="true" name="filter_status" id="filter_status">
-                    <option value="" selected>All status</option>
-                    <option @selected("opened" == request()->filter_status) value="opened">Opened</option>
-                    <option @selected("closed" == request()->filter_status) value="closed">Closed</option>
-                    <option @selected("cancelled" == request()->filter_status) value="cancelled">Cancelled</option>
-                    <option @selected("reopened" == request()->filter_status) value="cancelled">Reopened</option>
+
+            <!-- Subsidiary Filter -->
+            <div class="col-md-3 col-xl-2 col-lg-2 col-sm-4 col-xs-6 mb-3">
+                <label>Support Category</label>
+                <select name="filter_category" id="filter_category" class="form-control selectpicker">
+                    <option value="">All Categories</option>
+                    @foreach($data['categories'] as $cat)
+                        <option value="{{ $cat->id }}" {{ $cat->id == $data['filter_category'] ? 'selected' : '' }}>
+                            {{ $cat->name }}
+                        </option>
+                    @endforeach
                 </select>
             </div>
+
+            <!-- Department Filter -->
+            <div class="col-md-3 col-xl-2 col-lg-2 col-sm-4 col-xs-6 mb-3">
+                <label>Priority</label>
+                <select name="filter_priority" id="filter_priority" class="form-control selectpicker">
+                    <option value="">All Priorities</option>
+                    @foreach($data['priorities'] as $pr)
+                        <option value="{{ $pr->id }}" {{ $pr->id == $data['filter_priority'] ? 'selected' : '' }}>
+                            {{ $pr->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Branch Filter -->
+            <div class="col-md-3 col-xl-2 col-lg-2 col-sm-4 col-xs-6 mb-3">
+                <label>Customers</label>
+                <select name="filter_customer" id="filter_customer" class="form-control selectpicker">
+                    <option value="">All Customers</option>
+                    @foreach($customers as $cus)
+                        <option value="{{ $cus->id }}" {{ $cus->id == $data['filter_customer'] ? 'selected' : '' }}>
+                            {{ $cus->full_name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Branch Filter -->
+            <div class="col-md-3 col-xl-2 col-lg-2 col-sm-4 col-xs-6 mb-3">
+                <label>Statuses</label>
+                <select name="filter_status" id="filter_property" class="form-control selectpicker">
+                    <option value="">All Statuses</option>
+                    @foreach($data['statuses'] as $pro)
+                        <option value="{{ $pro->id }}" {{ $pro->id == $data['filter_status'] ? 'selected' : '' }}>
+                            {{ $pro->name }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Filter Submit Button -->
             <div class="col-xl-1 col-lg-1 col-md-12 col-sm-1 col-xs-12 pl-md-3 mt-4">
-                <button type="submit" name="btn" id="filterSubmit" title="Click to filter" class="btn btn-primary custom-btn-small mt-0 mr-0">Go</button>
+                <button type="button" id="filterSubmit" class="btn btn-primary custom-btn-small filter_submit">Go</button>
             </div>
         </div>
     </div>

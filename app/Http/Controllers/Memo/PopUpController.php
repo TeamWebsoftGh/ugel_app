@@ -91,11 +91,11 @@ class PopUpController extends Controller
                 $popup= PopUpBuilder::findOrFail($request->input('id'));
                 $popup->update($data);
                 request()->session()->flash('message',"Popup successfully updated.");
-                return redirect()->route('memos.popups.index');
+                return redirect()->route('popups.index');
             }else{
                 $popup->create($data);
                 request()->session()->flash('message',"Popup successfully created.");
-                return redirect()->route('memos.popups.index');
+                return redirect()->route('popups.index');
             }
 
         }catch (\Exception $ex){

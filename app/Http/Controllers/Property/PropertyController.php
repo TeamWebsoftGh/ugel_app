@@ -200,8 +200,8 @@ class PropertyController extends Controller
      */
     public function destroy($id)
     {
-        $meeting = $this->serviceTypeService->findServiceTypeById($id);
-        $result = $this->serviceTypeService->deleteServiceType($meeting);
+        $meeting = $this->propertyService->findPropertyById($id);
+        $result = $this->propertyService->deleteProperty($meeting);
 
         return $this->responseJson($result);
     }

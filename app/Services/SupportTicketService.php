@@ -220,6 +220,7 @@ class SupportTicketService extends ServiceBase implements ISupportTicketService
             'ticket' => $task,
             'statuses' => TaskUtil::getAllStatuses(),
             'employees' => PropertyHelper::getAll(),
+            'categories' => TaskUtil::getAllSupportTopics(),
         ];
     }
 

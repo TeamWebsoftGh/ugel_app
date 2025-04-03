@@ -78,7 +78,7 @@
                                                                    data-bs-toggle="tooltip"
                                                                    data-bs-placement="top"
                                                                    title="{{ $booking->fullname }}">
-                                                                    <img src="{{ asset($booking->Userimage ?? 'default.png') }}"
+                                                                    <img src="{{ asset($booking->user->Userimage ?? 'assets/images/user.png') }}"
                                                                          alt=""
                                                                          class="rounded-circle avatar-sm">
                                                                 </a>
@@ -130,7 +130,8 @@
                                                         </span>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
-                                                    <p class="text-uppercase fw-semibold fs-12 text-muted mb-1">Bookings</p>
+                                                    <a href="{{route('bookings.index')}}" class="text-uppercase fw-semibold fs-12 text-muted mb-1">
+                                                        Bookings</a>
                                                     <h4 class=" mb-0"><span class="counter-value" data-target="{{$bookings->count()}}">0</span></h4>
                                                 </div>
                                             </div>
@@ -148,7 +149,7 @@
                                                         </span>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
-                                                    <a href="#" class="text-uppercase fw-semibold fs-12 text-muted mb-1">Open Ticket</a>
+                                                    <a href="{{route('support-tickets.index')}}" class="text-uppercase fw-semibold fs-12 text-muted mb-1">Complaints</a>
                                                     <h4 class=" mb-0"><span class="counter-value" data-target="{{$ticket_count}}">0</span></h4>
                                                 </div>
                                             </div>
@@ -166,7 +167,7 @@
                                                         </span>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
-                                                    <a href="#" class="text-uppercase fw-semibold fs-12 text-muted mb-1">Companies</a>
+                                                    <a href="{{route("court-cases.index")}}" class="text-uppercase fw-semibold fs-12 text-muted mb-1">Court Cases</a>
                                                     <h4 class=" mb-0"><span class="counter-value" data-target="{{$leave_count}}">0</span></h4>
                                                 </div>
                                             </div>

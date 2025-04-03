@@ -6,6 +6,7 @@ use App\Models\Auth\User;
 use App\Models\Common\Priority;
 use App\Models\Common\Status;
 use App\Models\CustomerService\MaintenanceCategory;
+use App\Models\CustomerService\SupportTopic;
 use Illuminate\Support\Collection;
 
 class TaskUtil
@@ -81,20 +82,16 @@ class TaskUtil
     }
 
 
-    public static function getAllUnits($department = null)
+    public static function getAllSupportTopics()
     {
         /**
-         * Admission Type
+         * Support Topic
          *
          * @return Collection
          */
 
-        $data = Unit::where(['status' => 1]);
-        if($department != null)
-        {
-            $data = $data->where(['department_id' => $department]);
-        }
+        $data = SupportTopic::where(['is_active' => 1]);
 
-        return $data->select('id', 'unit_name')->get();
+        return $data->select('id', 'name')->get();
     }
 }

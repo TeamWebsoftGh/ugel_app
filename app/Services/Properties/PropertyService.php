@@ -165,6 +165,13 @@ class PropertyService extends ServiceBase implements IPropertyService
         //Declaration
         $result = false;
 
+        if($property->propertyUnits()->count() > 0){
+            $this->response->status = ResponseType::ERROR;
+            $this->response->message = ResponseMessage::DEFAULT_CANNOT_DELETE;
+
+            return $this->response;
+        }
+
         try{
             $result = $this->propertyRepo->deleteProperty($property);
         }catch (\Exception $ex){

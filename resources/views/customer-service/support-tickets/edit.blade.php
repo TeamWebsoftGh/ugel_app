@@ -7,11 +7,19 @@
         <div class="col-md-12 col-xl-9 col-lg-10">
             <div class="row">
                 @if($ticket->ticket_code)
-                <div class="form-group col-12 col-md-4">
-                    <label for="subject" class="control-label">Ticket Number </label>
-                    <input type="text" readonly value="{{$ticket->ticket_code}}" class="form-control">
-                </div>
+                    <div class="form-group col-12 col-md-4">
+                        <label for="subject" class="control-label">Ticket Number </label>
+                        <input type="text" readonly value="{{$ticket->ticket_code}}" class="form-control">
+                    </div>
                 @endif
+                <x-form.input-field
+                    name="support_topic_id"
+                    label="Category"
+                    type="select"
+                    :options="$categories->pluck('name', 'id')"
+                    :value="$ticket->support_topic_id"
+                    required
+                />
                 <div class="form-group col-12 col-md-4">
                     <label for="subject" class="control-label">Subject <span class="text-danger">*</span></label>
                     <input type="text" id="subject" name="subject" value="{{old('subject', $ticket->subject)}}" class="form-control">
@@ -20,31 +28,22 @@
                     @enderror
                     <span class="input-note text-danger" id="error-subject"> </span>
                 </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="priority_id" class="control-label">Priority <span class="text-danger">*</span></label>
-                    <select name="priority_id" id="priority" required class="form-control selectpicker">
-                        @foreach($priorities as $priority)
-                            <option value="{{ $priority->id }}">{{ $priority->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('priority_id')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-priority_id"> </span>
-                </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Customer <span class="text-danger">*</span></label>
-                    <select name="customer_id" id="customer_id" data-live-search="true" class="form-control selectpicker">
-                        <option selected value=""></option>
-                        @foreach($customers as $customer)
-                            <option value="{{ $customer->id }}" @if($ticket->customer_id == $customer->id) selected @endif>{{ $customer->fullname }}</option>
-                        @endforeach
-                    </select>
-                    @error('customer_id')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-customer_id"> </span>
-                </div>
+                <x-form.input-field
+                    name="priority_id"
+                    label="Priority"
+                    type="select"
+                    :options="$priorities->pluck('name', 'id')"
+                    :value="$ticket->priority_id"
+                    required
+                />
+                <x-form.input-field
+                    name="client_id"
+                    label="Customer"
+                    type="select"
+                    :options="$customers->pluck('fullname', 'id')"
+                    :value="$ticket->client_id"
+                    required
+                />
                 @if(user()->can('create-support-tickets|update-support-tickets'))
                     <div class="form-group col-12 col-md-4">
                         <label for="name" class="control-label">Assign To <span class="text-danger">*</span></label>
@@ -72,14 +71,12 @@
                         @enderror
                     </div><!--end col-->
                 @endif
-                <div class="form-group col-12 col-md-4">
-                    <label for="exampleFormControlTextarea1" class="form-label">Upload Attachment</label>
-                    <input name="ticket_files[]" type="file" multiple class="form-control bg-light border-light" id="exampleFormControlTextarea1"/>
-                    <span class="input-note text-danger" id="error-ticket_files"> </span>
-                    @error('ticket_files')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                </div><!--end col-->
+                <x-form.input-field
+                    name="attachments"
+                    label="Upload Attachments"
+                    type="multifile"
+                    :value="$ticket->attachments"
+                />
                 <div class="form-group col-12 col-md-8">
                     <label for="description" class="control-label">Note</label>
                     <textarea class="form-control" rows="3" name="ticket_note" id="ticket_note">{!! old('ticket_note', $ticket->ticket_note)  !!}</textarea>
