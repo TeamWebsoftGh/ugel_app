@@ -8,6 +8,7 @@ use App\Traits\UploadableTrait;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -42,7 +43,7 @@ abstract class BaseRepository implements IBaseRepository
      * @param bool $success
      * @param \Exception|null $exception
      */
-    private function logActivity(string $action, ?Model $model = null, bool $success = true, ?\Exception $exception = null): void
+    private function logActivity(string $action, ?Model $model = null, bool $success = true): void
     {
         $modelName = class_basename($this->model);
         $actionStatus = $success ? 'success' : 'failed';
@@ -52,12 +53,8 @@ abstract class BaseRepository implements IBaseRepository
             $message = "{$modelName} record has been {$action}d successfully.";
             log_activity($message, $model, $logAction);
         } else {
-            $errorDetails = $exception ? $exception->getMessage() : 'Unknown error occurred.';
-            $message = "{$modelName} record {$action} failed. Error: {$errorDetails}";
+            $message = "{$modelName} record {$action} failed.";
             log_activity($message, $model, $logAction);
-            if(isset($exception)){
-                log_error(format_exception($exception), $model, $logAction);
-            }
         }
     }
 
@@ -73,10 +70,11 @@ abstract class BaseRepository implements IBaseRepository
             $model = $this->model->create($attributes);
             $this->saveAttachments($attributes, $model);
 
-            $this->logActivity('create', $model); // Log success
+            $this->logActivity('create', $model, isset($model)); // Log success
             return $model;
         } catch (\Exception $e) {
-            $this->logActivity('create', $this->model, false, $e); // Log failure
+            $modelName = class_basename($this->model);
+            log_error(format_exception($e), $this->model, "create-{$modelName}-failed");
             return null;
         }
     }
@@ -94,7 +92,8 @@ abstract class BaseRepository implements IBaseRepository
             $this->logActivity('createOrUpdate',  $model);
             return $model;
         } catch (\Exception $e) {
-            $this->logActivity('createOrUpdate', $this->model, false, $e);
+            $modelName = class_basename($this->model);
+            log_error(format_exception($e), $this->model, "create-{$modelName}-failed");
             return null;
         }
     }
@@ -129,12 +128,13 @@ abstract class BaseRepository implements IBaseRepository
 
         try {
             $this->saveAttachments($attributes, $model);
-            $model->update($attributes);
+            $success = $model->update($attributes);
 
-            $this->logActivity('update', $model); // Log success
+            $this->logActivity('update', $model, $success); // Log success
             return true;
         } catch (\Exception $e) {
-            $this->logActivity('update', $model, false, $e); // Log failure
+            $modelName = class_basename($this->model);
+            log_error(format_exception($e), $this->model, "create-{$modelName}-failed");
             return false;
         }
     }
@@ -148,11 +148,12 @@ abstract class BaseRepository implements IBaseRepository
         $model = $this->find($id);
 
         try {
-            $model->delete();
-            $this->logActivity('delete', $model); // Log success
+            $success = $model->delete();
+            $this->logActivity('delete', $model, $success); // Log success
             return true;
         } catch (\Exception $e) {
-            $this->logActivity('delete', $model, false, $e); // Log failure
+            $modelName = class_basename($this->model);
+            log_error(format_exception($e), $this->model, "create-{$modelName}-failed");
             return false;
         }
     }
@@ -168,7 +169,8 @@ abstract class BaseRepository implements IBaseRepository
             $this->logActivity('delete-multiple', $this->model, $deleted);
             return $deleted;
         } catch (\Exception $e) {
-            $this->logActivity('delete-multiple', $this->model, false, $e);
+            $modelName = class_basename($this->model);
+            log_error(format_exception($e), $this->model, "create-{$modelName}-failed");
             return 0;
         }
     }

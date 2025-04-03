@@ -47,7 +47,7 @@ class Client extends Model
         'date_of_incorporation',
         'tin_number',
         'type_of_business',
-        'business_email',
+       // 'business_email',
         'client_type_id',
         'created_from',
         'created_by',

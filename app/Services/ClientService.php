@@ -62,15 +62,21 @@ class ClientService extends ServiceBase implements IClientService
     {
         //Declaration
         $password = Str::password(12);
-        //$data['gender'] = strtolower($data['gender']);
         $client= null;
 
         //Process Request
         try {
             $data['is_active'] = 1;
-
             DB::beginTransaction();
             $client = $this->clientRepo->create($data);
+
+            if($client == null)
+            {
+                $this->response->status = ResponseType::ERROR;
+                $this->response->message = ResponseMessage::DEFAULT_ERR_CREATE;
+
+                return $this->response;
+            }
 
             if(!isset($data['password'])){
                 $data['password'] = $password;

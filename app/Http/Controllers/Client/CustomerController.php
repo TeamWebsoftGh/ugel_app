@@ -223,9 +223,9 @@ class CustomerController extends Controller
             'client_type_id' => 'required',
             'first_name' => 'required',
             'last_name' => 'required',
-            'username' => 'required|unique:users,username,'.$request->input("id"),
+            'client_number' => 'required|unique:clients,client_number,'.$request->input("id"),
             'email' => 'required|unique:users,email,'.$request->input("id"),
-            'phone_number' => 'nullable|phone',
+            'phone_number' => 'required|phone',
         ]);
 
         $data = $request->except('_token', '_method', 'id');
