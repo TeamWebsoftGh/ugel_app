@@ -149,9 +149,9 @@
                 <li class="nav-item">
                     <a href="{{route("admin.customer-types.index")}}" class="nav-link {{ (request()->is('*customer-types*')) ? 'active' : '' }}" > Customer Types</a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{route("admin.customer-types.index")}}" class="nav-link {{ (request()->is('*customer-types*')) ? 'active' : '' }}" >FAQS</a>
-                </li>
+{{--                <li class="nav-item">--}}
+{{--                    <a href="{{route("admin.customer-types.index")}}" class="nav-link {{ (request()->is('*customer-types*')) ? 'active' : '' }}" >FAQS</a>--}}
+{{--                </li>--}}
             </ul>
         </div>
     </li>
