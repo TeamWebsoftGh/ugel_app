@@ -11,14 +11,14 @@ use Carbon\Carbon;
 
 class SupportTicket extends Model
 {
-    protected $appends = ["assignee_names", "priority_name"];
+    protected $appends = ["assignee_names"];
 
     protected $fillable = ['ticket_note', 'status', 'ticket_code', 'priority_id',
         'client_id', 'description', 'remarks', 'subject', 'company_id', 'created_by'];
 
     public function priority()
     {
-        return $this->belongsTo(Priority::class, "priority_id")->withDefault();
+        return $this->belongsTo(Priority::class)->withDefault();
     }
 
     public function client()

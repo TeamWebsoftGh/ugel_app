@@ -29,11 +29,11 @@
                             </tr>
                             <tr>
                                 <td class="fw-medium">Priority</td>
-                                <td><span class="badge badge-soft-danger">{{$ticket->priority->name}}</span></td>
+                                <td>{{$ticket->priority->name}}</td>
                             </tr>
                             <tr>
                                 <td class="fw-medium">Status</td>
-                                <td><span class="badge badge-soft-secondary">{{$ticket->status}}</span></td>
+                                <td><span class="">{{$ticket->status}}</span></td>
                             </tr>
                             <tr>
                                 <td class="fw-medium">Last Updated</td>
@@ -120,7 +120,7 @@
                                 <div class="row g-3">
                                     <div class="col-lg-6">
                                         <label for="exampleFormControlTextarea1" class="form-label">Remarks</label>
-                                        <textarea name="remarks" class="form-control border-light" @if(!in_array(user()->id, $assigneeIds)) disabled @endif id="remarks" rows="3" placeholder="Enter remarks">{{$ticket->remarks}}</textarea>
+                                        <textarea name="remarks" class="form-control border-light" @if(!in_array(user()->id, $assigneeIds) && !user()->can('update-support-tickets')) disabled @endif id="remarks" rows="3" placeholder="Enter remarks">{{$ticket->remarks}}</textarea>
                                         <span class="input-note text-danger" id="error-remarks"> </span>
                                         @error('remarks')
                                         <span class="input-note text-danger">{{ $message }} </span>

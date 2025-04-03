@@ -88,7 +88,7 @@ function DetermineIconFromResult(data) {
         error: "<h4><i class='fa fa-remove' style='font-size:23px;color:red'></i> ERROR</h4><hr />",
     };
 
-    return icons[data.Result] || icons.error;
+    return icons[data.status] || icons.error;
 }
 
 // Function to Print a Document

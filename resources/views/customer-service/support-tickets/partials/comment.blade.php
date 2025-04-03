@@ -4,11 +4,11 @@
         @forelse($comments->orderBy('updated_at', 'desc')->get() as $comment)
             <div class="d-flex mb-4">
                 <div class="flex-shrink-0">
-                    <img src="{{asset("storage/".$comment->sender->UserImage)}}" alt="" class="avatar-xs rounded-circle" />
+                    <img src="{{asset($comment->user->UserImage)}}" alt="" class="avatar-xs rounded-circle" />
                 </div>
                 <div class="flex-grow-1 ms-3">
                     <h5 class="fs-13">
-                        <a href="javascript:void(0)">{{$comment->sender->fullname}}</a>
+                        <a href="javascript:void(0)">{{$comment->user->fullname}}</a>
                         <small class="text-muted">{{$comment->created_at}}</small>
                         @if($comment->user_id == user()->id)
                             <a href="javascript:void(0)" onclick="DeleteItem('{{$comment->message}}', '{{route("support-tickets.comments.destroy", ['task_id'=>$ticket->id, 'id' => $comment->id])}}')" class="text-danger"><i class="las la-trash"></i></a>
