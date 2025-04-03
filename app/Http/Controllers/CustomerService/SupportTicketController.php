@@ -63,7 +63,11 @@ class SupportTicketController extends Controller
                 })
                 ->addColumn('client_number', function ($row)
                 {
-                    return $row->cleint->client_number;
+                    return $row->client->client_number;
+                })
+                ->addColumn('created_by', function ($row)
+                {
+                    return $row->owner->fullname;
                 })
                 ->addColumn('phone_number', function ($row)
                 {
@@ -75,11 +79,11 @@ class SupportTicketController extends Controller
                 })
                 ->addColumn('action', function ($data)
                 {
-                    $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></button>';
+                    $button = '<a href="'.route("support-tickets.show", $data->id).'" title="show" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></a>';
                     $button .= '&nbsp;';
                     if (user()->can('update-support-tickets') && !str_contains($data->status, 'Closed') )
                     {
-                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
+                        $button .= '<a href="'.route("support-tickets.edit", $data->id).'" title="Edit" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-edit"></i></a>';
                         $button .= '&nbsp;';
                     }
                     if (user()->can('delete-support-tickets') && !str_contains($data->status, 'Closed'))

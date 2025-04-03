@@ -3,7 +3,6 @@
 namespace App\Models\Workflow;
 
 use App\Abstracts\Model;
-use Carbon\Carbon;
 
 class WorkflowRequest extends Model
 {
@@ -29,7 +28,7 @@ class WorkflowRequest extends Model
         return $this->morphTo();
     }
 
-    public function employee()
+    public function client()
     {
         return $this->belongsTo(Employee::class)->withDefault();
     }
@@ -55,10 +54,5 @@ class WorkflowRequest extends Model
     public function workflowType()
     {
         return $this->belongsTo(WorkflowType::class)->withDefault();
-    }
-
-    public function getCreatedAtAttribute($value)
-    {
-        return Carbon::parse($value)->format(env('Date_Format'). ' h:i a');
     }
 }

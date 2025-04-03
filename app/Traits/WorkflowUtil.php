@@ -5,13 +5,16 @@ namespace App\Traits;
 use App\Constants\ResponseType;
 use App\Events\WorkflowRequestEvent;
 use App\Events\WorkflowStatusChanged;
-use App\Models\Workflow;
+use App\Models\Auth\Team;
+use App\Models\Auth\User;
+use App\Models\Workflow\Workflow;
+use App\Models\Workflow\WorkflowPosition;
+use App\Models\Workflow\WorkflowPositionType;
 use App\Models\Workflow\WorkflowRequest;
 use App\Models\Workflow\WorkflowRequestDetail;
 use App\Models\Workflow\WorkflowType;
 use App\Services\Helpers\Response;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 Trait WorkflowUtil
@@ -40,7 +43,6 @@ Trait WorkflowUtil
             ], [
                 'workflow_requestable_id' => $class->id,
                 'workflow_requestable_type' => get_class($class),
-                'user_id' => $user->id,
                 'action_type' => "approve",
                 'current_flow_sequence' => 0,
                 'workflow_type_id' => $workflowType->id,
@@ -149,8 +151,8 @@ Trait WorkflowUtil
         $subjectTypesToCodes = ['hod', 'division-head', 'branch-manager', 'unit-head', 'country-manager']; // Define which codes require special handling
 
         // Direct handling for specific codes without needing to loop or check multiple conditions.
-        if ($code == "reliever" && $class !== null) {
-            return Employee::where('id', $class->reliever_id)->get();
+        if ($code == "assignees" && $class !== null) {
+            return User::whereIn('id', $class->assignees()->pluck('id')->unique()->toArray())->get();
         } elseif ($code == "supervisor") {
             return collect([$this->getSupervisor($employee->id)]); // Ensure it returns a collection
         }
@@ -176,7 +178,7 @@ Trait WorkflowUtil
         $employeeIds = $workflows->pluck('employee_id')->unique()->toArray();
 
         // Fetch all Employees matching the employee_ids
-        $employees = Employee::whereNull('exit_date')->whereIn('id', $employeeIds)->get();
+        $employees = User::whereIn('id', $employeeIds)->get();
 
         return $employees;
     }
@@ -195,6 +197,8 @@ Trait WorkflowUtil
                 return $employee->location_id;
             case 'unit-head':
                 return $employee->department_unit_id;
+            case 'team-lead':
+                return $employee->team_id;
             default:
                 return null;
         }
@@ -210,6 +214,7 @@ Trait WorkflowUtil
             'division-head' => Subsidiary::class,
             'unit-head' => DepartmentUnit::class,
             'branch-manager' => Location::class,
+            'team-lead' => Team::class,
         ];
 
         return $mapping[$code] ?? null;
@@ -217,8 +222,8 @@ Trait WorkflowUtil
 
     public function getSupervisor($employee_id)
     {
-        $employee = Employee::find($employee_id);
-        $supervisor = Employee::find($employee->supervisor_id);
+        $employee = User::find($employee_id);
+        $supervisor = User::find($employee->supervisor_id);
         if (!$supervisor || $supervisor->id == $employee->id) {
             $unitHead = $this->getGeneralPositions("unit-head", $employee)->first();
             $hod = $this->getGeneralPositions("hod", $employee)->first();
@@ -355,14 +360,14 @@ Trait WorkflowUtil
      */
     public function sendWorkflow($workflow, $user, $workflowRequest, $data): void
     {
-        $implementors = $this->getImplementorsFromWorkflow($workflow, $employee, $workflowRequest->workflow_requestable);
+        $implementors = $this->getImplementorsFromWorkflow($workflow, $user, $workflowRequest->workflow_requestable);
 
         foreach ($implementors as $implementor) {
             $workflowRequestDetail = new WorkflowRequestDetail();
             $workflowRequestDetail->workflow_position_type_id = $workflow->workflow_position_type_id;
             $workflowRequestDetail->implementor_id = $implementor->id;
             $workflowRequestDetail->company_id = $workflowRequest->company_id;
-            $workflowRequestDetail->employee_id = $employee->id;
+            $workflowRequestDetail->user_id = $user->id;
             $workflowRequestDetail->workflow_id = $workflow->id;
             $workflowRequestDetail->flow_sequence = $workflow->flow_sequence;
             $workflowRequestDetail->approval_route = $data['route'] ?? null;

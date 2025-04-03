@@ -25,9 +25,6 @@
                         <div>
                             @if(user()->can(['create-'.get_permission_name()]))
                                 <a class="btn btn-primary ms-auto" href="{{route("support-tickets.create")}}">Add New</a>
-{{--                                @isset($import)--}}
-{{--                                    <a href="{{url()->current()}}/import" class="btn btn-soft-info ms-auto">Import</a>--}}
-{{--                                @endisset--}}
                             @endif
                         </div>
                     </div>
@@ -40,9 +37,10 @@
                             </th>
                             <th>Ticket #</th>
                             <th>Subject</th>
+                            <th>Customer</th>
                             <th>Status</th>
-                            <th>Date</th>
                             <th>Responsible</th>
+                            <th>Date</th>
                             <th>Created By</th>
                             <th>Action</th>
                         </tr>
@@ -67,10 +65,10 @@
                         {data: 'ticket_code', name: 'ticket_code'},
                         {data: 'subject', name: 'subject'},
                         {data: 'client_name', name: 'client_name'},
-                        {data: 'assignee_names', name: 'assignee_names'},
-                        {data: 'phone_number', name: 'phone_number'},
                         {data: 'status', name: 'status'},
-                        {data: 'date_created', name: 'date_created'},
+                        {data: 'assignee_names', name: 'assignee_names'},
+                        {data: 'created_at', name: 'created_at'},
+                        {data: 'created_by', name: 'created_by'},
                         {data: 'action', name: 'action', orderable: false }
                     ];
                 loadDataAndInitializeDataTable("support_ticket", "{{ route('support-tickets.index') }}", cols);

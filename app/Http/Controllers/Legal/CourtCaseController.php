@@ -58,7 +58,7 @@ class CourtCaseController extends Controller
                 ->make(true);
         }
 
-        return view('legal.court-cases.active');
+        return view('legal.court-cases.index');
     }
 
     /**

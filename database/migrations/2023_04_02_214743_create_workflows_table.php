@@ -63,6 +63,7 @@ return new class extends Migration
             $table->string('subject_type')->nullable();
             $table->text('description')->nullable();
             $table->integer('sort_order')->nullable();
+            $table->integer('type')->nullable();
             $table->integer('stages')->default(1);
             $table->boolean('is_active')->default(1);
 
@@ -126,6 +127,8 @@ return new class extends Migration
 
             $table->UnsignedBiginteger('workflow_id')->index();
             $table->foreign('workflow_id')->references('id')->on('workflows')->onDelete('cascade');
+
+            $table->UnsignedBiginteger('client_id')->nullable();
 
             $table->UnsignedBiginteger('user_id')->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

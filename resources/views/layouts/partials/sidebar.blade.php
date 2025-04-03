@@ -193,9 +193,6 @@
                                 <a href="{{route("support-tickets.create")}}" class="nav-link" data-key="t-hub"> Open a Ticket </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{route("support-tickets.my-tickets")}}" class="nav-link" data-key="t-calendar"> My Tickets </a>
-                            </li>
-                            <li class="nav-item">
                                 <a href="{{route("support-tickets.assigned")}}" class="nav-link" data-key="t-calendar"> Assigned Tickets </a>
                             </li>
                             @if(user()->can('read-support-tickets'))

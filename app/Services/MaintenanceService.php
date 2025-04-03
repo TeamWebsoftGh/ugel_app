@@ -118,7 +118,8 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
         if($oldStatus != $params['status']){
           //  event(new TicketStatusChangeEvent($maintenance));
         }
-        //$this->addWorkflowRequest($maintenance, $maintenance->user);
+
+        $this->addWorkflowRequest($maintenance, $maintenance->owner);
         return $this->buildUpdateResponse($maintenance, $result);
     }
 
