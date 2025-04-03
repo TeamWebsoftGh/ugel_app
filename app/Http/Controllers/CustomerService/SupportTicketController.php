@@ -212,7 +212,7 @@ class SupportTicketController extends Controller
                 ['subject_type', 'App\Models\SupportTicket'],
                 ['subject_id', $ticket->id],
             ])->get();
-        $files = $ticket->documents()->orderByDesc('created_at')->get();
+        $files = $ticket->attachments()->orderByDesc('created_at')->get();
         $comments = $ticket->ticketComments();
         $assigneeIds =  $ticket->assignees()->pluck("id")->toArray();
         return view("customer-service.support-tickets.show", compact("ticket", "logs", 'files', 'comments', 'assigneeIds'));

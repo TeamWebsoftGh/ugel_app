@@ -5,7 +5,7 @@ namespace App\Models\CustomerService;
 use App\Abstracts\Model;
 use App\Models\Auth\User;
 use App\Models\Client\Client;
-use App\Models\Common\DocumentUpload;
+use App\Models\Common\Comment;
 use App\Models\Common\Priority;
 use Carbon\Carbon;
 
@@ -56,7 +56,7 @@ class SupportTicket extends Model
 
     public function ticketComments()
     {
-        return $this->hasMany(Comment::class);
+        return $this->morphMany(Comment::class, 'commentable');
     }
 
     public function getDateCreatedAttribute($value)

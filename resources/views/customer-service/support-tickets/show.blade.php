@@ -53,11 +53,11 @@
                         <li>
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0">
-                                    <img src="{{asset($ticket->o?->UserImage)}}" alt="" class="avatar-xs rounded-circle">
+                                    <img src="{{asset($ticket->owner?->UserImage)}}" alt="" class="avatar-xs rounded-circle">
                                 </div>
                                 <div class="flex-grow-1 ms-2">
-                                    <h6 class="mb-1"><a href="javascript:void(0)">{{$ticket->user->fullname}}</a></h6>
-                                    <p class="text-muted mb-0">{{$ticket->user->designation->designation_name}}</p>
+                                    <h6 class="mb-1"><a href="javascript:void(0)">{{$ticket->owner?->fullname}}</a></h6>
+                                    <p class="text-muted mb-0">{{$ticket->client->owner->fullname}}</p>
                                 </div>
                                 <div class="flex-shrink-0">
                                     <div class="dropdown">
@@ -80,11 +80,11 @@
                             <li>
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0">
-                                        <img src="{{asset("storage/".$assignee->UserImage)}}" alt="" class="avatar-xs rounded-circle">
+                                        <img src="{{asset($assignee->UserImage)}}" alt="" class="avatar-xs rounded-circle">
                                     </div>
                                     <div class="flex-grow-1 ms-2">
                                         <h6 class="mb-1"><a href="javascript:void(0)">{{$assignee->fullname}}</a></h6>
-                                        <p class="text-muted mb-0">{{$assignee->designation->designation_name}}</p>
+                                        <p class="text-muted mb-0">{{$assignee->role_name}}</p>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown">
@@ -127,7 +127,7 @@
                                         @enderror
                                     </div><!--end col-->
 
-                                    @if(in_array(user()->id, $assigneeIds) || user()->hasPermission('update-support-tickets'))
+                                    @if(in_array(user()->id, $assigneeIds) || user()->can('update-support-tickets'))
                                         <div class="col-lg-6">
                                             <label for="exampleFormControlTextarea1" class="form-label">Status</label>
                                             <select class="form-control" name="status">
