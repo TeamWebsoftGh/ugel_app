@@ -74,14 +74,29 @@ class PropertyRepository extends BaseRepository implements IPropertyRepository
     {
         $query = $this->model->query();
 
-        // Apply filters using when() for cleaner querying
         $query->when(!empty($filter['filter_property_category']), function ($q) use ($filter) {
-            $q->whereHas('propertyCategory', function ($query) use ($filter) {
-                $query->where('id', $filter['filter_property_category']);
+            $q->whereHas('propertyType', function ($query) use ($filter) {
+                $query->where('property_category_id', $filter['filter_property_category']);
             });
         });
 
         $query->when(!empty($filter['filter_property_type']), function ($q) use ($filter) {
+            $value = $filter['filter_property_type'];
+
+            // If it's all digits, treat it as an ID
+            if (ctype_digit($value)) {
+                $q->where('property_type_id', (int)$value);
+            } else {
+                // Else, match by name from the related table
+                $q->whereHas('propertyType', function ($subQuery) use ($value) {
+                    $subQuery->where('short_name', $value);
+                });
+            }
+        });
+
+
+
+        $query->when(!empty($filter['filter_property_type_name']), function ($q) use ($filter) {
             $q->where('property_type_id', $filter['filter_property_type']);
         });
 
