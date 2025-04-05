@@ -18,7 +18,7 @@ class PropertyUnitResource extends JsonResource
             'id' => $this->id,
             'name' => $this->unit_name,
             'property_name' => $this->property->property_name,
-            'image' => asset($this->image),
+            'image' => isset($this->image)?asset($this->image):null,
             'rent_amount' => $this->rent_amount,
             'rent_type' => $this->rent_type,
             'icon' => $this->icon,
