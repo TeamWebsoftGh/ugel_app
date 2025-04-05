@@ -31,16 +31,18 @@ class InvoiceController extends MobileController
         $perPage = $request->input('perPage', 25);
         $query = $this->invoiceService->listInvoices($data);
 
-        if ($perPage < 0) {
-            // Apply pagination if enabled
-            $items = $query->paginate($perPage, ['*'], 'page', $page);
-        } else {
-            // Return all records if pagination is disabled
-            $items = $query->get();
-        }
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $resource = InvoiceResource::collection($paginator); // Resource handles paginator
 
-        $item = InvoiceResource::collection($items);
-        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);    }
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource, $paginator);
+        } else {
+            $items = $query->get();
+            $resource = InvoiceResource::collection($items);
+
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource);
+        }
+    }
 
     public function create()
     {

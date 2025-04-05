@@ -32,22 +32,22 @@ class BookingController extends MobileController
         $perPage = $request->input('perPage', 25);
         $query = $this->bookingService->listBookings($data);
 
-        if ($perPage < 0) {
-            // Apply pagination if enabled
-            $items = $query->paginate($perPage, ['*'], 'page', $page);
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $resource = BookingResource::collection($paginator); // Resource handles paginator
+
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource, $paginator);
         } else {
-            // Return all records if pagination is disabled
             $items = $query->get();
+            $resource = BookingResource::collection($items);
+
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource);
         }
+    }
 
-        $item = BookingResource::collection($items);
-        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);    }
-
-    public function create()
+    public function lookup()
     {
-        $data['hostels'] = PropertyHelper::getAllHostels();
         $data['booking_periods'] = PropertyHelper::getActiveBookingPeriods();
-
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $data);
     }
 

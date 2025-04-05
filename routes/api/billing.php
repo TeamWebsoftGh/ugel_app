@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['namespace' => 'Mobile', 'prefix' => 'billing'], function () {
+    Route::get('bookings/lookup', [BookingController::class, 'lookup'])->name('bookings.lookup');
     Route::apiResource('bookings', BookingController::class)->except(['update']);
     Route::post('bookings/update', [BookingController::class, 'update'])->name('bookings.update');
     Route::apiResource('invoices', InvoiceController::class)->except(['update']);
