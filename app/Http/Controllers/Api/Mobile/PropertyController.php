@@ -49,16 +49,17 @@ class PropertyController extends MobileController
         $perPage = $request->input('perPage', 25);
         $query = $this->propertyService->listProperties($data);
 
-        if ($perPage < 0) {
-            // Apply pagination if enabled
-            $items = $query->paginate($perPage, ['*'], 'page', $page);
-        } else {
-            // Return all records if pagination is disabled
-            $items = $query->get();
-        }
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $resource = PropertyResource::collection($paginator); // Resource handles paginator
 
-        $item = PropertyResource::collection($items);
-        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource, $paginator);
+        } else {
+            $items = $query->get();
+            $resource = PropertyResource::collection($items);
+
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource);
+        }
     }
 
     public function show(Request $request, $id)
@@ -82,36 +83,40 @@ class PropertyController extends MobileController
         $page = $request->input('page', 1); // Explicitly set page
 
         // Fetch paginated data directly from the query
-        $items = $this->propertyUnitService
-            ->listPropertyUnits($request->all())
-            ->paginate($perPage, ['*'], 'page', $page); // Explicitly use page number
+        $query = $this->propertyUnitService
+            ->listPropertyUnits($request->all());
 
-        // Transform the paginated result using API resource
-        $items = PropertyUnitResource::collection($items);
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $resource = PropertyUnitResource::collection($paginator); // Resource handles paginator
 
-        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $items);
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource, $paginator);
+        } else {
+            $items = $query->get();
+            $resource = PropertyUnitResource::collection($items);
+
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource);
+        }
     }
 
     public function rooms(Request $request)
     {
-        // Get pagination inputs with defaults
         $perPage = $request->input('perPage', 25);
-        $page = $request->input('page', 1); // Explicitly set page
+        $page = $request->input('page', 1);
 
-        // Fetch paginated data directly from the query
         $query = $this->roomService->listRooms($request->all());
 
-        if ($perPage < 0) {
-            // Apply pagination if enabled
-            $items = $query->paginate($perPage, ['*'], 'page', $page);
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $resource = RoomResource::collection($paginator); // Resource handles paginator
+
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource, $paginator);
         } else {
-            // Return all records if pagination is disabled
             $items = $query->get();
+            $resource = RoomResource::collection($items);
+
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource);
         }
-
-        // Transform the paginated result using API resource
-        $items = RoomResource::collection($items);
-
-        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $items);
     }
+
 }
