@@ -179,7 +179,7 @@ class PropertyHelper
      * @param array $columns
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public static function getActiveBookingPeriods(?string $currentDate = null, array $columns = ['id', 'name', 'type', 'booking_start_date', 'booking_end_date'])
+    public static function getActiveBookingPeriods(?string $currentDate = null, array $columns = ['id', 'name', 'type', 'booking_start_date', 'booking_end_date', 'lease_start_date', 'lease_end_date'])
     {
         $currentDate = $currentDate ?? Carbon::now()->toDateString();
 
