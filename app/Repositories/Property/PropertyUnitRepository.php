@@ -73,10 +73,10 @@ class PropertyUnitRepository extends BaseRepository implements IPropertyUnitRepo
     public function listPropertyUnits(array $filter = [], string $order = 'updated_at', string $sort = 'desc', array $columns = ['*'])
     {
         $result = $this->model->query();
-        if (!empty($params['filter_property_type']))
+        if (!empty($filter['filter_property_type']))
         {
-            $result = $result->whereHas('property', function ($query) use($params) {
-                return $query->where('property_type_id', '=', $params['filter_property_type']);
+            $result = $result->whereHas('property', function ($query) use($filter) {
+                return $query->where('property_type_id', '=', $filter['filter_property_type']);
             });
         }
         if (!empty($filter['filter_property']))
