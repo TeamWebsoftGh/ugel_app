@@ -93,7 +93,7 @@ class BookingController extends MobileController
     {
         $validatedData = $request->validate([
             'booking_period_id' => 'required|exists:booking_periods,id',
-            'property_id' => 'required|exists:properties,id',
+            'property_id' => 'nullable|exists:properties,id',
             'property_unit_id' => 'required|exists:property_units,id',
             'room_id' => 'nullable|exists:rooms,id',
            // 'client_id' => 'required|exists:clients,id',
