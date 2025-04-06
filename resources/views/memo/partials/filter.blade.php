@@ -12,10 +12,10 @@
             </div>
             <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
                 <label>Property Types</label>
-                <select name="filter_subsidiary" id="filter_subsidiary" data-live-search="true" class="form-control selectpicker">
+                <select name="filter_property_type" id="filter_property_type" data-live-search="true" class="form-control selectpicker">
                     <option selected value="">All Property Types</option>
                     @foreach($property_types as $property_type)
-                        <option @if($property_type->id == request()->filter_subsidiary) selected="selected" @endif value="{{ $property_type->id }}">{{ $property_type->name }}</option>
+                        <option @if($property_type->id == request()->filter_property_type) selected="selected" @endif value="{{ $property_type->id }}">{{ $property_type->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -30,10 +30,10 @@
             </div>
             <div class="col-md-12 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
                 <label>Client Types</label>
-                <select name="filter_branch" id="filter_branch" data-live-search="true" class="form-control selectpicker">
+                <select name="filter_customer_type" id="filter_customer_type" data-live-search="true" class="form-control selectpicker">
                     <option selected value="">All Client Type</option>
                     @foreach($client_types as $loc)
-                        <option @if($loc->id == request()->filter_branch) selected="selected" @endif value="{{ $loc->id }}">{{ $loc->name }}</option>
+                        <option @if($loc->id == request()->filter_customer_type) selected="selected" @endif value="{{ $loc->id }}">{{ $loc->name }}</option>
                     @endforeach
                 </select>
             </div>

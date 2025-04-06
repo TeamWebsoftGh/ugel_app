@@ -77,7 +77,7 @@
                                 </div>
                                 <div class="flex-shrink-0">
                                     <div>
-                                        <a href="/" class="btn btn-light" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Edit" data-bs-original-title="Edit"><i class="ri-pencil-fill align-bottom"></i></a>
+                                        <a href="{{route("properties.edit", $property->id)}}" class="btn btn-light" data-bs-toggle="tooltip" data-bs-placement="top" aria-label="Edit" data-bs-original-title="Edit"><i class="ri-pencil-fill align-bottom"></i></a>
                                     </div>
                                 </div>
                             </div>
@@ -104,7 +104,7 @@
                                             </div>
                                             <div class="flex-grow-1">
                                                 <p class="text-muted mb-1">Start Price :</p>
-                                                <h5 class="mb-0">GHS2,200.00</h5>
+                                                <h5 class="mb-0">{{format_money($property->propertyUnits->min('rent_amount') ?? 0)}}</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -119,8 +119,8 @@
                                                 </div>
                                             </div>
                                             <div class="flex-grow-1">
-                                                <p class="text-muted mb-1">No. of Orders :</p>
-                                                <h5 class="mb-0">2,234</h5>
+                                                <p class="text-muted mb-1">No. of Bookings :</p>
+                                                <h5 class="mb-0">{{number_format(count($property->bookings))}}</h5>
                                             </div>
                                         </div>
                                     </div>
@@ -169,11 +169,11 @@
                                                 </tr>
                                                 <tr>
                                                     <th scope="row">Address</th>
-                                                    <td>{{$property->address}}</td>
+                                                    <td>{{$property->address}}<br/> {{$property->city->name}}<br/> {{$property->city->region?->name}}</td>
                                                 </tr>
                                                 <tr>
-                                                    <th scope="row">City</th>
-                                                    <td>{{$property->city->name}}</td>
+                                                    <th scope="row">Country</th>
+                                                    <td>{{$property->city?->region?->country?->name??"N/A"}}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>

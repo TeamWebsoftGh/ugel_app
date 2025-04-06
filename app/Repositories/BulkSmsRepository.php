@@ -28,13 +28,13 @@ class BulkSmsRepository extends BaseRepository implements IBulkSmsRepository
      */
     public function listAnnouncements(array $params = null, string $order = 'id', string $sort = 'desc')
     {
-        $result = Announcement::query();
+        $result = $this->getFilteredList();
 
         $ed = $params['filter_end_date']??null;
         $sd = $params['filter_start_date']??null;
-        $s = $params['filter_constituency']??null;
-        $ps = $params['filter_polling_station']??null;
-        $c = $params['filter_company_id']??null;
+        $p = $params['filter_property']??null;
+        $pt = $params['filter_property_type']??null;
+        $ct = $params['filter_customer_type']??null;
         $u = $params['filter_user_id']??null;
         $t= $params['filter_type']??null;
 
@@ -43,10 +43,6 @@ class BulkSmsRepository extends BaseRepository implements IBulkSmsRepository
 //            $c = user()->company_id;
 //            $u = user()->user_id;
 //        }
-
-        $result = $result->when($c, function ($q, $c) {
-            return $q->where('company_id', '=', $c);
-        });
 
         $result = $result->when($u, function ($q, $u) {
             return $q->where('created_by', '=', $u);
@@ -64,14 +60,19 @@ class BulkSmsRepository extends BaseRepository implements IBulkSmsRepository
             return $q->where('type', '=', $t);
         });
 
-        $result->when($s, function ($q, $s) {
-            return $q->Where('constituency_id', $s)
-                ->orWhere('constituency_id','=',null);
+        $result->when($p, function ($q, $p) {
+            return $q->Where('property_id', $p);
+                //->orWhere('property_id','=',null);
         });
 
-        $result->when($ps, function ($q, $ps) {
-            return $q->Where('polling_station_id', $ps)
-                ->orWhere('polling_station_id','=',null);
+        $result->when($ct, function ($q, $ct) {
+            return $q->Where('client_type_id', $ct);
+                //->orWhere('client_type_id','=',null);
+        });
+
+        $result->when($pt, function ($q, $pt) {
+            return $q->Where('property_type_id', $pt);
+                //->orWhere('property_type_id','=',null);
         });
 
         return $result->orderBy($order, $sort)->get();

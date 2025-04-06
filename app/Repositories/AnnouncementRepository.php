@@ -47,13 +47,17 @@ class AnnouncementRepository extends BaseRepository implements IAnnouncementRepo
             return $q->where('start_date', '<=', $ed);
         });
 
+        $result = $result->when($params['filter_property_type'], function ($q, $params) {
+            return $q->where('property_type_id', '<=', $params['filter_property_type']);
+        });
+
         $result->when($s, function ($q, $s) {
             return $q->Where('company_id', $s)
                 ->orWhere('company_id','=',null);
         });
 
 
-        return $result->orderBy($order, $sort)->get();
+        return $result->orderBy($order, $sort);
     }
 
     /**

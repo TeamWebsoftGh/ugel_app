@@ -31,10 +31,15 @@ class RoomRepository extends BaseRepository implements IRoomRepository
     {
         $result = $this->model->query();
 
-        if (!empty($filter['filter_property_type']))
-        {
-            $result = $result->whereHas('propertyUnit', function ($query) use($filter) {
-                return $query->where('property_type_id', '=', $filter['filter_property_type']);
+        if (!empty($filter['filter_property_type'])) {
+            $result = $result->whereHas('propertyUnit.property', function ($query) use ($filter) {
+                $query->where('property_type_id', $filter['filter_property_type']);
+            });
+        }
+
+        if (!empty($filter['filter_property'])) {
+            $result = $result->whereHas('propertyUnit', function ($query) use ($filter) {
+                $query->where('property_id', $filter['filter_property']);
             });
         }
 
@@ -43,9 +48,10 @@ class RoomRepository extends BaseRepository implements IRoomRepository
             $result = $result->where('property_unit_id', $filter['filter_property_unit']);
         }
 
+
         if (!empty($filter['filter_name']))
         {
-            $result = $result->where('name', 'like', '%'.$filter['filter_name'].'%');
+            $result = $result->where('unit_name', 'like', '%'.$filter['filter_name'].'%');
         }
 
         return $result->orderBy($order, $sort);

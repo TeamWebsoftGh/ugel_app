@@ -4,6 +4,7 @@ namespace App\Models\Property;
 
 
 use App\Abstracts\Model;
+use App\Models\Billing\Booking;
 use App\Models\Settings\City;
 
 class Property extends Model
@@ -37,6 +38,11 @@ class Property extends Model
     public function city()
     {
         return $this->belongsTo(City::class)->withDefault(['name' => 'N/A']);
+    }
+
+    public function bookings()
+    {
+        return $this->hasManyThrough(Booking::class, PropertyUnit::class);
     }
 
     public function propertyPurpose()

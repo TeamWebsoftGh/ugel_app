@@ -19,6 +19,7 @@ class PropertyUnit extends Model
         'late_fee_type',
         'incident_receipt',
         'rent_type',
+        'rent_duration',
         'monthly_due_pay',
         'yearly_due_pay',
         'lease_start_date',

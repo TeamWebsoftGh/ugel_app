@@ -40,6 +40,7 @@ class BulkSmsController extends Controller
     {
         $data = $request->all();
         $data['filter_type'] = "sms";
+
         $announcements = $this->announcementService->listAnnouncements($data);
 
         if (empty($data['filter_start_date']))

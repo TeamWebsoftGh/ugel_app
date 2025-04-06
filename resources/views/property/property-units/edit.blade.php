@@ -24,7 +24,7 @@
                             placeholder="Enter unit rent" :value="$property_unit->rent_amount" required />
 
         <x-form.input-field name="rent_type" label="Rent Type" type="select"
-                            :options="['monthly' => 'Monthly', 'weekly' => 'Weekly', 'yearly' => 'Yearly']"
+                            :options="['monthly' => 'Monthly', 'weekly' => 'Weekly', 'yearly' => 'Yearly', 'semester' => 'Per Semester']"
                             :value="$property_unit->rent_type" required />
 
         <x-form.input-field name="rent_duration" label="Rent Duration" type="number"
@@ -35,15 +35,15 @@
                             :options="['fixed' => 'Fixed', 'percentage' => 'Percentage']"
                             :value="$property_unit->deposit_type" required />
 
-        <x-form.input-field name="deposit_amount" label="Deposit Amount" type="number"
-                            placeholder="Enter deposit amount" :value="$property_unit->deposit_amount" required />
+        <x-form.input-field name="security_deposit" label="Security Deposit" type="number"
+                            placeholder="Enter deposit amount" :value="$property_unit->security_deposit" required />
 
         <x-form.input-field name="late_fee_type" label="Late Fee Type" type="select"
                             :options="['fixed' => 'Fixed', 'percentage' => 'Percentage']"
                             :value="$property_unit->late_fee_type" required />
 
-        <x-form.input-field name="late_fee_amount" label="Late Fee Amount" type="number"
-                            placeholder="Enter late fee amount" :value="$property_unit->late_fee_amount" required />
+        <x-form.input-field name="late_fee" label="Late Fee" type="number"
+                            placeholder="Enter late fee" :value="$property_unit->late_fee" required />
 
         <x-form.input-field name="description" class="col-md-12" label="Notes" type="textarea"
                             placeholder="Enter additional notes" :value="$property_unit->description" />

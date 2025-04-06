@@ -40,7 +40,7 @@
                     @enderror
                 </div>
                 <div class="form-group col-6 col-md-4">
-                    <label for="phone_number" class="control-label">Phone Number</label>
+                    <label for="phone_number" class="control-label">Phone Number <span class="text-danger">*</span></label>
                     <input type="tel" name="phone_number" value="{{old('phone_number', $contact->phone_number)}}" class="form-control">
                     <span class="input-note text-danger" id="error-phone_number"> </span>
                     @error('phone_number')
