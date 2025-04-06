@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\CustomerService;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
@@ -9,14 +9,15 @@ use App\Events\TicketStatusChangeEvent;
 use App\Mail\Tickets\TicketStatusChangeMail;
 use App\Models\Common\DocumentUpload;
 use App\Models\Common\NumberGenerator;
-use App\Models\CustomerService\SupportTicket;
 use App\Models\CustomerService\Comment;
+use App\Models\CustomerService\SupportTicket;
+use App\Repositories\CustomerService\Interfaces\ISupportTicketRepository;
+use App\Services\CustomerService\Interfaces\ISupportTicketService;
 use App\Services\Helpers\PropertyHelper;
+use App\Services\Helpers\Response;
+use App\Services\ServiceBase;
 use App\Traits\TaskUtil;
 use App\Traits\UploadableTrait;
-use App\Repositories\Interfaces\ISupportTicketRepository;
-use App\Services\Helpers\Response;
-use App\Services\Interfaces\ISupportTicketService;
 
 class SupportTicketService extends ServiceBase implements ISupportTicketService
 {

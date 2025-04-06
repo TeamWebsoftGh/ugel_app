@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\CustomerService;
 
 use App\Models\CustomerService\Enquiry;
-use App\Repositories\Interfaces\IEnquiryRepository;
+use App\Repositories\BaseRepository;
+use App\Repositories\CustomerService\Interfaces\IEnquiryRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Collection;
 
 class EnquiryRepository extends BaseRepository implements IEnquiryRepository
 {

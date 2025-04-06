@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\CustomerService;
 
 use App\Models\CustomerService\MaintenanceRequest;
-use App\Repositories\Interfaces\IMaintenanceRepository;
-use Illuminate\Support\Collection;
+use App\Repositories\BaseRepository;
+use App\Repositories\CustomerService\Interfaces\IMaintenanceRepository;
 
 class MaintenanceRepository extends BaseRepository implements IMaintenanceRepository
 {

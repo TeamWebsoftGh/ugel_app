@@ -36,12 +36,12 @@
                                 <div class="form-check"><input type="checkbox" class="form-check-input fs-15 select-all"><label></label></div>
                             </th>
                             <th>Ticket #</th>
+                            <th>Category</th>
                             <th>Subject</th>
                             <th>Customer</th>
                             <th>Status</th>
                             <th>Responsible</th>
                             <th>Date</th>
-                            <th>Created By</th>
                             <th>Action</th>
                         </tr>
                         </thead>
@@ -63,12 +63,12 @@
                     [
                         {data: null, orderable: false, searchable: false},
                         {data: 'ticket_code', name: 'ticket_code'},
+                        {data: 'category', name: 'category'},
                         {data: 'subject', name: 'subject'},
                         {data: 'client_name', name: 'client_name'},
                         {data: 'status', name: 'status'},
                         {data: 'assignee_names', name: 'assignee_names'},
                         {data: 'created_at', name: 'created_at'},
-                        {data: 'created_by', name: 'created_by'},
                         {data: 'action', name: 'action', orderable: false }
                     ];
                 loadDataAndInitializeDataTable("support_ticket", "{{ route('support-tickets.index') }}", cols);

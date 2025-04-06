@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\CustomerService;
 
 
 use App\Models\CustomerService\MaintenanceCategory;
-use App\Repositories\Interfaces\IMaintenanceCategoryRepository;
+use App\Repositories\BaseRepository;
+use App\Repositories\CustomerService\Interfaces\IMaintenanceCategoryRepository;
 
 class MaintenanceCategoryRepository extends BaseRepository implements IMaintenanceCategoryRepository
 {

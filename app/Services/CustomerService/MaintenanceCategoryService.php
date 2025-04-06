@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\CustomerService;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\CustomerService\MaintenanceCategory;
-use App\Repositories\Interfaces\IMaintenanceCategoryRepository;
+use App\Repositories\CustomerService\Interfaces\IMaintenanceCategoryRepository;
+use App\Services\CustomerService\Interfaces\IMaintenanceCategoryService;
 use App\Services\Helpers\Response;
-use App\Services\Interfaces\IMaintenanceCategoryService;
+use App\Services\ServiceBase;
 use App\Traits\UploadableTrait;
 use Illuminate\Support\Collection;
 

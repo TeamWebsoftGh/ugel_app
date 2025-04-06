@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Services\Interfaces;
+namespace App\Services\CustomerService\Interfaces;
 
 use App\Models\CustomerService\Enquiry;
-use Illuminate\Support\Collection;
+use App\Services\Interfaces\IBaseService;
 
 interface IEnquiryService extends IBaseService
 {

@@ -132,7 +132,7 @@
            aria-expanded="false" aria-controls="sidebarAuth">
             <i class="ri-group-2-line"></i> <span data-key="t-authentication">Customers</span>
         </a>
-        <div class="collapse menu-dropdown {{ (request()->is('*cs*')) ? 'show' : '' }}" id="customers">
+        <div class="collapse menu-dropdown {{ (request()->is('*customers*') || request()->is('*customer-types*')) ? 'show' : '' }}" id="customers">
             <ul class="nav nav-sm flex-column">
                 <li class="nav-item">
                     <a href="{{route("admin.customers.create")}}" class="nav-link {{ (request()->is('*customers/create')) ? 'active' : '' }}" data-key="t-login_activity"> Add New Customer </a>
@@ -187,7 +187,7 @@
             <ul class="nav nav-sm flex-column">
                 <li class="nav-item">
                     <a href="#ticket" class="nav-link collapsed" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarAccount" data-key="t-level-1.2">Support Ticket</a>
-                    <div class="menu-dropdown collapse {{ (request()->is('*support-tickets*')) ? 'show' : '' }}" id="ticket" style="">
+                    <div class="menu-dropdown collapse {{ (request()->is('*support-tickets*') || request()->is('*support-topics*')) ? 'show' : '' }}" id="ticket" style="">
                         <ul class="nav nav-sm flex-column">
                             <li class="nav-item">
                                 <a href="{{route("support-tickets.create")}}" class="nav-link" data-key="t-hub"> Open a Ticket </a>
@@ -198,6 +198,11 @@
                             @if(user()->can('read-support-tickets'))
                                 <li class="nav-item">
                                     <a href="{{route("support-tickets.index")}}" class="nav-link" data-key="t-calendar"> All Tickets </a>
+                                </li>
+                            @endif
+                            @if(user()->can('create-support-tickets'))
+                                <li class="nav-item">
+                                    <a href="{{route("support-topics.index")}}" class="nav-link" data-key="t-calendar"> Support Topics </a>
                                 </li>
                             @endif
                         </ul>

@@ -151,7 +151,7 @@ class ServiceBase implements IBaseService
         {
             $this->response->status = ResponseType::SUCCESS;
             $this->response->message = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
-            $this->response->data = $data;
+            $this->response->data = $data?->refresh();
         } else
         {
             $this->response->status = ResponseType::ERROR;

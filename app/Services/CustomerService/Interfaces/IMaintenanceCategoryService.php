@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Interfaces;
+namespace App\Services\CustomerService\Interfaces;
 
 use App\Models\CustomerService\MaintenanceCategory;
+use App\Services\Interfaces\IBaseService;
 
 interface IMaintenanceCategoryService extends IBaseService
 {

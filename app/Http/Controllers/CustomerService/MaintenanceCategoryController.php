@@ -7,7 +7,7 @@ use App\Constants\ResponseType;
 use App\Http\Requests\ImportRequest;
 use App\Imports\AmenitiesImport;
 use App\Models\Property\PropertyCategory;
-use App\Services\Interfaces\IMaintenanceCategoryService;
+use App\Services\CustomerService\Interfaces\IMaintenanceCategoryService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -54,10 +54,6 @@ class MaintenanceCategoryController extends Controller
                 ->addColumn('parent_name', function ($row)
                 {
                     return $row->parent->name??"Main";
-                })
-                ->addColumn('updated_at', function ($row)
-                {
-                    return Carbon::parse($row->updated_at)->format(env('Date_Format'));
                 })
                 ->addColumn('action', function ($data)
                 {

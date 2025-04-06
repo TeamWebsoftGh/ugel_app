@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\CustomerService;
 
 use App\Models\CustomerService\SupportTicket;
-use App\Repositories\Interfaces\ISupportTicketRepository;
+use App\Repositories\BaseRepository;
+use App\Repositories\CustomerService\Interfaces\ISupportTicketRepository;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Hash;
 
 class SupportTicketRepository extends BaseRepository implements ISupportTicketRepository
 {
@@ -36,50 +36,58 @@ class SupportTicketRepository extends BaseRepository implements ISupportTicketRe
         {
             $result = $result->where(function ($query) {
                 return $query->whereHas('assignees', function ($query) {
-                    return $query->where('user_id', user()->id);
-                })->orWhere('user_id', user()->id);
+                    return $query->where('id', user()->id);
+                })->orWhere('created_by', user()->id);
             });
         }
 
-        if (!empty($params['filter_department']))
+        if (!empty($params['filter_customer_type']))
         {
-            $result = $result->whereHas('user', function ($query) use($params) {
-                return $query->where('department_id', '=', $params['filter_department']);
+            $result = $result->whereHas('client', function ($query) use($filter) {
+                return $query->where('client_type_id', '=', $filter['filter_customer_type']);
             });
         }
 
-        if (!empty($params['filter_subsidiary']))
+        if (!empty($filter['filter_status']))
         {
-            $result = $result->whereHas('user', function ($query) use($params) {
-                return $query->where('subsidiary_id', '=', $params['filter_subsidiary']);
+            $result = $result->where('status_id', $filter['filter_status']);
+        }
+
+        if (!empty($filter['filter_priority']))
+        {
+            $result = $result->where('priority_id', $filter['filter_priority']);
+        }
+
+        if (!empty($filter['filter_category']))
+        {
+            $result = $result->where('support_topic_id', $filter['filter_category']);
+        }
+
+        if (!empty($filter['filter_customer']))
+        {
+            $result = $result->where('client_id', $filter['filter_customer']);
+        }
+
+        if (!empty($filter['filter_assignee']))
+        {
+            $result = $result->whereHas('assignees', function ($query) use ($filter) {
+                return $query->where('id', $filter['filter_assignee']);
             });
         }
 
-        if (!empty($params['filter_status']))
+        if (!empty($filter['filter_user']))
         {
-            $result = $result->where('status_id', $params['filter_status']);
+            $result = $result->where('user_id', $filter['filter_user']);
         }
 
-        if (!empty($params['filter_assignee']))
+        if (!empty($filter['filter_start_date']))
         {
-            $result = $result->whereHas('assignees', function ($query) use ($params) {
-                return $query->where('id', $params['filter_assignee']);
-            });
+            $result = $result->where('created_at', '>=', $filter['filter_start_date']);
         }
 
-        if (!empty($params['filter_user']))
+        if (!empty($filter['filter_end_date']))
         {
-            $result = $result->where('user_id', $params['filter_user']);
-        }
-
-        if (!empty($params['filter_start_date']))
-        {
-            $result = $result->where('created_at', '>=', $params['filter_start_date']);
-        }
-
-        if (!empty($params['filter_end_date']))
-        {
-            $result = $result->where('created_at', '<=', $params['filter_end_date']);
+            $result = $result->where('created_at', '<=', $filter['filter_end_date']);
         }
 
         return $result->orderBy($order, $sort);

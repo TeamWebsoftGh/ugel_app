@@ -6,6 +6,7 @@ use App\Abstracts\Model;
 use App\Models\Billing\Booking;
 use App\Models\Billing\Invoice;
 use App\Models\CustomerService\MaintenanceRequest;
+use App\Models\CustomerService\SupportTicket;
 use App\Models\Property\Property;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -32,7 +33,7 @@ class NumberGenerator extends Model
         $obj->last_generated_value = $generated_number;
         $obj->save();
 
-        return self::get_prefix($generatable_type) . "-" . $generated_number;
+        return self::get_prefix($generatable_type).$generated_number;
     }
 
     private static function get_prefix($generatable_type)
@@ -42,6 +43,7 @@ class NumberGenerator extends Model
             MaintenanceRequest::class => 'MT',
             Booking::class => 'B',
             Invoice::class => 'INV',
+            SupportTicket::class => 'ST',
             'App\Models\Payment' => 'PMT',
             'App\Models\Wallet' => 'WAL',
             'App\Models\SupportTicket' => 'ST',

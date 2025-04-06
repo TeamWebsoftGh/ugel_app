@@ -13,8 +13,8 @@ class SupportTicket extends Model
 {
     protected $appends = ["assignee_names"];
 
-    protected $fillable = ['ticket_note', 'status', 'ticket_code', 'priority_id',
-        'client_id', 'description', 'remarks', 'subject', 'company_id', 'created_by'];
+    protected $fillable = ['ticket_note', 'status', 'ticket_code', 'priority_id','phone_number', 'email',
+        'client_id', 'description', 'remarks', 'subject','support_topic_id', 'company_id', 'created_by'];
 
     public function priority()
     {
@@ -24,6 +24,11 @@ class SupportTicket extends Model
     public function client()
     {
         return $this->belongsTo(Client::class)->withDefault();
+    }
+
+    public function supportTopic()
+    {
+        return $this->belongsTo(SupportTopic::class)->withDefault(['name' => "N/A"]);
     }
 
     public function assignees()

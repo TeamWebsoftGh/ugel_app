@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\CustomerService\Interfaces;
 
 use App\Models\CustomerService\SupportTicket;
-use Illuminate\Support\Collection;
+use App\Repositories\Interfaces\IBaseRepository;
 
 interface ISupportTicketRepository extends IBaseRepository
 {

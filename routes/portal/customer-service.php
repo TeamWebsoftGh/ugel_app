@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['namespace' => 'App\Http\Controllers\CustomerService', 'prefix' => 'customer-service'], function () {
+    //Support Topic
+    Route::get('support-topics/import', 'SupportTopicController@import')->name('support-topics.import');
+    Route::post('support-topics/import', 'SupportTopicController@importPost')->name('support-topics.importPost');
+    Route::delete('support-topics/delete/selected', 'SupportTopicController@bulkDelete')->name('support-topics.delete.selected');
+    Route::resource('support-topics', 'SupportTopicController')->except(['update']);
+
+
     //Comments
     Route::post('support-tickets/upload-file', 'SupportTicketController@uploadFile')->name('support-tickets.file-upload');
     Route::delete('support-tickets/delete-file/{ticket_id}/{id}', 'SupportTicketController@deleteDocument')->name('support-tickets.delete-file');

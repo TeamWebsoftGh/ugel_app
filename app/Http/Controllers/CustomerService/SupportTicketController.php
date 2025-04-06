@@ -5,8 +5,8 @@ namespace App\Http\Controllers\CustomerService;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Audit\LogActivity;
+use App\Services\CustomerService\Interfaces\ISupportTicketService;
 use App\Services\Helpers\PropertyHelper;
-use App\Services\Interfaces\ISupportTicketService;
 use App\Traits\TaskUtil;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
@@ -39,6 +39,7 @@ class SupportTicketController extends Controller
         $data['filter_end_date'] = $request->get('filter_end_date', Carbon::now()->format('Y-m-d'));
         $data['filter_category'] = $request->get('filter_category', '');
         $data['filter_customer'] = $request->get('filter_customer', '');
+        $data['filter_assignee'] = $request->get('filter_assignee', '');
         $data['filter_client_type'] = $request->get('filter_client_type', '');
         $data['filter_status'] = $request->get('filter_status', '');
         $data['filter_priority'] = $request->get('filter_priority', '');

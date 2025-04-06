@@ -10,6 +10,7 @@
                     <input type="text" id="date_range" class="form-control" placeholder="Select date range" />
                     <input type="hidden" id="filter_start_date" name="filter_start_date" value="{{ old('filter_start_date', $data['filter_start_date'] ?? '') }}">
                     <input type="hidden" id="filter_end_date" name="filter_end_date" value="{{ old('filter_end_date', $data['filter_end_date'] ?? '') }}">
+                    <input type="hidden" id="filter_assignee" name="filter_assignee" value="{{ old('filter_assignee', $data['filter_assignee'] ?? '') }}">
                 </div>
             </div>
 

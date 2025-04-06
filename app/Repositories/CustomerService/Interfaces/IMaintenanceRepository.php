@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\CustomerService\Interfaces;
 
 use App\Models\CustomerService\MaintenanceRequest;
-use Illuminate\Support\Collection;
+use App\Repositories\Interfaces\IBaseRepository;
 
 interface IMaintenanceRepository extends IBaseRepository
 {
