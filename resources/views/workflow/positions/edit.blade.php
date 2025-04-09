@@ -1,7 +1,7 @@
-<form method="POST" action="{{route('workflows.positions.store')}}"  class="form-horizontal">
+<form method="POST" id="position" action="{{route('workflows.positions.store')}}"  class="form-horizontal">
     @csrf
     <input type="hidden" id="_id" name="id" value="{{$workflowPosition->id}}">
-    <input type="hidden" id="_name" name="me" value="{{$workflowPosition->deduction_name}}">
+    <input type="hidden" id="_name" name="me" value="{{$workflowPosition->position_name}}">
     <div class="row">
         <div class="col-md-4 col-6 form-group">
             <label>{{__('Name')}} *</label>

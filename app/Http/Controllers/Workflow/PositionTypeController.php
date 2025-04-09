@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Workflow;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Workflow\WorkflowPositionType;
-use App\Services\Interfaces\IWorkflowPositionTypeService;
+use App\Services\Workflow\Interfaces\IWorkflowPositionTypeService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
@@ -161,6 +161,18 @@ class PositionTypeController extends Controller
         $workflowPositionType = $this->workflowPositionTypeService->findWorkflowPositionTypeById($id);
         $result = $this->workflowPositionTypeService->deleteWorkflowPositionType($workflowPositionType);
 
+        return $this->responseJson($result);
+    }
+
+    /**
+     * Bulk delete resources from storage.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $result = $this->workflowPositionTypeService->deleteMultiple($request->ids);
         return $this->responseJson($result);
     }
 }

@@ -98,7 +98,8 @@ class BulkSmsController extends Controller
 
         if ($results->status != ResponseType::SUCCESS)
         {
-            return redirect()->back()->with('error', $results->message);
+            session()->flash('error', $results->message);
+            return redirect()->back()->withInput($data);
         }
         session()->flash('message', $results->message);
 

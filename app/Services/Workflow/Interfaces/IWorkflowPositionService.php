@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Services\Interfaces;
+namespace App\Services\Workflow\Interfaces;
 
 use App\Models\Workflow\WorkflowPosition;
-use Illuminate\Support\Collection;
+use App\Services\Interfaces\IBaseService;
 
 interface IWorkflowPositionService extends IBaseService
 {
-    public function listWorkflowPositions(string $order = 'id', string $sort = 'desc', $columns = []) : Collection;
+    public function listWorkflowPositions(array $filter = [], string $order = 'updated_at', string $sort = 'desc');
 
     public function createWorkflowPosition(array $params);
 
@@ -16,5 +16,7 @@ interface IWorkflowPositionService extends IBaseService
     public function findWorkflowPositionById(int $id);
 
     public function deleteWorkflowPosition(WorkflowPosition $workflowPosition);
+
+    public function deleteMultiple(array $ids);
 
 }

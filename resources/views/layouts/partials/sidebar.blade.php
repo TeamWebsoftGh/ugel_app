@@ -243,12 +243,9 @@
         <div class="collapse menu-dropdown {{ (request()->is('*resource*')) ? 'show' : '' }}" id="resources">
             <ul class="nav nav-sm flex-column">
                 <li class="nav-item">
-                    <a href="{{route("resource.knowledge-base.all")}}" class="nav-link" data-key="t-user_activity"> Knowledge Hub </a>
+                    <a href="{{route("resource.knowledge-base.index")}}" class="nav-link" data-key="t-user_activity"> Knowledge Hub </a>
                 </li>
                 @if(user()->can('create-knowledge-bases'))
-                    <li class="nav-item">
-                        <a href="{{route("resource.knowledge-base.index")}}" class="nav-link" data-key="t-calendar"> Manage Topics </a>
-                    </li>
                     <li class="nav-item">
                         <a href="{{route("resource.categories.index")}}" class="nav-link" data-key="t-calendar"> Categories </a>
                     </li>
@@ -328,21 +325,21 @@
     @if(user()->can('read-subsidiaries|read-departments|read-users|read-site-settings'))
         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-components">Configurations</span></li>
     @endif
-    @canany(['read-companies', 'read-subsidiaries', 'read-departments', 'read-branches', 'read-designations'])
-        <li class="nav-item">
-            <a class="nav-link menu-link" href="#organization" data-bs-toggle="collapse" role="button"
-               aria-expanded="false" aria-controls="sidebarAdvanceUI">
-                <i class="ri-organization-chart"></i> <span data-key="t-advance-ui">Organization</span>
-            </a>
-            <div class="menu-dropdown collapse" id="organization" style="">
-                <ul class="nav nav-sm flex-column">
-                    <li class="nav-item">
-                        <a href="{{route('organization.companies.index')}}" class="nav-link" data-key="t-site-settings">Companies</a>
-                    </li>
-                </ul>
-            </div>
-        </li>
-    @endcanany
+{{--    @canany(['read-companies'])--}}
+{{--        <li class="nav-item">--}}
+{{--            <a class="nav-link menu-link" href="#organization" data-bs-toggle="collapse" role="button"--}}
+{{--               aria-expanded="false" aria-controls="sidebarAdvanceUI">--}}
+{{--                <i class="ri-organization-chart"></i> <span data-key="t-advance-ui">Organization</span>--}}
+{{--            </a>--}}
+{{--            <div class="menu-dropdown collapse" id="organization" style="">--}}
+{{--                <ul class="nav nav-sm flex-column">--}}
+{{--                    <li class="nav-item">--}}
+{{--                        <a href="{{route('organization.companies.index')}}" class="nav-link" data-key="t-site-settings">Companies</a>--}}
+{{--                    </li>--}}
+{{--                </ul>--}}
+{{--            </div>--}}
+{{--        </li>--}}
+{{--    @endcanany--}}
 
     @if(user()->can('read-users'))
         <li class="nav-item">

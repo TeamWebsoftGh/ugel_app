@@ -24,63 +24,20 @@ class WorkflowPositionRepository extends BaseRepository implements IWorkflowPosi
     /**
      * List all Companies
      *
+     * @param array $filter
      * @param string $order
      * @param string $sort
      *
-     * @param array $columns
      * @return Collection
      */
-    public function listWorkflowPositions(string $order = 'id', string $sort = 'desc', array $columns = ['*']): Collection
+    public function listWorkflowPositions(array $filter=[], string $order = 'updated_at', string $sort = 'desc')
     {
-        return $this->all($columns, $order, $sort);
-    }
+        $query = $this->getFilteredList();
+        $pt = $filter['filter_position_type']??null;
 
-    /**
-     * Create the WorkflowPosition
-     *
-     * @param array $data
-     *
-     * @return WorkflowPosition
-     */
-    public function createWorkflowPosition(array $data): WorkflowPosition
-    {
-        return $this->create($data);
-    }
-
-
-    /**
-     * Find the WorkflowPosition by id
-     *
-     * @param int $id
-     *
-     * @return WorkflowPosition
-     */
-    public function findWorkflowPositionById(int $id): WorkflowPosition
-    {
-        return $this->findOneOrFail($id);
-    }
-
-    /**
-     * Update WorkflowPosition
-     *
-     * @param array $params
-     * @param int $id
-     *
-     * @return bool
-     */
-    public function updateWorkflowPosition(array $params, int $id): bool
-    {
-        return $this->update($params, $id);
-    }
-
-
-    /**
-     * @param int $id
-     * @return bool
-     * @throws \Exception
-     */
-    public function deleteWorkflowPosition(int $id): bool
-    {
-        return $this->delete($id);
+        $query = $query->when($pt, function ($q, $pt) {
+            return $q->where('position_type_id',  $pt);
+        });
+        return $query->orderBy($order, $sort);
     }
 }

@@ -54,7 +54,7 @@ class CategoryService extends ServiceBase implements ICategoryService
      */
     public function listActiveCategories(string $order = 'id', string $sort = 'desc', $except = []): Collection
     {
-        return $this->categoryRepo->listCategories($order, $sort, $except)->where('status', '==', 1);
+        return $this->categoryRepo->listCategories($order, $sort, $except)->where('is_active', '==', 1);
     }
 
     /**

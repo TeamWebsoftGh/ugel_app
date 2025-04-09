@@ -27,16 +27,15 @@ Route::group(['prefix' => 'workflow-requests', 'namespace' => 'App\Http\Controll
 Route::group(['prefix' => 'workflows', 'namespace' => 'App\Http\Controllers\Workflow', 'as' => 'workflows.'], function ()
 {
     //Workflow Positions types
-    Route::get('position-types/detail/{id}', 'PositionTypeController@show')->name('position-types.detail');
-    Route::get('position-types/{id}/delete', 'PositionTypeController@destroy')->name('position-types.destroy');
+    Route::delete('position-types/delete/selected', 'PositionTypeController@bulkDelete')->name('position-types.delete.selected');
     Route::resource('position-types', 'PositionTypeController')->except(['update', 'show']);
 
     //Workflow Positions
+    Route::delete('positions/delete/selected', 'WorkflowPositionController@bulkDelete')->name('positions.delete.selected');
     Route::resource('positions', 'WorkflowPositionController')->except(['update', 'show']);
 
     //Workflow Types
-    Route::get('workflow-types/detail/{id}', 'WorkflowTypeController@show')->name('workflow-types.detail');
-    Route::get('workflow-types/{id}/delete', 'WorkflowTypeController@destroy')->name('workflow-types.destroy');
+    Route::delete('workflow-types/delete/selected', 'WorkflowTypeController@bulkDelete')->name('workflow-types.delete.selected');
     Route::resource('workflow-types', 'WorkflowTypeController')->except(['update']);
 
     //Workflows

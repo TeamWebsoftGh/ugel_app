@@ -41,14 +41,13 @@ class BookingController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $amenities = $this->bookingService->listBookings($request->all(), 'updated_at');
-            return datatables()->of($amenities)
+            $items = $this->bookingService->listBookings($request->all(), 'updated_at');
+            return datatables()->of($items)
                 ->setRowId(fn($row) => $row->id)
                 ->addColumn('client_name', fn($row) => $row->client->fullname)
                 ->addColumn('client_number', fn($row) => $row->client->client_number)
                 ->addColumn('booking_type', fn($row) => $row->bookingPeriod->name)
                 ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
-                ->addColumn('updated_at', fn($row) => Carbon::parse($row->updated_at)->format(env('Date_Format')))
                 ->addColumn('action', fn($data) => $this->getActionButtons($data, "amenities"))
                 ->rawColumns(['action'])
                 ->make(true);

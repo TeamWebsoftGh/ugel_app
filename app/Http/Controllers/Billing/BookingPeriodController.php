@@ -38,11 +38,10 @@ class BookingPeriodController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $amenities = $this->bookingPeriodService->listBookingPeriods($request->all(), 'updated_at');
-            return datatables()->of($amenities)
+            $items = $this->bookingPeriodService->listBookingPeriods($request->all(), 'updated_at');
+            return datatables()->of($items)
                 ->setRowId(fn($row) => $row->id)
                 ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
-                ->addColumn('updated_at', fn($row) => Carbon::parse($row->updated_at)->format(env('Date_Format')))
                 ->addColumn('action', fn($data) => $this->getActionButtons($data, "booking-periods"))
                 ->rawColumns(['action'])
                 ->make(true);

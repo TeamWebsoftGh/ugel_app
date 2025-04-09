@@ -261,7 +261,7 @@ class BulkSmsService extends ServiceBase implements IBulkSmsService
                 if($contacts == null || count($contacts) == 0)
                 {
                     $this->response->status = ResponseType::ERROR;
-                    $this->response->message = "No contacts selected.";
+                    $this->response->message = "No contacts available under selected contact group.";
 
                     return $this->response;
                 }

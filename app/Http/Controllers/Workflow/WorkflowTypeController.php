@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Workflow;
 
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
+use App\Models\Billing\Booking;
 use App\Models\CustomerService\MaintenanceRequest;
+use App\Models\CustomerService\SupportTicket;
 use App\Models\Workflow\WorkflowType;
-use App\Services\Interfaces\IWorkflowTypeService;
+use App\Services\Workflow\Interfaces\IWorkflowTypeService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 
@@ -41,7 +42,7 @@ class WorkflowTypeController extends Controller
     {
         if (request()->ajax())
         {
-            $workflowTypes = $this->workflowTypeService->listWorkflowTypes('updated_at');
+            $workflowTypes = $this->workflowTypeService->listWorkflowTypes();
 
             return datatables()->of($workflowTypes)
                 ->setRowId(function ($award)
@@ -49,11 +50,6 @@ class WorkflowTypeController extends Controller
                     return $award->id;
                 })
                 ->addIndexColumn()
-                ->setRowAttr([
-                    'data-target' => function($travel) {
-                        return '#wf_position-content';
-                    },
-                ])
                 ->addColumn('action', function ($data)
                 {
                     $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Show"><i class="las la-eye"></i></button>';
@@ -82,6 +78,8 @@ class WorkflowTypeController extends Controller
         $workflowType = new WorkflowType();
         $models = [
             MaintenanceRequest::class => 'Maintenance',
+            SupportTicket::class => 'Support Ticket',
+            Booking::class => 'Booking',
         ];
 
         if (request()->ajax()){
@@ -174,6 +172,18 @@ class WorkflowTypeController extends Controller
 
         $result = $this->workflowTypeService->deleteWorkflowType($workflowType);
 
+        return $this->responseJson($result);
+    }
+
+    /**
+     * Bulk delete resources from storage.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $result = $this->workflowTypeService->deleteMultiple($request->ids);
         return $this->responseJson($result);
     }
 }

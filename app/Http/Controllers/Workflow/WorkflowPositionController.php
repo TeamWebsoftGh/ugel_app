@@ -6,7 +6,7 @@ use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Workflow\WorkflowPosition;
 use App\Models\Workflow\WorkflowPositionType;
-use App\Services\Interfaces\IWorkflowPositionService;
+use App\Services\Workflow\Interfaces\IWorkflowPositionService;
 use App\Traits\WorkflowUtil;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -39,11 +39,11 @@ class WorkflowPositionController extends Controller
      *
      * @return JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
         if (request()->ajax())
         {
-            $workflowPositions = $this->workflowPositionService->listWorkflowPositions('updated_at');
+            $workflowPositions = $this->workflowPositionService->listWorkflowPositions($request->all());
             return datatables()->of($workflowPositions)
                 ->setRowId(function ($award)
                 {
@@ -99,6 +99,7 @@ class WorkflowPositionController extends Controller
     {
         $positionTypes = WorkflowPositionType::where('is_active', 1)->get();
         $workflowPosition = new WorkflowPosition();
+        $workflowPosition->is_active = 1;
 
         if (request()->ajax()){
             return view('workflow.positions.edit', compact('positionTypes', 'workflowPosition'));
@@ -176,6 +177,18 @@ class WorkflowPositionController extends Controller
 
         $result = $this->workflowPositionService->deleteWorkflowPosition($workflowType);
 
+        return $this->responseJson($result);
+    }
+
+    /**
+     * Bulk delete resources from storage.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $result = $this->workflowPositionService->deleteMultiple($request->ids);
         return $this->responseJson($result);
     }
 }

@@ -287,6 +287,15 @@ class SupportTicketController extends Controller
         return redirect()->back();
     }
 
+    public function destroy(int $id)
+    {
+        $award = $this->ticketService->findSupportTicketById($id);
+        $result = $this->ticketService->deleteSupportTicket($award);
+
+        return $this->responseJson($result);
+    }
+
+
     public function deleteDocument($ticket_id, $id)
     {
         $ticket = $this->ticketService->findSupportTicketById($ticket_id);

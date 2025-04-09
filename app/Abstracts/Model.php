@@ -214,4 +214,10 @@ abstract class Model extends Eloquent
     {
         return $this->morphMany(DocumentUpload::class, 'documentable');
     }
+
+
+    public function attachment()
+    {
+        return $this->morphMany(DocumentUpload::class, 'documentable')->latest();
+    }
 }

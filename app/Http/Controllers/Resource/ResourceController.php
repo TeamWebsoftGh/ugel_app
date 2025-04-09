@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Resource;
 
+use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
-use App\Http\Controllers\Controller;
 use App\Models\Resource\Publication;
-use App\Traits\JsonResponseTrait;
 use App\Services\Interfaces\ICategoryService;
 use App\Services\Interfaces\IPublicationService;
 use Illuminate\Contracts\Foundation\Application;
@@ -15,7 +14,6 @@ use Illuminate\Http\Request;
 
 class ResourceController extends Controller
 {
-    use JsonResponseTrait;
     /**
      * @var ICategoryService
      */
@@ -41,19 +39,40 @@ class ResourceController extends Controller
      * Display a listing of the resource.
      *
      * @param Request $request
-     * @return Application|Factory|View
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
-        $resources = $this->publicationService->listPublications($request->all(), 'updated_at');
-
-        if(isset($request->type) && $request->type == '')
-        {
-            $resources = $resources->where('type', '==', $request->type);
+        if ($request->ajax()) {
+            $items = $this->publicationService->listPublications($request->all());
+            return datatables()->of($items)
+                ->setRowId(fn($row) => $row->id)
+                ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
+                ->addColumn('category_name', fn($row) => $row->category->name)
+                ->addColumn('client_type_name', fn($row) => $row->category->name)
+                ->addColumn('property_name', fn($row) => $row->category->name)
+                ->addColumn('property__type_name', fn($row) => $row->category->name)
+                ->addColumn('action', fn($data) => $this->getActionButtons($data, "resources"))
+                ->rawColumns(['action'])
+                ->make(true);
         }
-        $categories = $this->categoryService->listActiveCategories();
+
+        return view('resource.resources.index');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     * @return Application|Factory|View
+     */
+    public function create(Request $request)
+    {
         $resource = new Publication();
-        return view('resource.resources.create', compact('resources', 'resource', 'categories'));
+        $resource->is_active = 1;
+        $categories = $this->categoryService->listActiveCategories();
+
+        return view("resource.resources.edit", compact("resource", "categories"));
     }
 
     public function showAll(Request $request)
@@ -66,7 +85,7 @@ class ResourceController extends Controller
         }
         $resources = $resources->groupBy('category_id');
         $categories = $this->categoryService->listActiveCategories();
-        return view('resource.resources.index', compact('resources', 'categories'));
+        return view('resource.resources.all', compact('resources', 'categories'));
     }
 
     /**
@@ -110,14 +129,14 @@ class ResourceController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return Factory|\Illuminate\Foundation\Application|object|View
      */
     public function show($id)
     {
         $resource = $this->publicationService->findCPublicationById($id);
         $categories = $this->categoryService->listActiveCategories();
 
-        return view("resource.resources.edi", compact("resource", "categories"));
+        return view("resource.resources.edit", compact("resource", "categories"));
     }
 
     /**

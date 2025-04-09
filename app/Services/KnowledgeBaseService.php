@@ -15,12 +15,10 @@ use Illuminate\Support\Str;
 
 class KnowledgeBaseService extends ServiceBase implements IKnowledgeBaseService
 {
-    use UploadableTrait;
-
     private IKnowledgeBaseRepository $knowledgeBaseRepo;
 
     /**
-     * SubsidiaryService constructor.
+     * KnowledgeBaseService constructor.
      *
      * @param IKnowledgeBaseRepository $knowledgeBaseRepository
      */
@@ -38,55 +36,23 @@ class KnowledgeBaseService extends ServiceBase implements IKnowledgeBaseService
      *
      * @return Collection
      */
-    public function listTopics(string $order = 'id', string $sort = 'desc'): Collection
+    public function listTopics(array $filter = [], string $order = 'updated_at', string $sort = 'desc')
     {
-        return $this->knowledgeBaseRepo->listTopics($order, $sort);
+        return $this->knowledgeBaseRepo->listTopics($filter, $order, $sort);
     }
 
     /**
      * Create the Subsidiary
      *
-     * @param array $params
+     * @param array $data
      * @return Response
      */
-    public function createTopic(array $params)
+    public function createTopic(array $data)
     {
         //Declaration
-        $topic = null;
-
-        //Process Request
-        try {
-            $params['slug'] = Str::slug($params['title']);
-            $topic = $this->knowledgeBaseRepo->createTopic($params);
-
-            if (isset($params['kb_files'])) {
-                $files = collect($params['kb_files']);
-                $this->saveDocuments($files, $topic, $topic->title);
-            }
-
-        } catch (\Exception $e) {
-            log_error(format_exception($e), new KnowledgeBase(), 'create-knowledge-base-failed');
-        }
-
-        //Check if Subsidiary was created successfully
-        if (!$topic)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERROR;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'create-knowledge-base-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_CREATE;
-
-        log_activity($auditMessage, $topic, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-        $this->response->data = $topic;
-
-        return $this->response;
+        $data['slug'] = Str::slug($data['title']);
+        $topic = $this->knowledgeBaseRepo->createTopic($data);
+        return $this->buildCreateResponse($topic);
     }
 
 
@@ -99,7 +65,7 @@ class KnowledgeBaseService extends ServiceBase implements IKnowledgeBaseService
      */
     public function findTopicById(int $id): KnowledgeBase
     {
-        return $this->knowledgeBaseRepo->findTopicById($id);
+        return $this->knowledgeBaseRepo->findOneOrFail($id);
     }
 
     /**
@@ -109,42 +75,12 @@ class KnowledgeBaseService extends ServiceBase implements IKnowledgeBaseService
      * @param KnowledgeBase $topic
      * @return Response
      */
-    public function updateTopic(array $params, KnowledgeBase $topic)
+    public function updateTopic(array $data, KnowledgeBase $topic)
     {
-        //Declaration
-        $result = false;
+        $data['slug'] = Str::slug($data['title']);
+        $result = $this->knowledgeBaseRepo->update($data, $topic->id);
 
-        //Process Request
-        try {
-            $params['slug'] = Str::slug($params['title']);
-            $result = $this->knowledgeBaseRepo->updateTopic($params, $topic);
-
-            if (isset($params['kb_files'])) {
-                $files = collect($params['kb_files']);
-                $this->saveDocuments($files, $topic, $topic->title);
-            }
-        } catch (\Exception $e) {
-            log_error(format_exception($e), $topic, 'update-knowledge-base-failed');
-        }
-
-        if (!$result)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERROR;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'update-knowledge-base-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
-
-        log_activity($auditMessage, $topic, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-        $this->response->data = $topic;
-
-        return $this->response;
+        return $this->buildUpdateResponse($topic, $result);
     }
 
     /**
@@ -153,68 +89,15 @@ class KnowledgeBaseService extends ServiceBase implements IKnowledgeBaseService
      */
     public function deleteTopic(KnowledgeBase $topic)
     {
-        //Declaration
-        $result = false;
-        try{
-
-            $result = $this->knowledgeBaseRepo->deleteTopic($topic);
-        }catch (\Exception $ex)
-        {
-            log_error(format_exception($ex), $topic, 'delete-knowledge-base-failed');
-        }
-
-        if (!$result)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERROR;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'delete-knowledge-base-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
-
-        log_activity($auditMessage, $topic, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-
-        return $this->response;
+        $result = $this->knowledgeBaseRepo->delete($topic->id);
+        return $this->buildDeleteResponse($result);
     }
 
-    /**
-     * @param KnowledgeBase $topic
-     * @return Response
-     */
-    public function deleteDocument(DocumentUpload $document, KnowledgeBase $topic)
+    public function deleteMultiple(array $ids)
     {
         //Declaration
-        $result = false;
+        $result = $this->knowledgeBaseRepo->deleteMultipleById($ids);
 
-        try{
-            $result = $this->knowledgeBaseRepo->deleteDocument($document);
-
-        }catch (\Exception $ex)
-        {
-            log_error(format_exception($ex), $topic, 'delete-knowledge-base-document-failed');
-        }
-
-        if (!$result)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERR_DELETE;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'delete-knowledge-base-document-successful';
-        $auditMessage = "File deleted.";
-
-        log_activity($auditMessage, $topic, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-
-        return $this->response;
+        return $this->buildDeleteResponse($result, "Records deleted successfully.");
     }
 }

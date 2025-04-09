@@ -111,8 +111,8 @@ class TeamController extends Controller
      */
     public function destroy(int $id): JsonResponse
     {
-        $amenity = $this->bookingPeriodService->findBookingPeriodById($id);
-        $result = $this->bookingPeriodService->deleteBookingPeriod($amenity);
+        $amenity = $this->teamService->findTeamById($id);
+        $result = $this->teamService->deleteTeam($amenity);
 
         return $this->responseJson($result);
     }
@@ -125,7 +125,7 @@ class TeamController extends Controller
      */
     public function bulkDelete(Request $request): JsonResponse
     {
-        $result = $this->bookingPeriodService->deleteMultipleBookingPeriods($request->ids);
+        $result = $this->teamService->deleteMultipleTeams($request->ids);
         return $this->responseJson($result);
     }
 

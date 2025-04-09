@@ -120,6 +120,20 @@ class SupportTopicController extends Controller
     }
 
     /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroy(int $id)
+    {
+        $award = $this->topicService->findSupportTopicById($id);
+        $result = $this->topicService->deleteSupportTopic($award);
+
+        return $this->responseJson($result);
+    }
+
+    /**
      * Bulk delete resources from storage.
      *
      * @param Request $request
@@ -127,7 +141,7 @@ class SupportTopicController extends Controller
      */
     public function bulkDelete(Request $request): JsonResponse
     {
-        $result = $this->topicService->de($request->ids);
+        $result = $this->topicService->deleteMultiple($request->ids);
         return $this->responseJson($result);
     }
 

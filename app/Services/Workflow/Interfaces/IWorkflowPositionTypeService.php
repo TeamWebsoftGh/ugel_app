@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Services\Interfaces;
+namespace App\Services\Workflow\Interfaces;
 
 use App\Models\Workflow\WorkflowPositionType;
+use App\Services\Interfaces\IBaseService;
 use Illuminate\Support\Collection;
 
 interface IWorkflowPositionTypeService extends IBaseService
 {
-    public function listWorkflowPositionTypes(string $order = 'id', string $sort = 'desc', $columns = []) : Collection;
+    public function listWorkflowPositionTypes(string $order = 'updated_at', string $sort = 'desc', $columns = []) : Collection;
 
-    public function listActiveWorkflowPositionTypes(string $order = 'id', string $sort = 'desc', $columns = ['*']): Collection;
+    public function listActiveWorkflowPositionTypes(string $order = 'updated_at', string $sort = 'desc', $columns = ['*']): Collection;
 
     public function createWorkflowPositionType(array $params);
 
@@ -18,5 +19,7 @@ interface IWorkflowPositionTypeService extends IBaseService
     public function findWorkflowPositionTypeById(int $id);
 
     public function deleteWorkflowPositionType(WorkflowPositionType $workflowPositionType);
+
+    public function deleteMultiple(array $ids);
 
 }

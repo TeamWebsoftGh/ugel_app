@@ -30,8 +30,6 @@
 <!-- dropify min -->
 <script src="/plugins/dropify/dropify.min.js"></script>
 
-<!-- dropzone min -->
-<script src="/assets/libs/dropzone/dropzone-min.js"></script>
 
 <script src="/assets/js/pages/form-validation.init.js"></script>
 

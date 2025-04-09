@@ -7,9 +7,9 @@ use App\Constants\ResponseType;
 use App\Events\NewTicketCommentEvent;
 use App\Events\TicketStatusChangeEvent;
 use App\Mail\Tickets\TicketStatusChangeMail;
+use App\Models\Common\Comment;
 use App\Models\Common\DocumentUpload;
 use App\Models\Common\NumberGenerator;
-use App\Models\CustomerService\Comment;
 use App\Models\CustomerService\SupportTicket;
 use App\Repositories\CustomerService\Interfaces\ISupportTicketRepository;
 use App\Services\CustomerService\Interfaces\ISupportTicketService;
@@ -81,25 +81,7 @@ class SupportTicketService extends ServiceBase implements ISupportTicketService
             log_error(format_exception($e), new SupportTicket(), 'create-support-ticket-failed');
         }
 
-        //Check if SupportTicket was created successfully
-        if (!$supportTicket)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERR_CREATE;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'create-support-ticket-successful';
-        $auditMessage = 'You have successfully added a new Ticket: '.$supportTicket->ticket_code;
-
-        log_activity($auditMessage, $supportTicket, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-        $this->response->data = $supportTicket;
-
-        return $this->response;
+        return $this->buildCreateResponse($supportTicket);
     }
 
     /**
@@ -146,25 +128,7 @@ class SupportTicketService extends ServiceBase implements ISupportTicketService
         } catch (\Exception $e) {
             log_error(format_exception($e), $supportTicket, 'update-support-ticket-failed');
         }
-
-        if (!$result)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERR_UPDATE;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'update-support-ticket-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
-
-        log_activity($auditMessage, $supportTicket, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-        $this->response->data = $supportTicket;
-
-        return $this->response;
+        return $this->buildUpdateResponse($supportTicket, $result);
     }
 
     /**
@@ -174,39 +138,16 @@ class SupportTicketService extends ServiceBase implements ISupportTicketService
     public function deleteSupportTicket(SupportTicket $supportTicket)
     {
         //Declaration
-        $result = false;
-        try{
-            if (count($supportTicket->assignees) > 0)
-            {
-                $this->response->status = ResponseType::ERROR;
-                $this->response->message = "You cannot delete this Support Ticket.";
-
-                return $this->response;
-            }
-
-            $result = $this->supportTicketRepo->deleteSupportTicket($supportTicket);
-        }catch (\Exception $ex)
-        {
-            log_error(format_exception($ex), $supportTicket, 'delete-support-ticket-failed');
-        }
-
-        if (!$result)
+        if (count($supportTicket->assignees) > 0 || $supportTicket->status == 'closed')
         {
             $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERR_DELETE;
+            $this->response->message = "You cannot delete this. This ticket is already assigned or closed.";
 
             return $this->response;
         }
 
-        //Audit Trail
-        $logAction = 'delete-support-ticket-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
-
-        log_activity($auditMessage, $supportTicket, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-
-        return $this->response;
+        $result = $this->supportTicketRepo->deleteSupportTicket($supportTicket);
+        return $this->buildDeleteResponse($result);
     }
 
     /**
@@ -394,6 +335,14 @@ class SupportTicketService extends ServiceBase implements ISupportTicketService
         $this->response->message = $auditMessage;
 
         return $this->response;
+    }
+
+    public function deleteMultiple(array $ids)
+    {
+        //Declaration
+        $result = $this->supportTicketRepo->deleteMultipleById($ids);
+
+        return $this->buildDeleteResponse($result, "Records deleted successfully.");
     }
 
 }

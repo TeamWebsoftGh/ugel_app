@@ -30,57 +30,8 @@ class WorkflowTypeRepository extends BaseRepository implements IWorkflowTypeRepo
      * @param array $columns
      * @return Collection
      */
-    public function listWorkflowTypes(string $order = 'id', string $sort = 'desc', array $columns = ['*']): Collection
+    public function listWorkflowTypes(string $order = 'updated_at', string $sort = 'desc', array $columns = ['*']): Collection
     {
         return $this->all($columns, $order, $sort);
-    }
-
-    /**
-     * Create the WorkflowType
-     *
-     * @param array $data
-     *
-     * @return WorkflowType
-     */
-    public function createWorkflowType(array $data): WorkflowType
-    {
-        return $this->create($data);
-    }
-
-
-    /**
-     * Find the WorkflowType by id
-     *
-     * @param int $id
-     *
-     * @return WorkflowType
-     */
-    public function findWorkflowTypeById(int $id): WorkflowType
-    {
-        return $this->findOneOrFail($id);
-    }
-
-    /**
-     * Update WorkflowType
-     *
-     * @param array $params
-     * @param int $id
-     *
-     * @return bool
-     */
-    public function updateWorkflowType(array $params, int $id): bool
-    {
-        return $this->update($params, $id);
-    }
-
-
-    /**
-     * @param int $id
-     * @return bool
-     * @throws \Exception
-     */
-    public function deleteWorkflowType(int $id): bool
-    {
-        return $this->delete($id);
     }
 }

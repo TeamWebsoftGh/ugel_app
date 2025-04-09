@@ -30,57 +30,8 @@ class WorkflowPositionTypeRepository extends BaseRepository implements IWorkflow
      * @param array $columns
      * @return Collection
      */
-    public function listWorkflowPositionTypes(string $order = 'id', string $sort = 'desc', array $columns = ['*']): Collection
+    public function listWorkflowPositionTypes(string $order = 'updated_at', string $sort = 'desc', array $columns = ['*']): Collection
     {
         return $this->all($columns, $order, $sort);
-    }
-
-    /**
-     * Create the WorkflowPositionType
-     *
-     * @param array $data
-     *
-     * @return WorkflowPositionType
-     */
-    public function createWorkflowPositionType(array $data): WorkflowPositionType
-    {
-        return $this->create($data);
-    }
-
-
-    /**
-     * Find the WorkflowPositionType by id
-     *
-     * @param int $id
-     *
-     * @return WorkflowPositionType
-     */
-    public function findWorkflowPositionTypeById(int $id): WorkflowPositionType
-    {
-        return $this->findOneOrFail($id);
-    }
-
-    /**
-     * Update WorkflowPositionType
-     *
-     * @param array $params
-     * @param int $id
-     *
-     * @return bool
-     */
-    public function updateWorkflowPositionType(array $params, int $id): bool
-    {
-        return $this->update($params, $id);
-    }
-
-
-    /**
-     * @param int $id
-     * @return bool
-     * @throws \Exception
-     */
-    public function deleteWorkflowPositionType(int $id): bool
-    {
-        return $this->delete($id);
     }
 }

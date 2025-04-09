@@ -28,6 +28,9 @@
         <textarea name="{{ $name }}" id="{{ $id ?? $name }}"
                   rows="{{ $rows ?? 3 }}"
                   {{ $attributes->merge(['class' => 'form-control']) }}>{{ old($name, $value) }}</textarea>
+    @elseif ($type === 'summernote')
+        <textarea name="{{ $name }}" id="{{ $id ?? $name }}"
+              {{ $attributes->merge(['class' => 'form-control summernote']) }}>{{ old($name, $value) }}</textarea>
 
     @elseif ($type === 'file')
         <input type="file" name="{{ $name }}" id="{{ $id ?? $name }}"

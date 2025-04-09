@@ -20,7 +20,7 @@
                             <th>Position Category</th>
                             <th>User</th>
                             <th>Last Modified</th>
-                            <th>Action</th>
+                            <th width="100px">Action</th>
                         </tr>
                         </thead>
                         <tbody></tbody>

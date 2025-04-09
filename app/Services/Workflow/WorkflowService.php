@@ -1,37 +1,37 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Workflow;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Organization\Branch;
 use App\Models\Organization\Department;
-use App\Models\Organization\Subsidiary;
-use App\Models\Workflow\WorkflowPositionType;
-use App\Repositories\Workflow\Interfaces\IWorkflowPositionTypeRepository;
+use App\Models\Workflow\Workflow;
+use App\Repositories\Workflow\Interfaces\IWorkflowRepository;
 use App\Services\Helpers\Response;
-use App\Services\Interfaces\IWorkflowPositionTypeService;
+use App\Services\ServiceBase;
+use App\Services\Workflow\Interfaces\IWorkflowService;
 use App\Traits\UploadableTrait;
 use Illuminate\Support\Collection;
 
-class WorkflowPositionTypeService extends ServiceBase implements IWorkflowPositionTypeService
+class WorkflowService extends ServiceBase implements IWorkflowService
 {
     use UploadableTrait;
 
-    private IWorkflowPositionTypeRepository $workflowPositionTypeRepo;
+    private IWorkflowRepository $workflowRepo;
 
     /**
-     * WorkflowPositionTypeService constructor.
+     * WorkflowService constructor.
      *
-     * @param IWorkflowPositionTypeRepository $workflowPositionTypeRepo
+     * @param IWorkflowRepository $workflowRepo
      */
-    public function __construct(IWorkflowPositionTypeRepository $workflowPositionTypeRepo){
+    public function __construct(IWorkflowRepository $workflowRepo){
         parent::__construct();
-        $this->workflowPositionTypeRepo = $workflowPositionTypeRepo;
+        $this->workflowRepo = $workflowRepo;
     }
 
     /**
-     * List all the WorkflowPositionTypes
+     * List all the Workflows
      *
      * @param string $order
      * @param string $sort
@@ -39,13 +39,13 @@ class WorkflowPositionTypeService extends ServiceBase implements IWorkflowPositi
      * @param array $columns
      * @return Collection
      */
-    public function listWorkflowPositionTypes(string $order = 'id', string $sort = 'desc', $columns = ['*']): Collection
+    public function listWorkflows(string $order = 'id', string $sort = 'desc', $columns = ['*']): Collection
     {
-        return $this->workflowPositionTypeRepo->listWorkflowPositionTypes($order, $sort, $columns);
+        return $this->workflowRepo->listWorkflows($order, $sort, $columns);
     }
 
     /**
-     * List all the WorkflowPositionTypes
+     * List all the Workflows
      *
      * @param string $order
      * @param string $sort
@@ -53,35 +53,35 @@ class WorkflowPositionTypeService extends ServiceBase implements IWorkflowPositi
      * @param array $columns
      * @return Collection
      */
-    public function listActiveWorkflowPositionTypes(string $order = 'id', string $sort = 'desc', $columns = ['*']): Collection
+    public function listActiveWorkflows(string $order = 'id', string $sort = 'desc', $columns = ['*']): Collection
     {
-        return $this->listWorkflowPositionTypes($order, $sort, $columns)
+        return $this->listWorkflows($order, $sort, $columns)
             ->where('is_active', '==', 1);
     }
 
     /**
-     * Create WorkflowPositionType
+     * Create Workflow
      *
      * @param array $params
      *
      * @return Response
      */
-    public function createWorkflowPositionType(array $params): Response
+    public function createWorkflow(array $params): Response
     {
         //Declaration
-        $workflowPositionType = null;
+        $workflow = null;
 
         //Process Request
         try {
             $params['is_active'] = $params['status'];
 
-            $workflowPositionType = $this->workflowPositionTypeRepo->createWorkflowPositionType($params);
+            $workflow = $this->workflowRepo->createWorkflow($params);
         } catch (\Exception $e) {
-            log_error(format_exception($e), new WorkflowPositionType(), 'create-workflow-position-failed');
+            log_error(format_exception($e), new Workflow(), 'create-workflow-failed');
         }
 
-        //Check if WorkflowPositionType was created successfully
-        if (!$workflowPositionType)
+        //Check if Workflow was created successfully
+        if (!$workflow)
         {
             $this->response->status = ResponseType::ERROR;
             $this->response->message = ResponseMessage::DEFAULT_ERROR;
@@ -90,40 +90,40 @@ class WorkflowPositionTypeService extends ServiceBase implements IWorkflowPositi
         }
 
         //Audit Trail
-        $logAction = 'create-workflow-position-successful';
+        $logAction = 'create-workflow-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_CREATE;
 
-        log_activity($auditMessage, $workflowPositionType, $logAction);
+        log_activity($auditMessage, $workflow, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
-        $this->response->data = $workflowPositionType;
+        $this->response->data = $workflow;
 
         return $this->response;
     }
 
 
     /**
-     * Find the WorkflowPositionType by id
+     * Find the Workflow by id
      *
      * @param int $id
      *
-     * @return WorkflowPositionType
+     * @return Workflow
      */
-    public function findWorkflowPositionTypeById(int $id): WorkflowPositionType
+    public function findWorkflowById(int $id): Workflow
     {
-        return $this->workflowPositionTypeRepo->findWorkflowPositionTypeById($id);
+        return $this->workflowRepo->findWorkflowById($id);
     }
 
 
     /**
-     * Update WorkflowPositionType
+     * Update Workflow
      *
      * @param array $params
      *
-     * @param WorkflowPositionType $workflowPositionType
+     * @param Workflow $workflow
      * @return Response
      */
-    public function updateWorkflowPositionType(array $params, WorkflowPositionType $workflowPositionType): Response
+    public function updateWorkflow(array $params, Workflow $workflow): Response
     {
         //Declaration
         $result = false;
@@ -131,12 +131,12 @@ class WorkflowPositionTypeService extends ServiceBase implements IWorkflowPositi
         //Process Request
         try {
             $params['is_active'] = $params['status'];
-            $result = $this->workflowPositionTypeRepo->updateWorkflowPositionType($params, $workflowPositionType->id);
+            $result = $this->workflowRepo->updateWorkflow($params, $workflow->id);
         } catch (\Exception $e) {
-            log_error(format_exception($e), $workflowPositionType, 'update-workflow-position-failed');
+            log_error(format_exception($e), $workflow, 'update-workflow-position-failed');
         }
 
-        //Check if WorkflowPositionType was updated successfully
+        //Check if Workflow was updated successfully
         if (!$result)
         {
             $this->response->status = ResponseType::ERROR;
@@ -149,7 +149,7 @@ class WorkflowPositionTypeService extends ServiceBase implements IWorkflowPositi
         $logAction = 'update-workflow-position-successful';
         $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
 
-        log_activity($auditMessage, $workflowPositionType, $logAction);
+        log_activity($auditMessage, $workflow, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
 
@@ -157,19 +157,19 @@ class WorkflowPositionTypeService extends ServiceBase implements IWorkflowPositi
     }
 
     /**
-     * @param WorkflowPositionType $workflowPositionType
+     * @param Workflow $workflow
      * @return Response
      */
-    public function deleteWorkflowPositionType(WorkflowPositionType $workflowPositionType): Response
+    public function deleteWorkflow(Workflow $workflow): Response
     {
         //Declaration
-        if ($this->workflowPositionTypeRepo->deleteWorkflowPositionType($workflowPositionType->id))
+        if ($this->workflowRepo->deleteWorkflow($workflow->id))
         {
             //Audit Trail
             $logAction = 'delete-workflow-position-successful';
             $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
 
-            log_activity($auditMessage, $workflowPositionType, $logAction);
+            log_activity($auditMessage, $workflow, $logAction);
             $this->response->status = ResponseType::SUCCESS;
             $this->response->message = $auditMessage;
 
@@ -203,15 +203,6 @@ class WorkflowPositionTypeService extends ServiceBase implements IWorkflowPositi
 
             $params['subject_type'] = get_class($location);
             $params['subject_id'] = $location->id;
-        }
-
-        if ($params['position_type'] == 'general-manager') {
-            $subsidiary = Subsidiary::find($params['category']);
-            $subsidiary->general_manager_id = $params['employee_id'];
-            $subsidiary->save();
-
-            $params['subject_type'] = get_class($subsidiary);
-            $params['subject_id'] = $subsidiary->id;
         }
         return $params;
     }

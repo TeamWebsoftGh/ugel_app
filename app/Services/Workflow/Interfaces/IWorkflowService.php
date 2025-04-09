@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Services\Interfaces;
+namespace App\Services\Workflow\Interfaces;
 
 use App\Models\Workflow\Workflow;
+use App\Services\Interfaces\IBaseService;
 use Illuminate\Support\Collection;
 
 interface IWorkflowService extends IBaseService

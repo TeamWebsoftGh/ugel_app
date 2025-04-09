@@ -18,4 +18,6 @@ interface ISupportTicketService extends IBaseService
     public function deleteSupportTicket(SupportTicket $supportTicket);
 
     public function getCreateTicket();
+
+    public function deleteMultiple(array $ids);
 }

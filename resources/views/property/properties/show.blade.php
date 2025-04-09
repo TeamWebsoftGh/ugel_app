@@ -2,7 +2,7 @@
 @section('title', ' Property Details')
 @section('page-title', 'Properties')
 @section('breadcrumb')
-    {{--    <li class="breadcrumb-item"><a href="{{route('awards.index')}}">Employee awards</a></li>--}}
+    <li class="breadcrumb-item"><a href="{{route('properties.index')}}">Properties</a></li>
 @endsection
 
 @section('content')

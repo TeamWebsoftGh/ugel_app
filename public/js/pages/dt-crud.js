@@ -179,6 +179,8 @@ function openEditModal(rowData, url, id)
             // Update the modal content with the fetched content
             $('#editModal .modal-form-body').html(response);
             $('.selectpicker').selectpicker('refresh');
+            $('.summernote').each(function(){$(this).summernote({height: 150})});
+            $('.summernote').each(function(){$(this).summernote('enable')});
             // Show the edit modal
             $('#editModal .modal-title').text("Edit Record");
             $('#editModal').modal('show');
@@ -241,6 +243,7 @@ function openAddModal(url)
             // Show the edit modal
             $('#editModal .modal-title').text("Add New");
             $('#editModal').modal('show');
+            $('.summernote').each(function(){$(this).summernote({height: 150})});
         },
         error: function(xhr, status, error) {
             alert("Page failed to load.")

@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Workflow;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Workflow\Workflow;
+use App\Services\Workflow\Interfaces\IWorkflowPositionTypeService;
+use App\Services\Workflow\Interfaces\IWorkflowService;
+use App\Services\Workflow\Interfaces\IWorkflowTypeService;
 use App\Traits\JsonResponseTrait;
-use App\Services\Interfaces\IWorkflowPositionTypeService;
-use App\Services\Interfaces\IWorkflowService;
-use App\Services\Interfaces\IWorkflowTypeService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
@@ -19,7 +19,6 @@ use Illuminate\View\View;
 use function datatables;
 use function redirect;
 use function request;
-use function user;
 use function view;
 
 class WorkflowController extends Controller

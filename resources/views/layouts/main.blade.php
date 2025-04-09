@@ -185,5 +185,6 @@
 @include('layouts.popup.popup-jspart')
 @yield("js")
 @yield("scripts")
+@stack('scripts')
 </body>
 </html>
