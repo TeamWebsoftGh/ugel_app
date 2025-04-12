@@ -111,12 +111,12 @@
                                 <table class="table table-borderless table-nowrap align-middle mb-0 ms-auto" style="width:250px">
                                     <tbody>
                                     <tr>
-                                        <td>Sub Total</td>
-                                        <td class="text-end">GHS {{ number_format($item->sub_total_amount, 2) }}</td>
+                                        <td>Booking Total</td>
+                                        <td class="text-end"> {{ format_money($item->sub_total_amount) }}</td>
                                     </tr>
                                     <tr class="border-top border-top-dashed fs-15">
                                         <th>Total Amount</th>
-                                        <th class="text-end">GHS {{ number_format($item->total_amount, 2) }}</th>
+                                        <th class="text-end"> {{ format_money($item->total_amount) }}</th>
                                     </tr>
                                     </tbody>
                                 </table>
