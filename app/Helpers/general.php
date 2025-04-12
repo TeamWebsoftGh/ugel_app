@@ -205,7 +205,7 @@ if (!function_exists('employee')) {
      */
     function employee()
     {
-        return user()->employee;
+        return user();
     }
 }
 
