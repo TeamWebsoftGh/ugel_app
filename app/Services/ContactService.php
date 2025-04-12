@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
-use App\Models\Memo\Contact;
+use App\Models\Communication\Contact;
 use App\Repositories\Interfaces\IContactRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IContactService;

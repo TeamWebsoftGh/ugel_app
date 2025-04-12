@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Memo\Announcement;
-use App\Models\Memo\SmsAlert;
+use App\Models\Communication\Announcement;
+use App\Models\Communication\SmsAlert;
 use App\Services\Auth\Interfaces\IUserService;
 use App\Traits\SmsTrait;
 use Carbon\Carbon;

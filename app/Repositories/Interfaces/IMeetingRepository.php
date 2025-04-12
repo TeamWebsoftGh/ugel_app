@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\Memo\Meeting;
+use App\Models\Communication\Meeting;
 use Illuminate\Support\Collection;
 
 interface IMeetingRepository extends IBaseRepository

@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Memo\Announcement;
+use App\Models\Communication\Announcement;
 use App\Repositories\Interfaces\IAnnouncementRepository;
 
 class AttendanceRepository extends BaseRepository implements IAnnouncementRepository

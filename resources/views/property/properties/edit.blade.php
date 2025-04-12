@@ -19,6 +19,13 @@
         <x-form.input-field name="city_id" label="City" type="select" :options="[]" :value="$property->city_id" required />
         <x-form.input-field name="physical_address" label="Property Address" type="text" placeholder="Enter Address" :value="$property->physical_address" />
         <x-form.input-field name="google_map" label="Google Map" type="text" placeholder="Enter Google Map" :value="$property->google_map" />
+        <h5>Property Images</h5>
+        <x-form.input-field
+            name="attachments"
+            label="Upload Images"
+            type="multifile"
+            :value="$property->attachments"
+        />
     </div>
     <div class="form-group col-12">
         @include("shared.save-button")

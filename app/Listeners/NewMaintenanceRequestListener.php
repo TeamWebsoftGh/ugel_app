@@ -5,7 +5,7 @@ namespace App\Listeners;
 use App\Events\NewClientEvent;
 use App\Events\NewMaintenanceRequestEvent;
 use App\Models\Common\Email;
-use App\Models\Memo\SmsAlert;
+use App\Models\Communication\SmsAlert;
 use App\Notifications\CustomerService\MaintenanceRequestNotification;
 use App\Traits\SmsTrait;
 use Exception;

@@ -45,8 +45,22 @@ class InvoiceController extends Controller
                 ->addColumn('property_unit_name', fn($row) => $row->booking->propertyUnit->unit_name)
                 ->addColumn('formatted_total', fn($row) => format_money($row->total_amount))
                 ->addColumn('formatted_paid', fn($row) => format_money($row->total_paid))
-                ->addColumn('action', fn($data) => $this->getActionButtons($data, "invoices"))
-                ->rawColumns(['action'])
+                ->addColumn('action', function ($data)
+                {
+                    $button = '<a href="' . route("invoices.show", $data->id) . '" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></a>';
+                    $button .= '&nbsp;';
+                    if (user()->can('update-invoices'))
+                    {
+                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
+                        $button .= '&nbsp;';
+                    }
+                    if (user()->can('delete-property-types'))
+                    {
+                        $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
+                    }
+
+                    return $button;
+                })                ->rawColumns(['action'])
                 ->make(true);
         }
 
@@ -115,7 +129,13 @@ class InvoiceController extends Controller
             : redirect()->route('invoices.index');
     }
 
-    /**
+    public function show(int $id)
+    {
+        $item = $this->invoiceService->findInvoiceById($id);
+        $invoiceItemLookups = PropertyHelper::getAllInvoiceItems();
+
+        return view('billing.invoices.show', compact('item', "invoiceItemLookups"));
+    }    /**
      * Remove the specified resource from storage.
      *
      * @param int $id

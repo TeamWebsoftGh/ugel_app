@@ -36,7 +36,7 @@
             <x-form.input-field name="invoice_number_" label="Invoice No" type="text" :value="$item->invoice_number" readonly class="col-lg-3 col-sm-6" />
             <x-form.input-field name="invoice_date_" label="Invoice Date" type="text" :value="$item->invoice_date" disabled class="col-lg-3 col-sm-6" />
             <x-form.input-field name="status_" label="Status" type="text" :value="$item->status" disabled class="col-lg-3 col-sm-6" />
-            <x-form.input-field name="total_amount_" label="Total Amount" type="text" :value="$item->total_amount" disabled class="col-lg-3 col-sm-6" />
+            <x-form.input-field name="due_date" label="Due Date" type="text" :value="$item->due_date" disabled class="col-lg-3 col-sm-6" />
         </div>
     </div>
 
@@ -71,7 +71,7 @@
                 <tfoot>
                 <tr>
                     <td colspan="5">
-                        <button type="button" class="btn btn-soft-secondary fw-medium" onclick="addInvoiceItem()">
+                        <button type="button" class="btn btn-soft-secondary fw-medium hide_show" onclick="addInvoiceItem()">
                             <i class="ri-add-fill me-1 align-bottom"></i> Add Item
                         </button>
                     </td>
@@ -88,6 +88,10 @@
                             <tr class="border-top border-top-dashed">
                                 <th>Total Amount</th>
                                 <td><input type="text" class="form-control bg-light border-0" id="cart-total" value="{{ format_money($item->total_amount) }}" readonly></td>
+                            </tr>
+                            <tr class="border-top border-top-dashed">
+                                <th>Total Paid</th>
+                                <td><input type="text" class="form-control bg-light border-0" id="total_paid" value="{{ format_money($item->total_paid) }}" readonly></td>
                             </tr>
                             </tbody>
                         </table>
@@ -106,8 +110,6 @@ All accounts are to be paid within 7 days from receipt of invoice. To be paid by
 
         <div class="hstack gap-2 justify-content-end d-print-none mt-4">
             @include("shared.save-button")
-            <a href="javascript:void(0);" class="btn btn-primary"><i class="ri-download-2-line align-bottom me-1"></i> Download Invoice</a>
-            <a href="javascript:void(0);" class="btn btn-danger"><i class="ri-send-plane-fill align-bottom me-1"></i> Send Invoice</a>
         </div>
     </div>
 </form>
@@ -142,7 +144,7 @@ All accounts are to be paid within 7 days from receipt of invoice. To be paid by
                 <td><input type="number" name="items[${rowCount}][rate]" id="rate-${rowCount}" class="form-control" step="0.01" value="${existing ? existing.rate : 0}" oninput="updateTotal(${rowCount})"></td>
                 <td><input type="number" name="items[${rowCount}][quantity]" id="qty-${rowCount}" class="form-control" value="${existing ? existing.quantity : 1}" oninput="updateTotal(${rowCount})"></td>
                 <td class="text-end"><input type="number" name="items[${rowCount}][amount]" id="amount-${rowCount}" class="form-control" step="0.01" value="${existing ? parseFloat(existing.amount).toFixed(2) : 0}" readonly></td>
-                <td><button type="button" class="btn btn-danger btn-sm" onclick="$(this).closest('tr').remove(); recalculateTotals();">Remove</button></td>
+                <td><button type="button" class="btn btn-danger hide_show btn-sm" onclick="$(this).closest('tr').remove(); recalculateTotals();">Remove</button></td>
             </tr>
         `;
         tableBody.append(row);

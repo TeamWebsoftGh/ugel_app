@@ -206,6 +206,9 @@ function openShowModal(rowData, url, id)
             $('#editModal .modal-title').text("Details");
             $('#editModal').modal('show');
             $('#editModal form input,#editModal form textarea,#editModal form select, .save_dt_btn').prop('disabled', true);
+
+            $('.save_dt_btn').hide();
+            $('.hide_show').hide();
         },
         error: function(xhr, status, error) {
             alert("Page failed to load.")
@@ -400,7 +403,6 @@ function updateSelectAllCheckbox(table) {
         headerCheckbox.prop('checked', false);  // Uncheck the header checkbox
     }
 }
-
 function getFilterData(containerSelector = '#filter_form') {
     var filterData = {};
     $(containerSelector).find('input[name], select[name], textarea[name]').each(function() {

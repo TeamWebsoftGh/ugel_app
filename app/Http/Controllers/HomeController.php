@@ -7,7 +7,7 @@ use App\Models\Auth\User;
 use App\Models\Billing\Booking;
 use App\Models\Client\Client;
 use App\Models\Common\DocumentUpload;
-use App\Models\Memo\Announcement;
+use App\Models\Communication\Announcement;
 use App\Models\Property\Property;
 use Illuminate\Support\Facades\Storage;
 

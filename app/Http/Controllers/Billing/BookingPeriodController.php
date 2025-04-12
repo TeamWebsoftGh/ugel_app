@@ -117,6 +117,32 @@ class BookingPeriodController extends Controller
     }
 
     /**
+     * Show the form for editing the specified resource.
+     *
+     * @param int $id
+     * @return View|Factory|Application|RedirectResponse
+     */
+    public function show(int $id)
+    {
+        $item = $this->bookingPeriodService->findBookingPeriodById($id);
+        $hostels = PropertyHelper::getAllHostels();
+        // Fetch existing prices and rent types for the given Booking Period
+        $propertyUnitPrices = $item->propertyUnitPrices;
+
+        // Attach existing prices and rent types to hostels
+        foreach ($hostels as $hostel) {
+            $priceData = $propertyUnitPrices->where('property_unit_id', $hostel->id)->first();
+            $hostel->existing_price = $priceData->price ?? null;
+            $hostel->existing_rent_type = $priceData->rent_type ?? null;
+        }
+
+        return request()->ajax()
+            ? view('billing.booking-periods.edit', compact('item', 'hostels'))
+            : redirect()->route('booking-periods.index');
+    }
+
+
+    /**
      * Remove the specified resource from storage.
      *
      * @param int $id

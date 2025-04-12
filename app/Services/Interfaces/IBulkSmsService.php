@@ -2,7 +2,7 @@
 
 namespace App\Services\Interfaces;
 
-use App\Models\Memo\Announcement;
+use App\Models\Communication\Announcement;
 use Illuminate\Support\Collection;
 
 interface IBulkSmsService extends IBaseService

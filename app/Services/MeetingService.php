@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Auth\User;
-use App\Models\Memo\Meeting;
+use App\Models\Communication\Meeting;
 use App\Notifications\MeetingNotify;
 use App\Repositories\Interfaces\IClientRepository;
 use App\Repositories\Interfaces\IMeetingRepository;

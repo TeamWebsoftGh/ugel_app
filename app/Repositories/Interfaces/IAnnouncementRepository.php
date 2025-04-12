@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\Memo\Announcement;
+use App\Models\Communication\Announcement;
 
 interface IAnnouncementRepository extends IBaseRepository
 {

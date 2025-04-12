@@ -16,6 +16,7 @@ use App\Services\Billing\Interfaces\IBookingService;
 use App\Services\Helpers\PropertyHelper;
 use App\Services\Helpers\Response;
 use App\Services\ServiceBase;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -243,6 +244,7 @@ class BookingService extends ServiceBase implements IBookingService
             'total_amount' => $booking->total_price,
             'created_by' => $booking->created_by,
             'invoice_date' => $booking->booking_date,
+            'due_date' => $booking?->lease_start_date,
             'company_id' => $booking->company_id,
         ];
     }

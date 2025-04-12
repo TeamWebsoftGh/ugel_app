@@ -4,7 +4,7 @@ namespace App\Listeners;
 
 use App\Events\BookingEvent;
 use App\Models\Common\Email;
-use App\Models\Memo\SmsAlert;
+use App\Models\Communication\SmsAlert;
 use App\Traits\SmsTrait;
 use Exception;
 
