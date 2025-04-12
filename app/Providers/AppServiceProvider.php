@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Events\ActivityTriggered;
 use App\Events\NewMaintenanceRequestEvent;
+use App\Events\PasswordChangeEvent;
 use App\Listeners\LogActivityListener;
 use App\Listeners\NewMaintenanceRequestListener;
+use App\Listeners\PasswordChangeListener;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
@@ -63,6 +65,8 @@ class AppServiceProvider extends ServiceProvider
             NewMaintenanceRequestEvent::class,
             NewMaintenanceRequestListener::class,
         );
+
+//
 //
 //        Event::listen(
 //            ActivityTriggered::class,

@@ -5,6 +5,8 @@ namespace App\Services\Auth;
 use App\Constants\Constants;
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
+use App\Events\NewMaintenanceRequestEvent;
+use App\Events\PasswordChangeEvent;
 use App\Mail\Admin\AccountCreatedMail;
 use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
@@ -309,6 +311,8 @@ class UserService extends ServiceBase implements IUserService
         log_activity($auditMessage, $user, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
+
+        event(new PasswordChangeEvent($user));
 
         return $this->response;
     }
