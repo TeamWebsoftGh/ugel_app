@@ -30,8 +30,12 @@ class ChangePasswordController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
-    public function edit()
+    public function edit(Request $request)
     {
+        if ($request->ajax())
+        {
+            return view('account.password');
+        }
         return view('account.change-password');
     }
 

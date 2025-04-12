@@ -30,14 +30,13 @@ class UserRepository extends BaseRepository implements IUserRepository
      *
      * @return $users
      */
-    public function listUsers(string $order = 'id', string $sort = 'desc'): Collection
+    public function listUsers(string $order = 'updated_at', string $sort = 'desc'): Collection
     {
-        if(!user()->access_all_companies)
-        {
-            return $users = User::where('company_id', user()->company_id)->orderBy($order, $sort)->get()
-                ->except(array(1, user()->id));
-        }
-        return $users = User::orderBy($order, $sort)->get()
+        $query = $this->getFilteredList();
+
+        $query = $query->whereNull("client_id")->orderBy($order, $sort);
+
+        return $query->get()
             ->except(array(1, user()->id));
     }
 

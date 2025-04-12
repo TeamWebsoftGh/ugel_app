@@ -10,13 +10,13 @@ interface IUserService extends IBaseService
 {
     public function listUsers(string $order = 'id', string $sort = 'desc'): Collection;
 
-    public function createUser(array $params);
+    public function createUser(array $data);
 
     public function findUserById(int $id) : User;
 
-    public function updateUser(array $params, User $user);
+    public function updateUser(array $data, User $user);
 
-    public function changePassword(array $params, User $user);
+    public function changePassword(array $data, User $user);
 
     public function listRoles() : Collection;
 

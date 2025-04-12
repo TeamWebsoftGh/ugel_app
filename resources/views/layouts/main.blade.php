@@ -90,49 +90,7 @@
                 <div class="modal-body">
                     <p>Your Password has expired or you are logged in for the first time.</p>
                     @include('layouts.partials.messages')
-                    <form id="formValidate" method="POST" action="{{ route('account.change-password') }}" aria-label="{{ __('Change Password') }}">
-                        @csrf
-                        <div class="form-group row">
-                            <label for="current-password" class="col-md-4 col-form-label text-md-right">{{ __('Current Password') }}</label>
-                            <div class="col-md-6">
-                                <input id="current-password" type="password" class="ignore form-control{{ $errors->has('email') ? ' is-invalid' : '' }}" name="current-password" value="{{ old('current-password') }}" >
-                                <div class="text-danger">{{ $errors->first('current-password')?:'' }}</div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="new-password" class="col-md-4 col-form-label text-md-right">{{ __('New Password') }}</label>
-                            <div class="col-md-6">
-                                <input id="new-password" type="password" data-minlength="6" data-minlength-error="Minimum of 6 characters allowed" class="ignore form-control" name="new-password" >
-                                @if ($errors->has('new-password'))
-                                    <span class="text-danger" role="alert">
-                                                <strong>{{ $errors->first('new-password') }}</strong>
-                                    </span>
-                                @endif
-                                <div class="help-block form-text with-errors form-control-feedback"></div>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-right">{{ __('Confirm New Password') }}</label>
-                            <div class="col-md-6">
-                                <input id="password-confirm" data-match="#new-password" data-match-error="Passwords must match" type="password" class="ignore form-control" name="new-password_confirmation">
-                                <div class="help-block form-text with-errors form-control-feedback"></div>
-                                @if ($errors->has('new-password_confirmation'))
-                                    <span class="text-danger" role="alert">
-                                                <strong>{{ $errors->first('new-password_confirmation') }}</strong>
-                                            </span>
-                                @endif
-                            </div>
-                        </div>
-
-                        <div class="form-group row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Change Password') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    @include('account.password')
                 </div>
                 <div class="modal-footer">
                 </div>

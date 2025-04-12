@@ -72,7 +72,6 @@ class UserService extends ServiceBase implements IUserService
             if (isset($data['role']))
                 $user->syncRoles($data['role']);
 
-
             if (settings("send_mail_new_account", 1) && !empty($data['email'])){
                 $user->password = $data['password'];
                 send_mail(AccountCreatedMail::class, $user, $user);
@@ -195,7 +194,7 @@ class UserService extends ServiceBase implements IUserService
                 'last_password_reset' => Carbon::now()
             ], $user);
 
-            if (Constants::SEND_PASSWORD_RESET_MAIL){
+            if (settings("send_mail_password_reset", 1) && !empty($user->email)){
                 $user->password = $password;
                 send_mail(AccountCreatedMail::class, $user, $user);
             }
@@ -264,14 +263,14 @@ class UserService extends ServiceBase implements IUserService
         return $this->response;
     }
 
-    public function changePassword(array $params, User $user)
+    public function changePassword(array $data, User $user)
     {
         //Declaration
         $res = false;
 
         //Process Request
         try {
-            if (!(Hash::check($params['current_password'], $user->password)))
+            if (!(Hash::check($data['current_password'], $user->password)))
             {
                 //The passwords match
                 $this->response->status = ResponseType::ERROR;
@@ -279,7 +278,7 @@ class UserService extends ServiceBase implements IUserService
                 return $this->response;
             }
 
-            if(strcmp($params['current_password'],$params['new-password']) == 0){
+            if(strcmp($data['current_password'],$data['new_password']) == 0){
                 //Current password and new password are same
                 $this->response->status = ResponseType::ERROR;
                 $this->response->message = "New Password cannot be same as your current password.";
@@ -287,7 +286,7 @@ class UserService extends ServiceBase implements IUserService
             }
 
             $res = $this->userRepo->updateUser([
-                'password' => $params['new_password'],
+                'password' => $data['new_password'],
                 'ask_password_reset' => 0,
                 'last_password_reset' => Carbon::now()
             ], $user);

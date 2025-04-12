@@ -102,7 +102,7 @@
                                 <tr>
                                     <td style=" font-family: sans-serif; font-size: 14px; vertical-align: top;">
                                         <p style="margin: 0; margin-bottom: 15px; text-align: center">
-                                            <img src="{{asset(company()->company_logo)}}" height="60">&nbsp;
+                                            <img src="{{asset(settings("logo"))}}" height="60">&nbsp;
                                         </p>
                                         @yield('content')
                                     </td>
