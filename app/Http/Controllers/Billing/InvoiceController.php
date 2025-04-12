@@ -62,8 +62,9 @@ class InvoiceController extends Controller
     {
         $item = new Invoice();
         $item->is_active = 1;
+        $invoiceItemLookups = PropertyHelper::getAllInvoiceItems();
 
-        return view('billing.invoices.edit', compact('item'));
+        return view('billing.invoices.edit', compact('item', 'invoiceItemLookups'));
     }
 
     /**
@@ -75,22 +76,28 @@ class InvoiceController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'name' => 'required',
-            'short_name' => 'nullable',
-            'is_active' => 'sometimes|boolean',
+            'items' => 'nullable|array',
+            'items.*.lookup_id' => 'nullable|exists:invoice_item_lookups,id',
+            'items.*.description' => 'nullable|string',
+            'items.*.rate' => 'nullable|numeric',
+            'items.*.quantity' => 'nullable|integer|min:1',
+            'items.*.amount' => 'nullable|numeric',
         ]);
 
-        $data = $request->except('_token', '_method', 'id');
+        $data = $request->except('_token', '_method');
+
         $result = $request->filled('id')
-            ? $this->invoiceService->updateInvoice($data, $this->invoiceService->findInvoiceById($request->input('id')))
+            ? $this->invoiceService->updateInvoice(
+                $data,
+                $this->invoiceService->findInvoiceById($request->input('id'))
+            )
             : $this->invoiceService->createInvoice($data);
 
-        if ($request->ajax()) {
-            return $this->responseJson($result);
-        }
-
-        return $this->handleRedirect($result, 'invoices.index');
+        return $request->ajax()
+            ? $this->responseJson($result)
+            : $this->handleRedirect($result, 'invoices.index');
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -101,9 +108,10 @@ class InvoiceController extends Controller
     public function edit(int $id)
     {
         $item = $this->invoiceService->findInvoiceById($id);
+        $invoiceItemLookups = PropertyHelper::getAllInvoiceItems();
 
         return request()->ajax()
-            ? view('billing.invoices.edit', compact('item'))
+            ? view('billing.invoices.edit', compact('item', "invoiceItemLookups"))
             : redirect()->route('invoices.index');
     }
 

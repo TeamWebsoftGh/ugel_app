@@ -47,6 +47,16 @@ class InvoiceService extends ServiceBase implements IInvoiceService
     public function createInvoice(array $data): Response
     {
         $invoice = $this->invoiceRepo->create($data);
+        if (isset($data['items']) && is_array($data['items'])) {
+            foreach ($data['items'] as $item) {
+                $invoice->items()->create([
+                    'invoice_item_lookup_id' => $item['lookup_id'] ?? null,
+                    'description' => $item['description'] ?? null,
+                    'quantity' => $item['quantity'] ?? 1,
+                    'amount' => $item['amount'] ?? 0,
+                ]);
+            }
+        }
         return $this->buildCreateResponse($invoice);
     }
 
@@ -58,8 +68,21 @@ class InvoiceService extends ServiceBase implements IInvoiceService
      */
     public function updateInvoice(array $data, Invoice $invoice): Response
     {
-        //Declaration
         $result = $this->invoiceRepo->update($data, $invoice->id);
+
+        $invoice->items()->delete();
+
+        if (isset($data['items']) && is_array($data['items'])) {
+            foreach ($data['items'] as $item) {
+                $invoice->items()->create([
+                    'invoice_item_lookup_id' => $item['lookup_id'] ?? null,
+                    'description' => $item['description'] ?? null,
+                    'quantity' => $item['quantity'] ?? 1,
+                    'amount' => $item['amount'] ?? 0,
+                ]);
+            }
+        }
+
         return $this->buildUpdateResponse($invoice, $result);
     }
 

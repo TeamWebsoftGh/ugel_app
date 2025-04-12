@@ -73,7 +73,7 @@ class CustomerController extends Controller
                     $button .= '&nbsp;';
                     if (user()->can('update-customers'))
                     {
-                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
+                        $button .= '<a href="' . route("admin.customers.edit", $data->id) . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></a>';
                         $button .= '&nbsp;';
                     }
                     if (user()->can('delete-customers'))
@@ -268,19 +268,12 @@ class CustomerController extends Controller
      *
      * @param Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application|object
      */
     public function edit(Request $request, $id)
     {
-        $data = $this->userService->getCreateUser($request->all());
-        $data['user'] = $this->userService->findUserById($id);
-        $data['roleId'] = optional($data['user']->roles()->first())->id;
-
-        if ($request->ajax()){
-            return view('user-access.users.edit', $data);
-        }
-
-        return redirect()->route("users.create", ["userId" => $id]);
+        $client = $this->clientService->findClientById($id);
+        return view('client.clients.create', compact("client"));
     }
 
     /**
@@ -300,7 +293,6 @@ class CustomerController extends Controller
             'email' => 'required|unique:users,email,'.$user->id,
             'username' => 'sometimes|unique:users,username,'.$user->id,
             'phone_number' => 'nullable|max:25',
-            'role' => 'sometimes',
         ]);
 
         $data = $request->except('_token', '_method');
@@ -324,7 +316,6 @@ class CustomerController extends Controller
     public function changeStatus(int $id): JsonResponse
     {
         $user = $this->userService->findUserById($id);
-
         $result = $this->userService->changeStatus($user->status?0:1,$user);
 
         return $this->responseJson($result);
@@ -333,7 +324,6 @@ class CustomerController extends Controller
     public function resetPassword(int $id): JsonResponse
     {
         $user = $this->userService->findUserById($id);
-
         $result = $this->userService->resetPassword($user);
 
         return $this->responseJson($result);

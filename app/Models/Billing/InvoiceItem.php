@@ -2,9 +2,17 @@
 
 namespace App\Models\Billing;
 
-use Illuminate\Database\Eloquent\Model;
+
+use App\Abstracts\Model;
 
 class InvoiceItem extends Model
 {
     //
+    protected $fillable = [
+        'invoice_item_lookup_id',
+        'description',
+        'amount',
+        'quantity',
+    ];
+
 }

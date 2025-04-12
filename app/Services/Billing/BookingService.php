@@ -3,6 +3,7 @@
 namespace App\Services\Billing;
 
 use App\Constants\ResponseType;
+use App\Events\BookingEvent;
 use App\Models\Billing\Booking;
 use App\Models\Billing\BookingPeriod;
 use App\Models\Billing\Invoice;
@@ -69,11 +70,16 @@ class BookingService extends ServiceBase implements IBookingService
                 }
             } else {
                 $unit = PropertyUnit::where('id', $data['property_unit_id'])
-                    ->where('status', 'active')
+                   // ->where('status', 'active')
                     ->lockForUpdate()
                     ->first();
 
-                if (!$unit || !PropertyHelper::isPropertyUnitAvailable($unit->id, $data['lease_start_date'], $data['lease_end_date'])) {
+                if(count($unit->rooms) > 0)
+                {
+                    return $this->errorResponse("No rooms selected for this unit.");
+                }
+
+                if (!$unit || !PropertyHelper::isPropertyUnitAvailable($unit, $data['lease_start_date'], $data['lease_end_date'])) {
                     DB::rollBack();
                     return $this->errorResponse("Property unit is no longer available.");
                 }
@@ -101,6 +107,7 @@ class BookingService extends ServiceBase implements IBookingService
             }
 
             DB::commit();
+            event(new BookingEvent($booking));
             return $this->buildCreateResponse($invoice);
 
         } catch (\Exception $ex) {
@@ -183,6 +190,7 @@ class BookingService extends ServiceBase implements IBookingService
      */
     public function deleteBooking(Booking $booking): Response
     {
+        $booking->invoice()->delete();
         $result = $this->bookingRepo->deleteBooking($booking);
         return $this->buildDeleteResponse($result);
     }

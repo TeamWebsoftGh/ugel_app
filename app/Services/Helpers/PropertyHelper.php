@@ -5,6 +5,7 @@ namespace App\Services\Helpers;
 use App\Models\Auth\User;
 use App\Models\Billing\Booking;
 use App\Models\Billing\BookingPeriod;
+use App\Models\Billing\InvoiceItemLookup;
 use App\Models\Billing\PropertyUnitPrice;
 use App\Models\Client\Client;
 use App\Models\Client\ClientType;
@@ -208,6 +209,12 @@ class PropertyHelper
             ->get();
     }
 
+    public static function getAllInvoiceItems(): Collection
+    {
+        return InvoiceItemLookup::where('is_active', 1)
+            ->get();
+    }
+
     public static function isRoomAvailable(int $roomId, string $startDate, string $endDate): bool
     {
         $room = Room::where('id', $roomId)->where('is_active', 1)->first();
@@ -229,15 +236,13 @@ class PropertyHelper
         return $existingBookings < $room->bed_count;
     }
 
-    public static function isPropertyUnitAvailable(int $unitId, string $startDate, string $endDate): bool
+    public static function isPropertyUnitAvailable($unit, string $startDate, string $endDate): bool
     {
-        $unit = PropertyUnit::where('id', $unitId)->where('is_active', 1)->first();
-
         if (!$unit) {
             return false; // Room not found or inactive
         }
 
-        $existingBookings = Booking::where('property_unit_id', $unit)
+        $existingBookings = Booking::where('property_unit_id', $unit->id)
             ->where(function ($query) use ($startDate, $endDate) {
                 $query->whereBetween('lease_start_date', [$startDate, $endDate])
                     ->orWhereBetween('lease_end_date', [$startDate, $endDate])

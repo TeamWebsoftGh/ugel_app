@@ -82,6 +82,7 @@ return new class extends Migration
             $table->foreignId('invoice_item_lookup_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('description');
             $table->decimal('amount', 10, 2);
+            $table->integer('quantity')->default(1);
             $this->empExtracted($table);
         });
 

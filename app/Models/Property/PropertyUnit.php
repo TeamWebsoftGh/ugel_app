@@ -45,5 +45,8 @@ class PropertyUnit extends Model
         return $this->belongsTo(Property::class)->withDefault(['name' => 'N/A']);
     }
 
-
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
 }
