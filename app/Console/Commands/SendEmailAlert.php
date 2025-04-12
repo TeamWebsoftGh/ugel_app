@@ -57,6 +57,7 @@ class SendEmailAlert extends Command
                 }catch (\Exception $ex){
                     log_error(format_exception($ex), $alert, 'send-email-failed');
                     $this->info('Error Occurred.');
+                    return false;
                 }
 
                 $alert->save();

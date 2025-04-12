@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Common\Email;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -10,7 +11,7 @@ class AlertMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public object $data;
+    public Email $alert;
     /**
      * Create a new message instance.
      *
@@ -18,7 +19,7 @@ class AlertMail extends Mailable
      */
     public function __construct($data)
     {
-        $this->data = $data;
+        $this->alert = $data;
     }
 
     /**
@@ -28,21 +29,21 @@ class AlertMail extends Mailable
      */
     public function build()
     {
-        $data['data'] = $this->data->toArray();
-        $email = $this->subject($this->data->subject)->view('emails.alert', $data);
+        $data['alert'] = $this->alert;
+        $email = $this->subject($this->alert->subject)->view('emails.alert', $data);
 
         // Check if CC is set and not empty
-        if (isset($this->data->cc) && !empty($this->data->cc)) {
+        if (isset($this->alert->cc) && !empty($this->alert->cc)) {
             // Assuming $this->data->cc is a string of email addresses separated by commas
-            $ccEmails = explode(',', $this->data->cc);
+            $ccEmails = explode(',', $this->alert->cc);
             // Add CC emails to the email
             $email = $email->cc($ccEmails);
         }
 
         // Check if BCC is set and not empty
-        if (isset($this->data->bcc) && !empty($this->data->bcc)) {
+        if (isset($this->alert->bcc) && !empty($this->alert->bcc)) {
             // Assuming $this->data->bcc is a string of email addresses separated by commas
-            $bccEmails = explode(',', $this->data->bcc);
+            $bccEmails = explode(',', $this->alert->bcc);
             // Add BCC emails to the email
             $email = $email->bcc($bccEmails);
         }

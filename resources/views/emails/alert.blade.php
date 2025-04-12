@@ -31,7 +31,7 @@
         </table>
     @endisset
     @isset($alert->line_5)
-        <p style="font-family: sans-serif; font-size: 12px; font-weight: normal; margin: 0; margin-bottom: 15px;">{{$alert->line_5}}</p>
+        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">{{$alert->line_5}}</p>
     @endisset
     <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;">Cheers!<br/>{{settings("company_name")}} Team</p>
 @endsection
