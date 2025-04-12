@@ -271,7 +271,7 @@ class UserService extends ServiceBase implements IUserService
 
         //Process Request
         try {
-            if (!(Hash::check($params['current-password'], $user->password)))
+            if (!(Hash::check($params['current_password'], $user->password)))
             {
                 //The passwords match
                 $this->response->status = ResponseType::ERROR;
@@ -279,7 +279,7 @@ class UserService extends ServiceBase implements IUserService
                 return $this->response;
             }
 
-            if(strcmp($params['current-password'],$params['new-password']) == 0){
+            if(strcmp($params['current_password'],$params['new-password']) == 0){
                 //Current password and new password are same
                 $this->response->status = ResponseType::ERROR;
                 $this->response->message = "New Password cannot be same as your current password.";
@@ -287,11 +287,10 @@ class UserService extends ServiceBase implements IUserService
             }
 
             $res = $this->userRepo->updateUser([
-                'password' => $params['new-password'],
+                'password' => $params['new_password'],
                 'ask_password_reset' => 0,
                 'last_password_reset' => Carbon::now()
             ], $user);
-            $this->updateFinanceUser($user->email, ['password' => Hash::make($params['new-password'])]);
         } catch (\Exception $e) {
             log_error(format_exception($e), $user, "change-user-password-failed");
         }
@@ -306,7 +305,7 @@ class UserService extends ServiceBase implements IUserService
 
         //Audit Trail
         $logAction = "change-user-password-successful";
-        $auditMessage = "Password successfully changed for " . $user->name;
+        $auditMessage = "Password successfully changed for " . $user->fullname;
 
         log_activity($auditMessage, $user, $logAction);
         $this->response->status = ResponseType::SUCCESS;
@@ -337,7 +336,6 @@ class UserService extends ServiceBase implements IUserService
         //Process Request
         try {
             $response = $this->userRepo->updateUser(['is_active' => $status], $user);
-            $this->updateFinanceUser($user->email, ['enabled' => $status]);
 
         } catch (\Exception $e) {
             log_error(format_exception($e), $user, "change-status-failed");
@@ -355,7 +353,7 @@ class UserService extends ServiceBase implements IUserService
 
         //Audit Trail
         $logAction = "change-status-successful";
-        $auditMessage = 'You have successfully '.$changeAction.' a user with name: '.$user->name;
+        $auditMessage = 'You have successfully '.$changeAction.' a user with name: '.$user->fullname;
 
         log_activity($auditMessage, $user, $logAction);
         $this->response->status = ResponseType::SUCCESS;
