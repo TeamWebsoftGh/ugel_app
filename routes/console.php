@@ -11,5 +11,5 @@ Artisan::command('inspire', function () {
 Schedule::command('app:send-bulk-sms')->everyMinute();
 Schedule::command('app:send-quick-sms')->everyThirtySeconds()->withoutOverlapping();
 //Schedule::command('app:send-quick-whatsapp')->everyFifteenSeconds()->withoutOverlapping();
-Schedule::command('app:app:send-email')->everyThirtySeconds()->withoutOverlapping();
+Schedule::command('app:send-email')->everyThirtySeconds()->withoutOverlapping();
 //Schedule::command('app:send-quick-voice')->everyFifteenSeconds()->withoutOverlapping();

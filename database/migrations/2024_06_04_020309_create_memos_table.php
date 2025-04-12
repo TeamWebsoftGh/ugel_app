@@ -95,6 +95,7 @@ return new class extends Migration
             $table->string('message_type')->nullable();
             $table->dateTime('request_date')->nullable();
             $table->boolean('is_sent')->default(0);
+            $table->integer('no_of_tries')->nullable();
 
             $table->unsignedBigInteger('eloquentable_id')->nullable();
             $table->string('eloquentable_type')->index()->nullable();
