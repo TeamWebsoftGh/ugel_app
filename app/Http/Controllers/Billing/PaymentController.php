@@ -1,207 +1,205 @@
 <?php
 
-namespace App\Http\Controllers\Property;
+namespace App\Http\Controllers\Billing;
 
 use App\Abstracts\Http\Controller;
-use App\Constants\Constants;
 use App\Constants\ResponseType;
-use App\Models\Common\TravelType;
-use App\Models\Property\Complaint;
-use App\Models\Property\Medical;
-use App\Models\Property\Travel;
-use App\Services\Interfaces\IMedicalService;
-use App\Services\Interfaces\IPaymentService;
-use App\Services\Interfaces\ITravelService;
-use App\Traits\JsonResponseTrait;
+use App\Services\Billing\Interfaces\IPaymentService;
+use App\Services\Billing\InvoiceService;
+use App\Services\Interfaces\IPaymentGatewayService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class PaymentController extends Controller
 {
-    private IPaymentService $paymentService; // Update the service variable name
+    private IPaymentService $paymentService;
+    private InvoiceService $invoiceService;
+    private IPaymentGatewayService $paymentGatewayService;
 
-    /**
-     * Create a new controller instance.
-     *
-     * @param IMedicalService $medicalService
-     */
-    public function __construct(IPaymentService $paymentService) // Update the constructor parameter
+    public function __construct(IPaymentService $paymentService, InvoiceService $invoiceService, IPaymentGatewayService $paymentGatewayService)
     {
-
-        $this->paymentService = $paymentService; // Update the service assignment
+        parent::__construct();
+        $this->paymentService = $paymentService;
+        $this->invoiceService = $invoiceService;
+        $this->paymentGatewayService = $paymentGatewayService;
     }
 
-	/**
-	 * Display a listing of the resource.
-	 *
-	 * @return JsonResponse
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index(Request $request)
     {
-        $data = $request->all();
+        if ($request->ajax()) {
+            $amenities = $this->paymentService->listPayments($request->all(), 'updated_at');
+            return datatables()->of($amenities)
+                ->setRowId(fn($row) => $row->id)
+                ->addColumn('client_name', fn($row) => $row->client->fullname)
+                ->addColumn('client_number', fn($row) => $row->client->client_number)
+                ->addColumn('invoice_number', fn($row) => $row->invoice->invoice_number)
+                ->addColumn('payment_gateway_name', fn($row) => $row->paymentGateway->name)
+                ->addColumn('formatted_total', fn($row) => format_money($row->total_amount))
+                ->addColumn('action', function ($data)
+                {
+                    $button = '<a href="' . route("invoices.show", $data->id) . '" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></a>';
+                    $button .= '&nbsp;';
+                    if (user()->can('update-paymentss'))
+                    {
+                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
+                        $button .= '&nbsp;';
+                    }
+                    if (user()->can('delete-payments'))
+                    {
+                        $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
+                    }
 
-        return view('property.payments.index');
-	}
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Application|Factory|View
-     */
-    public function create() // Update the method name
-    {
-        $medical = new Medical();
-        $blood_groups = Constants::BLOOD_GROUPS;
-
-        $fillableFields = $this->getFillable();
-
-        if (request()->ajax()){
-            return view('property.payments.edit', compact('medical', 'blood_groups', 'fillableFields'));
+                    return $button;
+                })
+                ->rawColumns(['action'])
+                ->make(true);
         }
 
-        return view('property.payments.create', compact('medical', 'blood_groups', 'fillableFields'));
+        return view('billing.payments.index');
     }
 
 
     /**
-	 * Store a newly created resource in storage.
-	 *
-	 * @param Request $request
-	 * @return JsonResponse
-     */
-	public function store(Request $request)
-	{
-        $validatedData = $request->validate([
-            'employee_id' => 'required',
-            'height' => 'required',
-            'weight' => 'required',
-            'hospital_name' => 'required',
-            'exam_date' => 'required',
-            'fit_to_work' => 'required',
-        ]);
-
-        $data = $request->except('_token', '_method', 'id');
-        $data['travel_type'] = $request->arrangement_type;
-
-        if ($request->has("id") && $request->input("id") != null)
-        {
-            $travel = $this->medicalService->findMedicalById($request->input("id"));
-            $results = $this->medicalService->updateMedical($data, $travel);
-        }else{
-            $results = $this->medicalService->createMedical($data);
-        }
-
-        if ($request->ajax()){
-            return $this->responseJson($results);
-        }
-
-        if ($results->status != ResponseType::SUCCESS)
-        {
-            return redirect()->back()->with('error', $results->message);
-        }
-
-        request()->session()->flash('message', $results->message);
-
-        return redirect()->route('property.payments.index');
-	}
-
-
-    /**
-     * Display the specified resource.
+     * Display a listing of the resource.
      *
-     * @param int $id
-     * @return Application|Factory|RedirectResponse|View
+     * @return Application|Factory|View|void
      */
-    public function show($id)
+    public function pendingPayments()
     {
-        $medical = $this->medicalService->findMedicalById($id);
-        $blood_groups = Constants::BLOOD_GROUPS;
-        $fillableFields = $this->getFillable();
+        $payments = $this->paymentService->listPayments()->where('status', '==', 'pending');
+        //$payments = Payment::all();
 
-        if (request()->ajax()){
-            return view('property.payments.edit', compact('medical', 'blood_groups', 'fillableFields'));
-        }
-
-        return redirect()->route("property.payments.index");
+        return view('admin.sales.payments.index', compact("payments"));
     }
 
-	/**
-	 * Show the form for editing the specified resource.
-	 *
-	 * @param int $id
-	 * @return Application|Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
-     */
-	public function edit($id)
-	{
-        $medical = $this->medicalService->findMedicalById($id);
-        $blood_groups = Constants::BLOOD_GROUPS;
-
-        $fillableFields = $this->getFillable();
-
-        if (request()->ajax()){
-            return view('property.payments.edit', compact('medical', 'blood_groups', 'fillableFields'));
-        }
-
-        return redirect()->route("property.payments.index");
-	}
-
     /**
-     * Remove the specified resource from storage.
+     * Display a listing of the resource.
      *
-     * @param int $id
-     * @return JsonResponse
+     * @return Application|Factory|View|void
      */
-    public function destroy($id)
+    public function unsuccessfulPayments()
     {
-        $medical = $this->medicalService->findMedicalById($id); // Update the method call
+        $payments = $this->paymentService->listPayments()->where('status', '!=', 'pending')
+            ->where('status', '!=', 'success');
+        //$payments = Payment::all();
 
-        $result = $this->medicalService->deleteMedical($medical); // Update the method call
-
-        return $this->responseJson($result);
+        return view('admin.payments.index', compact("payments"));
     }
 
-    public function bulkDelete(Request $request)
+    public function create(Request $request)
     {
-        $logged_user = auth()->user();
-
-        if ($logged_user->can('delete-payments'))
+        $invoice_id = $request->invoice_id;
+        if(isset($invoice_id))
         {
-            $medical_id = $request['medicalIdArray'];
-            $medical = Medical::whereIn('id', $medical_id);
-            if ($medical->delete())
-            {
-                return response()->json(['success' => __('Multi Delete', ['key' => trans('file.Medical')])]); // Update the message
-            } else
-            {
-                return response()->json(['error' => 'Error, selected medical records can not be deleted']); // Update the message
+            $invoice = $this->invoiceService->findInvoiceById($invoice_id);
+            if(is_null($invoice)){
+                return redirect()->back()->with('error', 'Sorry the request was not successful, please try again');
             }
         }
-        return response()->json(['success' => __('You are not authorized')]); // Update the message
+
+        $data = [];
+
+        $data['amount'] = $invoice->total_price;
+        $data['invoice'] = $invoice;
+        $data['reason'] = "Invoice";
+        $data["payment_options"] = [
+            'online' => $this->paymentGatewayService->listOnlinePaymentGateways(),
+            'offline' => $this->paymentGatewayService->listOfflinePaymentGateways(),
+            'show_wallet_option' => false
+        ];
+
+        return view('billing.payments.create', $data);
     }
 
-    private function getFillable(){
-        return [
-            'hospital_name',
-            'doctor_name',
-            'sickling',
-            'height',
-            'weight',
-            'mouth_and_teeth',
-            'cvs',
-            'resp_system',
-            'abdomen',
-            'mss_skin',
-            'vision',
-            'immunization_record',
-            'hearing',
-            'chest_xray',
-            'other_tests',
-            'hepatitis',
-        ];
+    public function showPay(string $slug, Request $request)
+    {
+        $invoice_id = $request->invoice_id;
+        $invoice = $this->invoiceService->findInvoiceById($invoice_id);
+        $data = [];
+
+        if(isset($invoice))
+        {
+            $data['invoice_id'] = $invoice->id;
+            $data['amount'] = $invoice->balance;
+            $data['minPayment'] = $invoice->minPayment;
+        }else{
+            $data['amount'] = $request->amount;
+            $data['minPayment'] = settings('minimum_top_up', 50.00);
+            $data['invoice_id'] = null;
+        }
+
+        if($slug == "wallet" && isset($invoice))
+        {
+            if($data['amount'] > user()->wallet()->balance())
+            {
+                return redirect()->back()->with('error', 'Your wallet doesn\'t have sufficient balance');
+            }
+            return view('customer.payment.wallet', compact('invoice'));
+        }else {
+            $paymentMethod = $this->paymentGatewayService->listAllPaymentGateways()->firstWhere('slug', '==', $slug);
+            $data['paymentMethod'] = $paymentMethod;
+
+            if($paymentMethod->mode == 'offline')
+            {
+                return view('billing.payments.offline', compact('data', 'invoice'));
+            }
+
+            if($paymentMethod->slug == 'paystack')
+            {
+                return view('billing.payments.paystack', compact('data', 'invoice'));
+            }
+        }
+
+        return redirect()->back()->with('error', 'Sorry the request was not successful, please try again');
+    }
+
+    public function store(Request $request)
+    {
+        $validatedData = $request->validate([
+            'amount' => 'required|numeric',
+            'payment_method' => 'required',
+        ]);
+
+        $data= $request->except('_token');
+        $invoice = $this->invoiceService->findInvoiceById($data['invoice_id']);
+        $data = $request->except('_token', '_method', 'id');
+        $result = $request->filled('id')
+            ? $this->paymentService->updatePayment($data, $this->paymentService->findPayment($request->input('id')))
+            : $this->paymentService->createPayment($data, $invoice);
+
+        if ($request->ajax()) {
+            return $this->responseJson($result);
+        }
+
+        return $this->handleRedirect($result, 'payments.index');
+    }
+
+    /**
+     * @param string $id
+     * @return Application|Factory|View
+     */
+    public function Show(string $id)
+    {
+        $payment = $this->paymentService->findPayment(["transaction_id" => $id]);
+        $customer = $payment->customer;
+        $order = $payment->order;
+
+        return view('admin.payments.show', compact('order', 'payment', 'customer'));
+    }
+
+    public function changeStatus(int $id, Request $request)
+    {
+        $payment = $this->paymentService->findPaymentById($id);
+
+        $result = $this->paymentService->changeStatus($payment, $request->status);
+
+        return $this->responseJson($result);
     }
 }

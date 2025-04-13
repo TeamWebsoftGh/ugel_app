@@ -42,4 +42,12 @@ Route::group(['prefix' => 'billing', 'namespace' => 'App\Http\Controllers\Billin
     Route::post('invoices/import', 'InvoiceController@importPost')->name('invoices.importPost');
     Route::resource('invoices', 'InvoiceController')->except(['update']);
 
+
+    //Payment
+    Route::get('payment/{slug}/{invoice_id}', 'PaymentController@showPay')->name('payments.pay');
+    Route::delete('payments/delete/selected', 'PaymentController@bulkDelete')->name('payments.delete.selected');
+    Route::get('payments/import', 'PaymentController@import')->name('payments.import');
+    Route::post('payments/import', 'PaymentController@importPost')->name('payments.importPost');
+    Route::resource('payments', 'PaymentController')->except(['update']);
+
 });

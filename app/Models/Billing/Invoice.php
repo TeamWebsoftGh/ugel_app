@@ -36,4 +36,9 @@ class Invoice extends Model
     {
         return $this->hasMany(InvoiceItem::class);
     }
+
+    public function getBalanceAttribute()
+    {
+        return $this->total_amount - $this->total_paid;
+    }
 }

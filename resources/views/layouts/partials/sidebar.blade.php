@@ -125,7 +125,7 @@
                aria-expanded="false" aria-controls="sidebarAuth">
                 <i class="ri-wallet-2-line"></i> <span data-key="t-bookings">Billing Center</span>
             </a>
-            <div class="collapse menu-dropdown {{ (request()->is('*booking*')||request()->is('*invoice*')||request()->is('*booking')|request()->is('*booking')) ? 'show' : '' }}" id="bookings">
+            <div class="collapse menu-dropdown {{ (request()->is('*booking*')||request()->is('*invoice*')||request()->is('*booking')|request()->is('*billing')) ? 'show' : '' }}" id="bookings">
                 <ul class="nav nav-sm flex-column">
                     @can("read-bookings")
                         <li class="nav-item">
@@ -139,7 +139,7 @@
                     @endcan
                     @can("read-payments")
                         <li class="nav-item">
-                            <a href="{{route("invoices.index")}}" class="nav-link" data-key="t-user_activity"> Transactions </a>
+                            <a href="{{route("payments.index")}}" class="nav-link" data-key="t-user_activity"> Payments </a>
                         </li>
                     @endcan
                     @can("read-invoice-items")

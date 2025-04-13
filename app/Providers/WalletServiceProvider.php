@@ -2,7 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\Payment\Payment;
+use App\Models\Billing\Invoice;
+use App\Models\Billing\Payment;
 use App\Services\WalletService;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -30,7 +31,7 @@ class WalletServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'payment'           => Payment::class,
-            'order'             => Order::class,
+            'invoice'             => Invoice::class,
             // We cannot add App\User as it is being used in Spatie Permission
         ]);
     }

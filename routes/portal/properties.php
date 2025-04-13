@@ -41,14 +41,5 @@ Route::group(['prefix' => 'facilities', 'namespace' => 'App\Http\Controllers\Pro
     Route::delete('reviews/delete/selected', 'ReviewController@bulkDelete')->name('reviews.delete.selected');
     Route::resource('reviews', 'ReviewController')->except(['update']);
 
-    //service-types
-    Route::get('companies/kyc', 'AmenityController@kyc')->name('companies.kyc');
-    Route::get('offers/payment', 'AmenityController@payment')->name('offers.payment');
-    Route::get('offers/queued', 'AmenityController@queued')->name('offers.queued');
-    Route::get('offers/active', 'AmenityController@active')->name('offers.active');
-    Route::resource('service-types', 'PropertyController')->except(['update']);
-    Route::resource('offers', 'AmenityController')->except(['update']);
-    Route::resource('payments', 'PaymentController')->except(['update']);
-
 
 });

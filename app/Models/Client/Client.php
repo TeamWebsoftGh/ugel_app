@@ -6,12 +6,11 @@ use App\Abstracts\Model;
 use App\Models\Auth\User;
 use App\Models\Billing\Booking;
 use App\Models\Settings\Country;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasWalletTrait;
 
 class Client extends Model
 {
-    use HasFactory;
+    use HasWalletTrait;
 
     protected $appends =['full_name'];
 

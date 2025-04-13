@@ -2,7 +2,7 @@
 @section('title', 'Manage Payments')
 @section('page-title', 'Make Payment')
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{route('offers.index')}}">Payments</a></li>
+    <li class="breadcrumb-item"><a href="{{route('payments.index')}}">Payments</a></li>
 @endsection
 
 @section('content')
@@ -18,33 +18,40 @@
                         <hr/>
                         <div class="d-flex justify-content-between">
                             <h4 class="h4">Amount Due</h4>
-                            <div class="h4">GHS 6,0000</div>
+                            <div class="h4">{{format_money(($invoice->total_amount-$invoice->total_paid))}}</div>
                         </div>
-                        <p>Your offer code is : FC00012</p>
-                        <p class="text-muted">Online</p>
-                        <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action payment_btn">
-                                Pay using Hubtel
-                            </a>
-                        </div>
+                        <p>Your Booking Number : {{$invoice->booking->booking_number}}</p>
+                        @if(isset($payment_options['online']) && count($payment_options['online'])>0)
+                            <p class="text-muted">Online</p>
+                            <div class="list-group">
+                                @foreach($payment_options['online'] as $option)
+                                    <a href="{{route('payments.pay', ['slug' => $option->slug, 'invoice_id' => optional($invoice)->id, 'amount' => $invoice->total_amount])}}" class="list-group-item list-group-item-action payment_btn">
+                                        Pay using {{ $option->name }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
                         <br/>
-                        <p class="text-muted">Offline</p>
-                        <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action payment_btn">
-                                Bank Deposit
-                            </a>
-                            <a href="#" class="list-group-item list-group-item-action payment_btn">
-                                Wire Transfer
-                            </a>
-                        </div>
-                        <br>
-                        <p class="text-muted">Wallet- Balance: GHS 0</p>
-                        <div class="list-group">
-                            <a href="#" class="list-group-item list-group-item-action payment_btn">
-                                <div><i class="fas fa-wallet"></i> Pay using your wallet</div>
-                            </a>
-                        </div>
-                    </div>
+                        @if(isset($payment_options['offline']) && count($payment_options['offline'])> 0)
+                            <br/>
+                            <p class="text-muted">Offline</p>
+                            <div class="list-group">
+                                @foreach($payment_options['offline'] as $option)
+                                    <a href="{{route('payments.pay', ['slug' => $option->slug, 'invoice_id' => optional($invoice)->id, 'amount' => $amount])}}" class="list-group-item list-group-item-action payment_btn">
+                                        {{ $option->name }}
+                                    </a>
+                                @endforeach
+                            </div>
+                        @endif
+                        @if($payment_options['show_wallet_option'])
+                            <br>
+                            <p class="text-muted">Wallet- Balance: {{format_money(user()->wallet()->balance())}}</p>
+                            <div class="list-group">
+                                <a href="{{route('payments.pay', ['slug' => "wallet", 'invoice_id' => optional($invoice)->id, 'amount' => $amount])}}" class="list-group-item list-group-item-action payment_btn">
+                                    <div><i class="fas fa-wallet"></i> Pay using your wallet</div>
+                                </a>
+                            </div>
+                        @endif
                 </div>
             </div> <!-- end card-body-->
         </div> <!-- end col -->

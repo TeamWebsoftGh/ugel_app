@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Billing;
 
-use App\Helpers\GeneralSettings;
-use App\Models\Order;
-use App\Models\Payment;
+use App\Models\Billing\Payment;
+use App\Models\Payment\PaymentGateway;
+use App\Repositories\BaseRepository;
 use App\Repositories\Interfaces\IPaymentRepository;
 
 
@@ -13,7 +13,6 @@ class PaymentRepository extends BaseRepository implements IPaymentRepository
     /**
      * @var mixed
      */
-    protected $http;
 
     /**
      * HubtelCheckoutRepository constructor.
@@ -25,9 +24,10 @@ class PaymentRepository extends BaseRepository implements IPaymentRepository
         $this->model = $payment;
     }
 
-    public function listPayments(string $order = 'id', string $sort = 'desc', $columns = array('*') )
+    public function listPayments(array $filter = [], string $orderBy= 'updated_at', string $sort = 'desc')
     {
-        return $this->all($columns, $order, $sort);
+        $query = $this->getFilteredList();
+        return $query->orderBy($orderBy, $sort);
     }
 
     /**
@@ -93,27 +93,5 @@ class PaymentRepository extends BaseRepository implements IPaymentRepository
             log_activity($msg, $applicant, $logType);
         }
         return false;
-    }
-
-    /**
-     * @param array $data
-     * @param $order
-     * @return Payment
-     */
-    public function createPayment(array $data, $order) : Payment
-    {
-        $data["order_id"] = $order->id;
-        $data["customer_id"] = $order->customer_id;
-
-        try{
-            $this->model = $this->model->updateOrCreate([
-                'reference_id' => $data['reference_id'],
-                'order_id' => $order->id,
-                'customer_id' => $order->customer_id
-            ], $data);
-        }catch (\Exception $ex){
-            log_error(format_exception($ex), $this->model, 'make-payment-failed');
-        }
-        return $this->model;
     }
 }

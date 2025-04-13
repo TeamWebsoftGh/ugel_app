@@ -68,6 +68,7 @@ return new class extends Migration
             $table->foreignId('booking_id')->constrained()->onDelete('cascade');
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->decimal('total_amount', 18, 2);
+            $table->decimal('total_paid', 18, 2);
             $table->string('invoice_number')->unique();
             $table->date('invoice_date');
             $table->date('due_date');

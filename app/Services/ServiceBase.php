@@ -129,12 +129,12 @@ class ServiceBase implements IBaseService
      * @param mixed $data
      * @return Response
      */
-    public function buildCreateResponse($data): Response
+    public function buildCreateResponse($data, $message = null): Response
     {
         if ($data)
         {
             $this->response->status = ResponseType::SUCCESS;
-            $this->response->message = ResponseMessage::DEFAULT_SUCCESS_CREATE;
+            $this->response->message = $message??ResponseMessage::DEFAULT_SUCCESS_CREATE;
             $this->response->data = $data;
         } else
         {
