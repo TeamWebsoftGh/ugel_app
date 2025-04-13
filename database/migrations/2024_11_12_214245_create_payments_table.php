@@ -13,24 +13,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-//        Schema::create('payment_gateways', function (Blueprint $table) {
-//            $table->id();
-//            $table->string('name');
-//            $table->string('slug')->unique();
-//            $table->string('account_id')->nullable();
-//            $table->string('client_id')->nullable();
-//            $table->string('client_secret')->nullable();
-//            $table->string('api_url')->nullable()->unique();
-//            $table->string('redirect_url')->nullable();
-//            $table->string('cancel_url')->nullable();
-//            $table->string('failed_url')->nullable();
-//            $table->string('description')->nullable();
-//            $table->text('instruction')->nullable();
-//            $table->text('settings')->nullable();
-//            $table->string('mode')->default('online');
-//            $table->string('status')->default(0);
-//            $this->empExtracted($table);
-//        });
+        Schema::create('payment_gateways', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('account_id')->nullable();
+            $table->string('client_id')->nullable();
+            $table->string('client_secret')->nullable();
+            $table->string('api_url')->nullable()->unique();
+            $table->string('redirect_url')->nullable();
+            $table->string('cancel_url')->nullable();
+            $table->string('failed_url')->nullable();
+            $table->string('description')->nullable();
+            $table->text('instruction')->nullable();
+            $table->text('settings')->nullable();
+            $table->string('mode')->default('online');
+            $table->string('status')->default(0);
+            $this->empExtracted($table);
+        });
 
         Schema::dropIfExists('payments');
         Schema::create('payments', function (Blueprint $table) {

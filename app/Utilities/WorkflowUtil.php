@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Utilities;
 
 use App\Constants\ResponseType;
 use App\Events\WorkflowRequestEvent;
@@ -27,7 +27,7 @@ Trait WorkflowUtil
      * @param null $routeName
      * @return void/false
      */
-    public function addWorkflowRequest($class, $user, $routeName = null)
+    public function addWorkflowRequest($class, $user)
     {
         // Check if the workflow feature is enabled and if the class status allows for workflow processing
         if (!config('app.enable_workflow', true) || in_array($class->status ?? '', ['approved', 'declined', 'rejected'], true)) {

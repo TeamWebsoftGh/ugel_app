@@ -11,6 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('workflow_request_details');
+        Schema::dropIfExists('workflow_requests');
+        Schema::dropIfExists('workflow_positions');
+        Schema::dropIfExists('workflow_position_types');
+        Schema::dropIfExists('workflows');
+        Schema::dropIfExists('workflow_types');
         Schema::create('workflow_position_types', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -66,6 +72,7 @@ return new class extends Migration
             $table->integer('type')->nullable();
             $table->integer('stages')->default(1);
             $table->boolean('is_active')->default(1);
+            $table->text('approval_route')->nullable();
 
             $table->string('created_from', 100)->nullable();
             $table->unsignedInteger('created_by')->nullable();
@@ -153,7 +160,7 @@ return new class extends Migration
             $table->text('approval_route')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('forwarded_at')->nullable();
-            $table->UnsignedBiginteger('new_implementor_id')->nullable();
+            $table->unsignedBigInteger('old_implementor_id')->nullable();
             $table->timestamps();
             $table->softDeletes();
 

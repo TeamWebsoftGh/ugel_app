@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\CustomerService\MaintenanceRequest;
+use App\Models\CustomerService\SupportTicket;
 use App\Models\Workflow\WorkflowPositionType;
 use App\Models\Workflow\WorkflowType;
 use Illuminate\Database\Seeder;
@@ -30,5 +31,12 @@ class WorkflowSeeder extends Seeder
             'subject_type' => MaintenanceRequest::class,
             'company_id' => $company_id,
             ]);
+
+        WorkflowType::create([
+            'name' => 'Support Ticket',
+            'code' => 'support-ticket',
+            'subject_type' => SupportTicket::class,
+            'company_id' => $company_id,
+        ]);
     }
 }

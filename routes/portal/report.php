@@ -10,15 +10,15 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::group(['prefix' => 'report', 'as' => 'report.', 'namespace' => 'App\Http\Controllers\Report'], function ()
+Route::group(['prefix' => 'reports', 'as' => 'report.', 'namespace' => 'App\Http\Controllers\Report'], function ()
 {
     Route::prefix('billing')->group(function ()
     {
-        Route::get('payments', 'BillingReportController@payments')->name('payments');
-        Route::post('payments', 'BillingReportController@exportPayments')->name('payments');
+        Route::get('payment', 'BillingReportController@payments')->name('payments');
+        Route::post('payment', 'BillingReportController@exportPayments')->name('payments');
     });
 
-    Route::prefix('properties')->group(function ()
+    Route::prefix('property')->group(function ()
     {
         Route::get('', 'PropertyReportController@properties')->name('properties');
         Route::post('', 'PropertyReportController@exportProperties')->name('properties');

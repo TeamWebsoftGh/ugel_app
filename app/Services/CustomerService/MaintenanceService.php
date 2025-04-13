@@ -17,7 +17,7 @@ use App\Services\Helpers\Response;
 use App\Services\ServiceBase;
 use App\Traits\TaskUtil;
 use App\Traits\UploadableTrait;
-use App\Traits\WorkflowUtil;
+use App\Utilities\WorkflowUtil;
 
 class MaintenanceService extends ServiceBase implements IMaintenanceService
 {

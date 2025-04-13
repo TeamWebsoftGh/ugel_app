@@ -16,7 +16,7 @@ use App\Repositories\Interfaces\ILeaveRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\ILeaveService;
 use App\Traits\LeaveTrait;
-use App\Traits\WorkflowUtil;
+use App\Utilities\WorkflowUtil;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;

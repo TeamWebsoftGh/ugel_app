@@ -7,7 +7,7 @@ use App\Constants\ResponseType;
 use App\Models\Workflow\WorkflowPosition;
 use App\Models\Workflow\WorkflowPositionType;
 use App\Services\Workflow\Interfaces\IWorkflowPositionService;
-use App\Traits\WorkflowUtil;
+use App\Utilities\WorkflowUtil;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;

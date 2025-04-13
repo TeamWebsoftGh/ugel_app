@@ -21,7 +21,7 @@ use App\Services\Helpers\Response;
 use App\Services\Interfaces\ITaskService;
 use App\Traits\TaskUtil;
 use App\Traits\UploadableTrait;
-use App\Traits\WorkflowUtil;
+use App\Utilities\WorkflowUtil;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 

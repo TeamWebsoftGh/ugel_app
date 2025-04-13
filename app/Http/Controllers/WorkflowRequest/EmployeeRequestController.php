@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Workflow\WorkflowRequest;
 use App\Models\Workflow\WorkflowRequestDetail;
 use App\Models\Workflow\WorkflowType;
-use App\Traits\WorkflowUtil;
+use App\Utilities\WorkflowUtil;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;

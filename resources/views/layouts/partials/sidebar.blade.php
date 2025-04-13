@@ -125,7 +125,7 @@
                aria-expanded="false" aria-controls="sidebarAuth">
                 <i class="ri-wallet-2-line"></i> <span data-key="t-bookings">Billing Center</span>
             </a>
-            <div class="collapse menu-dropdown {{ (request()->is('*booking*')||request()->is('*invoice*')||request()->is('*booking')|request()->is('*billing*')) ? 'show' : '' }}" id="bookings">
+            <div class="collapse menu-dropdown {{ (request()->is('billing*')) ? 'show' : '' }}" id="bookings">
                 <ul class="nav nav-sm flex-column">
                     @can("read-bookings")
                         <li class="nav-item">
@@ -162,7 +162,7 @@
                aria-expanded="false" aria-controls="sidebarAuth">
                 <i class="ri-group-2-line"></i> <span data-key="t-authentication">Customers</span>
             </a>
-            <div class="collapse menu-dropdown {{ (request()->is('*customers*') || request()->is('*customer-types*')) ? 'show' : '' }}" id="customers">
+            <div class="collapse menu-dropdown {{ (request()->is('cs*')) ? 'show' : '' }}" id="customers">
                 <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
                         <a href="{{route("admin.customers.create")}}" class="nav-link {{ (request()->is('*customers/create')) ? 'active' : '' }}" data-key="t-login_activity"> Add New Customer </a>
