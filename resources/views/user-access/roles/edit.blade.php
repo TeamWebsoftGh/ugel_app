@@ -32,20 +32,52 @@
                     <span class="input-note text-danger">{{ $message }} </span>
                     @enderror
                 </div>
-{{--                <div class="form-group col-12 col-md-8">--}}
-{{--                    <label for="description" class="control-label">Description </label>--}}
-{{--                    <textarea class="form-control" rows="3" name="description">{{old('', $role->description)}}</textarea>--}}
-{{--                    <span class="input-note text-danger" id="error-description"> </span>--}}
-{{--                    @error('description')--}}
-{{--                    <span class="input-note text-danger">{{ $message }} </span>--}}
-{{--                    @enderror--}}
-{{--                </div>--}}
-                <div class="form-group col-12 col-md-12">
-                    @include("user-access.permissions.permissions-inline")
+
+                <div class="form-group col-12">
+                    <label class="col-form-label">Select Permissions</label>
+                    @php
+                        $groupedPermissions = collect($permissions)->groupBy(function($perm) {
+                            // Get last word from display_name as model (e.g., 'Maintenance Requests')
+                            $words = explode(' ', $perm->display_name);
+                            array_shift($words); // Remove action (Create/Read/etc.)
+                            return implode(' ', $words);
+                        });
+                    @endphp
+
+                    @foreach($groupedPermissions as $model => $perms)
+                        @php $modelClass = strtolower(str_replace(' ', '_', $model)); @endphp
+                        <div class="card mb-3 border">
+                            <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                                <strong>{{ $model }}</strong>
+                                <div>
+                                    <input type="checkbox" class="select-all-model" data-model="{{ $modelClass }}" />
+                                    <label class="mb-0">Select All</label>
+                                </div>
+                            </div>
+                            <div class="card-body row">
+                                @foreach($perms as $perm)
+                                    <div class="col-md-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input permission-checkbox {{ $modelClass }}" type="checkbox"
+                                                   name="permissions[]"
+                                                   value="{{ $perm->name }}"
+                                                   id="perm_{{ $perm->id }}"
+                                                {{ isset($attachedPermissionsArrayIds) && in_array($perm->id, $attachedPermissionsArrayIds) ? 'checked' : '' }}>
+                                            <label class="form-check-label" for="perm_{{ $perm->id }}">
+                                                {{ $perm->display_name }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
+
                     @error('permissions')
                     <span class="input-note text-danger">{{ $message }} </span>
                     @enderror
                 </div>
+
                 <div class="form-group col-12">
                     @include("shared.new-controls")
                 </div>
@@ -53,3 +85,20 @@
         </div>
     </div>
 </form>
+
+@push('scripts')
+    <script>
+        $(document).on('change', '.select-all-model', function () {
+            const model = $(this).data('model');
+            const checked = $(this).is(':checked');
+            $('.' + model).prop('checked', checked);
+        });
+
+        $(document).on('change', '.permission-checkbox', function () {
+            const modelClass = Array.from(this.classList).find(cls => cls !== 'permission-checkbox');
+            const all = $('.' + modelClass);
+            const allChecked = all.length === all.filter(':checked').length;
+            $('.select-all-model[data-model="' + modelClass + '"]').prop('checked', allChecked);
+        });
+    </script>
+@endpush

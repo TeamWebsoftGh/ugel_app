@@ -18,62 +18,61 @@
 <script src="/assets/js/pages/datatables-init.js"></script>
 <script src="/js/pages/dt-crud.js"></script>
 <script>
-    // Get display date format from Laravel (e.g., 'DD-MM-YYYY' or 'MM/DD/YYYY')
-    let displayDateFormat = "DD-MM-YYYY";
-    let backendDateFormat = "YYYY-MM-DD"; // Always send 'YYYY-MM-DD' to backend
+    $(function () {
+        const displayFormat = 'DD-MM-YYYY';
+        const backendFormat = 'YYYY-MM-DD';
 
-    // Default Date Range (Start of Year to Today)
-    let defaultStartDate = moment().startOf('year');
-    let defaultEndDate = moment();
+        const $dateRange = $('#date_range');
+        const $startInput = $('#filter_start_date');
+        const $endInput = $('#filter_end_date');
 
-    // Initialize Date Range Picker
-    $('#date_range').daterangepicker({
-        startDate: defaultStartDate,
-        endDate: defaultEndDate,
-        autoUpdateInput: true,
-        showDropdowns: true,
-        alwaysShowCalendars: true,
-        locale: {
-            format: displayDateFormat,  // Display format from .env
-            separator: " - ",
-            cancelLabel: 'Clear',
-            applyLabel: "Apply",
-            customRangeLabel: "Custom Range"
-        },
-        ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-            'This Year': [moment().startOf('year'), moment()]
-        }
+        // Read from data-* attributes
+        const startRaw = $dateRange.data('start');
+        const endRaw = $dateRange.data('end');
+
+        const startDate = startRaw ? moment(startRaw, backendFormat) : moment().startOf('year');
+        const endDate = endRaw ? moment(endRaw, backendFormat) : moment();
+
+        $dateRange.daterangepicker({
+            startDate: startDate,
+            endDate: endDate,
+            showDropdowns: true,
+            alwaysShowCalendars: true,
+            autoUpdateInput: true,
+            locale: {
+                format: displayFormat,
+                separator: ' - ',
+                applyLabel: 'Apply',
+                cancelLabel: 'Clear'
+            },
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'This Year': [moment().startOf('year'), moment()]
+            }
+        });
+
+        // Set default hidden values
+        $startInput.val(startDate.format(backendFormat));
+        $endInput.val(endDate.format(backendFormat));
+        $dateRange.val(startDate.format(displayFormat) + ' - ' + endDate.format(displayFormat));
+
+        // On Apply
+        $dateRange.on('apply.daterangepicker', function (ev, picker) {
+            $startInput.val(picker.startDate.format(backendFormat));
+            $endInput.val(picker.endDate.format(backendFormat));
+            $(this).val(picker.startDate.format(displayFormat) + ' - ' + picker.endDate.format(displayFormat));
+        });
+
+        // On Cancel
+        $dateRange.on('cancel.daterangepicker', function () {
+            $(this).val('');
+            $startInput.val('');
+            $endInput.val('');
+        });
     });
-
-    // Set default backend values in hidden inputs
-    $('#filter_start_date').val(defaultStartDate.format(backendDateFormat));
-    $('#filter_end_date').val(defaultEndDate.format(backendDateFormat));
-
-    // Handle Date Selection (Apply Selected Dates)
-    $('#date_range').on('apply.daterangepicker', function (ev, picker) {
-        // Save values in backend format
-        $('#filter_start_date').val(picker.startDate.format(backendDateFormat));
-        $('#filter_end_date').val(picker.endDate.format(backendDateFormat));
-
-        // Display values in chosen format
-        $(this).val(picker.startDate.format(displayDateFormat) + ' - ' + picker.endDate.format(displayDateFormat));
-
-        //table.ajax.reload();
-    });
-
-    // Handle Clear Button
-    $('#date_range').on('cancel.daterangepicker', function () {
-        $(this).val('');
-        $('#filter_start_date').val('');
-        $('#filter_end_date').val('');
-        //table.ajax.reload();
-    });
-
-
 </script>

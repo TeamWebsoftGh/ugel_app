@@ -10,21 +10,20 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::group(['prefix' => 'report', 'as' => 'report.', 'namespace' => 'Report'], function ()
+Route::group(['prefix' => 'report', 'as' => 'report.', 'namespace' => 'App\Http\Controllers\Report'], function ()
 {
-    Route::prefix('hrm')->group(function ()
+    Route::prefix('billing')->group(function ()
     {
-        Route::get('attendance', 'HrmReportController@attendance')->name('attendance');
-        Route::get('training', 'HrmReportController@training')->name('training');
-        Route::get('employees', 'HrmReportController@employees')->name('employees');
+        Route::get('payments', 'BillingReportController@payments')->name('payments');
+        Route::post('payments', 'BillingReportController@exportPayments')->name('payments');
     });
 
-    Route::get('project', 'ReportController@project')->name('project');
-    Route::get('task', 'ReportController@task')->name('task');
-    Route::get('account', 'ReportController@account')->name('account');
-    Route::get('expense', 'ReportController@expense')->name('expense');
-    Route::get('deposit', 'ReportController@deposit')->name('deposit');
-    Route::get('transaction', 'ReportController@transaction')->name('transaction');
+    Route::prefix('properties')->group(function ()
+    {
+        Route::get('', 'PropertyReportController@properties')->name('properties');
+        Route::post('', 'PropertyReportController@exportProperties')->name('properties');
+    });
+
 });
 
 //Audit Trail

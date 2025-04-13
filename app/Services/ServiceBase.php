@@ -7,6 +7,7 @@ use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IBaseService;
+use Mpdf\Mpdf;
 
 class ServiceBase implements IBaseService
 {
@@ -54,14 +55,14 @@ class ServiceBase implements IBaseService
 
         // Common CSS setup
         $sidebar_color = Constants::PAYSLIP_COLOR;
-        $tr = ".headerRow td,.headerRow th{background-color:$sidebar_color;color:#FFFFFF;padding:1mm;}";
+        $tr = ".headerRow td,.headerRow th{background-color:$sidebar_color;color:#ffffff;padding:1mm;}";
 
         // Include external stylesheet
         $stylesheet = file_get_contents(public_path('css/print.css'));
         $stylesheet .= $tr;
 
         // Define footer
-        $emp_name = auth()->user() ? auth()->user()->username : '';
+        $emp_name = auth()->user() ? auth()->user()->fullname : '';
         $footer = "
             <table width='100%'>
                 <tr>

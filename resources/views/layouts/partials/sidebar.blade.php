@@ -125,7 +125,7 @@
                aria-expanded="false" aria-controls="sidebarAuth">
                 <i class="ri-wallet-2-line"></i> <span data-key="t-bookings">Billing Center</span>
             </a>
-            <div class="collapse menu-dropdown {{ (request()->is('*booking*')||request()->is('*invoice*')||request()->is('*booking')|request()->is('*billing')) ? 'show' : '' }}" id="bookings">
+            <div class="collapse menu-dropdown {{ (request()->is('*booking*')||request()->is('*invoice*')||request()->is('*booking')|request()->is('*billing*')) ? 'show' : '' }}" id="bookings">
                 <ul class="nav nav-sm flex-column">
                     @can("read-bookings")
                         <li class="nav-item">
@@ -344,7 +344,7 @@
             </div>
         </li>
     @endif
-    @canany(['read-payroll-reports', 'read-property-reports'])
+    @canany(['read-payment-reports', 'read-property-reports'])
         <li class="nav-item">
             <a class="nav-link menu-link" href="#sidebarPages" data-bs-toggle="collapse" role="button"
                aria-expanded="false" aria-controls="sidebarPages">
@@ -353,7 +353,10 @@
             <div class="collapse menu-dropdown {{ (request()->is('*reports*')) ? 'show' : '' }}" id="sidebarPages">
                 <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
-                        <a href="#" class="nav-link" data-key="t-starter"> Test Report </a>
+                        <a href="{{route("report.payments")}}" class="nav-link" data-key="t-starter"> Payments Report </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{route("report.properties")}}" class="nav-link" data-key="t-starter"> Properties Report </a>
                     </li>
                 </ul>
             </div>

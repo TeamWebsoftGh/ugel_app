@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Report;
 
+use App\Abstracts\Http\Controller;
 use App\Exports\PropertyExport;
-use App\Http\Controllers\Controller;
-use App\Traits\JsonResponseTrait;
+use App\Models\Property\Property;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -12,29 +12,24 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PropertyReportController extends Controller
 {
-    use JsonResponseTrait;
-
-    private ILoanService $loanService;
-
-    public function __construct(ILoanService $loanService)
+    public function __construct()
     {
-        $this->loanService = $loanService;
     }
 
-    public function loanRepayment(Request $request)
+    public function properties(Request $request)
     {
         $data = $request->all();
-        $data["report_title"] =  "LOAN REPAYMENT REPORT";
-        $data = $this->formatLoanRepaymentData($data);
+        $data["report_title"] =  "PROPERTIES REPORT";
+        $data = $this->formatPropertyData($data);
 
-        return view('admin.report.loans.repayments', compact('data'));
+        return view('report.properties.properties', compact('data'));
     }
 
     public function exportLoanRepayments(Request $request)
     {
         $title = "LOAN REPAYMENT REPORT";
         $data = $request->all();
-        $data = $this->formatLoanRepaymentData($data);
+        $data = $this->formatPropertyData($data);
 
         $data["report_title"] = $title;
 
@@ -88,58 +83,31 @@ class PropertyReportController extends Controller
         return $data;
     }
 
-    private function formatLoanRepaymentData($data)
+    private function formatPropertyData(array $data): array
     {
-        if (empty($data['filter_start_date']))
-        {
-            $data['start_date'] = Carbon::now()->format(env('Date_Format'));
-            $data['filter_start_date'] = Carbon::now()->format('Y-m-d');
-        }else{
-            $data['start_date'] = Carbon::parse($data['filter_start_date'])->format(env('Date_Format'));
-        }
+        $now = Carbon::now();
 
-        if (empty($data['filter_end_date']))
-        {
-            $data['end_date'] = Carbon::now()->addDays(7)->format(env('Date_Format'));
-            $data['filter_end_date'] = Carbon::now()->addDays(7)->format('Y-m-d');
-        }else{
-            $data['end_date'] = Carbon::parse($data['filter_end_date'])->format(env('Date_Format'));
-        }
+        // Date defaults
+        $data['filter_start_date'] = $data['filter_start_date'] ?? $now->startOfYear()->format('Y-m-d');
+        $data['filter_end_date']   = $data['filter_end_date']   ?? $now->format('Y-m-d');
 
-        if(isset($data['report_type']) && $data['report_type'] == "pdf")
-        {
-            $data["logo"] = public_path(settings("logo"));
-        }else{
-            $data["logo"] = asset(settings("logo"));
-        }
+        // Display-friendly format from .env
+        $data['start_date'] = Carbon::parse($data['filter_start_date'])->format(env('Date_Format'));
+        $data['end_date']   = Carbon::parse($data['filter_end_date'])->format(env('Date_Format'));
 
-        $result = LoanRepaymentSchedule::query();
+        // Logo path
+        $data['logo'] = isset($data['report_type']) && $data['report_type'] === 'pdf'
+            ? public_path(settings("logo"))
+            : asset(settings("logo"));
 
-        if (!empty($data['filter_start_date']))
-        {
-            $result = $result->where('due_date', '>=', $data['filter_start_date']);
-        }
-
-        if (!empty($data['filter_end_date']))
-        {
-            $result = $result->where('due_date', '<=', $data['filter_end_date']);
-        }
-
-        if (!empty($data['filter_status']))
-        {
-            $result = $result->where('status', $data['filter_status']);
-        }
-
-        if (!empty($params['filter_client']))
-        {
-            $result = $result->whereHas('loan', function ($query) use($params) {
-                return $query->where('client_id', '=', $params['filter_client']);
+        // Build query
+        $query = Property::query()
+            ->when(!empty($data['filter_status']), fn($q) => $q->where('status', $data['filter_status']))
+            ->when(!empty($data['filter_property_type']), function ($q) use ($data) {
+                $q->whereHas('propertyType', fn($sub) => $sub->where('id', $data['filter_property_type']));
             });
-        }
 
-
-        $data['loan_repayments'] = $result->orderBy("due_date", "desc")->get();
-
+        $data['properties'] = $query->latest('updated_at')->get();
 
         return $data;
     }
