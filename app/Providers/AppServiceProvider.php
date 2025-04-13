@@ -65,12 +65,6 @@ class AppServiceProvider extends ServiceProvider
             NewMaintenanceRequestListener::class,
         );
 
-//
-//
-//        Event::listen(
-//            ActivityTriggered::class,
-//            LogActivityListener::class,
-//        );
 
         Request::macro('isApi', function () {
             return $this->is(config('api.prefix') . '/*');

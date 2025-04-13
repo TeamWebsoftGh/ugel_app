@@ -8,7 +8,7 @@
                 <table class="table-bordered report-datatable" style="width: 100%">
                     <thead>
                     <tr style="background: #153e6f; color: #ffffff!important; padding: 5px">
-                        <th style="color: #ffffff">#</th>
+                        <th style="color: #ffffff">#</th style="color: #ffffff">
                         <th style="color: #ffffff">Invoice #</th>
                         <th style="color: #ffffff">Transaction #</th>
                         <th style="color: #ffffff">Payment Gateway</th>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Report;
 use App\Abstracts\Http\Controller;
 use App\Exports\PropertyExport;
 use App\Models\Property\Property;
+use App\Services\Properties\Interfaces\IPropertyService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -12,29 +13,31 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class PropertyReportController extends Controller
 {
-    public function __construct()
+    private $propertyService;
+    public function __construct(IPropertyService $propertyService)
     {
+        $this->propertyService = $propertyService;
     }
 
     public function properties(Request $request)
     {
         $data = $request->all();
-        $data["report_title"] =  "PROPERTIES REPORT";
+        $data["report_title"] =  "PROPERTY REPORT";
         $data = $this->formatPropertyData($data);
 
         return view('report.properties.properties', compact('data'));
     }
 
-    public function exportLoanRepayments(Request $request)
+    public function exportProperties(Request $request)
     {
-        $title = "LOAN REPAYMENT REPORT";
+        $title = "PROPERTY REPORT";
         $data = $request->all();
         $data = $this->formatPropertyData($data);
 
         $data["report_title"] = $title;
 
         $filename = Str::slug(settings('app_name') .'-'.$title);
-        $content = view('admin.report.partials.loan-repayments-report', compact("data"));
+        $content = view('report.properties.partials.properties-report', compact("data"));
 
         return $this->exportData($content, $filename);
     }
@@ -176,6 +179,6 @@ class PropertyReportController extends Controller
             return $content;
         }
 
-        return $this->loanService->print($content, $filename.".pdf", "A4-l");
+        return $this->propertyService->print($content, $filename.".pdf", "A4-l");
     }
 }

@@ -39,7 +39,7 @@ Trait WorkflowUtil
             $workflowRequest = WorkflowRequest::firstOrCreate([
                 'workflow_requestable_id' => $class->id,
                 'workflow_requestable_type' => get_class($class),
-                'user_id' => $user->id
+                'user_id' => $user?->id
             ], [
                 'workflow_requestable_id' => $class->id,
                 'workflow_requestable_type' => get_class($class),
@@ -367,6 +367,8 @@ Trait WorkflowUtil
     {
         $implementors = $this->getImplementorsFromWorkflow($workflow, $user, $workflowRequest->workflow_requestable);
 
+        $isFirst = true;
+
         foreach ($implementors as $implementor) {
             $workflowRequestDetail = new WorkflowRequestDetail();
             $workflowRequestDetail->workflow_position_type_id = $workflow->workflow_position_type_id;
@@ -380,14 +382,17 @@ Trait WorkflowUtil
             $workflowRequestDetail->workflow_request_id = $workflowRequest->id;
             $workflowRequestDetail->save();
 
-            event(new WorkflowRequestEvent($workflowRequestDetail));
+            event(new WorkflowRequestEvent($workflowRequestDetail, $isFirst));
+
+            // Only true for the first iteration
+            $isFirst = false;
         }
 
-        if (count($implementors) > 0)
-        {
+        if (count($implementors) > 0) {
             $workflowRequest->current_flow_sequence = $workflow->flow_sequence;
             $workflowRequest->workflow_id = $workflow->id;
             $workflowRequest->save();
         }
     }
+
 }

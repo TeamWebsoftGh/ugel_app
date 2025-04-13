@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
-@section('title', 'All Workflow Requests')
-@section('page-title', 'All Workflow Requests')
+@section('title', 'My Workflow Requests')
+@section('page-title', 'My Workflow Requests')
 
 @section('content')
     <div class="row">
@@ -51,7 +51,7 @@
                         { data: "created_at" },
                         { data: "action", orderable: false, searchable: false }
                     ];
-                loadDataAndInitializeDataTable("workflow_request", "{{ route('workflow-requests.index') }}", cols);
+                loadDataAndInitializeDataTable("workflow_request", "{{ route('workflow-requests.my-requests') }}", cols);
             });
         })(jQuery);
     </script>
