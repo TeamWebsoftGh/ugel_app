@@ -134,6 +134,7 @@ class WorkflowRequestController extends Controller
         if (request()->ajax())
         {
             $data = $request->all();
+            $data['filter_created_by'] = user_id();
             $workflowRequests = $this->workflowRequestService->listWorkflowRequests($data);
             return datatables()->of($workflowRequests)
                 ->addIndexColumn()

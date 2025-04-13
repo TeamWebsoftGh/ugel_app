@@ -38,7 +38,7 @@ class NewMaintenanceRequestListener
         try {
 
             $maintenance = $maintenanceRequest;
-            $client = optional($maintenance->client)->email ?? 'default@example.com';
+            $client = $maintenance->client;
 
             $emailData = [
                 'to'             => $client->email,
