@@ -41,12 +41,6 @@ class GlobalViewServiceProvider extends ServiceProvider
             PropertyComposer::class
         );
 
-        view()->composer([
-            'timesheet.partials*',
-        ], function ($view) {
-            $view->with('leave_years', FinancialYear::pluck('year'));
-            $view->with('leave_year', date('Y'));
-        });
 
         view()->composer([
             'report.*',

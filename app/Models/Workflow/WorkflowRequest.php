@@ -3,6 +3,8 @@
 namespace App\Models\Workflow;
 
 use App\Abstracts\Model;
+use App\Models\Auth\User;
+use App\Models\Client\Client;
 
 class WorkflowRequest extends Model
 {
@@ -31,7 +33,12 @@ class WorkflowRequest extends Model
 
     public function client()
     {
-        return $this->belongsTo(Employee::class)->withDefault();
+        return $this->belongsTo(Client::class)->withDefault();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class)->withDefault();
     }
 
     public function workflowRequestDetails(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -55,5 +62,10 @@ class WorkflowRequest extends Model
     public function workflowType()
     {
         return $this->belongsTo(WorkflowType::class)->withDefault();
+    }
+
+    public function workflow()
+    {
+        return $this->belongsTo(Workflow::class)->withDefault();
     }
 }

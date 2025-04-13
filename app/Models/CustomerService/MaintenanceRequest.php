@@ -10,9 +10,11 @@ use App\Models\Common\Priority;
 use App\Models\Property\Property;
 use App\Models\Property\PropertyUnit;
 use App\Models\Property\Room;
+use App\Traits\WorkflowTrait;
 
 class MaintenanceRequest extends Model
 {
+    use WorkflowTrait;
     //
     protected $fillable = [
         'client_id',

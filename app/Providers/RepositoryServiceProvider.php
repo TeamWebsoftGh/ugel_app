@@ -87,10 +87,12 @@ use App\Repositories\VisitorLogRepository;
 use App\Repositories\Workflow\Interfaces\IWorkflowPositionRepository;
 use App\Repositories\Workflow\Interfaces\IWorkflowPositionTypeRepository;
 use App\Repositories\Workflow\Interfaces\IWorkflowRepository;
+use App\Repositories\Workflow\Interfaces\IWorkflowRequestRepository;
 use App\Repositories\Workflow\Interfaces\IWorkflowTypeRepository;
 use App\Repositories\Workflow\WorkflowPositionRepository;
 use App\Repositories\Workflow\WorkflowPositionTypeRepository;
 use App\Repositories\Workflow\WorkflowRepository;
+use App\Repositories\Workflow\WorkflowRequestRepository;
 use App\Repositories\Workflow\WorkflowTypeRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -129,6 +131,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(IWorkflowPositionTypeRepository::class, WorkflowPositionTypeRepository::class);
         $this->app->bind(IWorkflowTypeRepository::class, WorkflowTypeRepository::class);
         $this->app->bind(IWorkflowRepository::class, WorkflowRepository::class);
+        $this->app->bind(IWorkflowRequestRepository::class, WorkflowRequestRepository::class);
 
         //Organization
         $this->app->bind(ICompanyRepository::class, CompanyRepository::class);

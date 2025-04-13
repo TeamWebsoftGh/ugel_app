@@ -1,7 +1,7 @@
 @extends('layouts.main')
 
-@section('title', 'Ticket Details')
-@section('page-title', 'Ticket Details')
+@section('title', 'Maintenance Requests')
+@section('page-title', 'Maintenance Requests')
 
 @section('content')
     <div class="row">
@@ -29,11 +29,11 @@
                             </tr>
                             <tr>
                                 <td class="fw-medium">Priority</td>
-                                <td><span class="badge badge-soft-danger">{{$ticket->priority->name}}</span></td>
+                                <td>{{$ticket->priority->name}}</td>
                             </tr>
                             <tr>
                                 <td class="fw-medium">Status</td>
-                                <td><span class="badge badge-soft-secondary">{{$ticket->status}}</span></td>
+                                <td><span class="">{{$ticket->status}}</span></td>
                             </tr>
                             <tr>
                                 <td class="fw-medium">Last Updated</td>
@@ -53,11 +53,11 @@
                         <li>
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0">
-                                    <img src="{{asset($ticket->o?->UserImage)}}" alt="" class="avatar-xs rounded-circle">
+                                    <img src="{{asset($ticket->owner?->UserImage)}}" alt="" class="avatar-xs rounded-circle">
                                 </div>
                                 <div class="flex-grow-1 ms-2">
-                                    <h6 class="mb-1"><a href="javascript:void(0)">{{$ticket->user->fullname}}</a></h6>
-                                    <p class="text-muted mb-0">{{$ticket->user->designation->designation_name}}</p>
+                                    <h6 class="mb-1"><a href="javascript:void(0)">{{$ticket->owner?->fullname}}</a></h6>
+                                    <p class="text-muted mb-0">{{$ticket->client->owner->fullname}}</p>
                                 </div>
                                 <div class="flex-shrink-0">
                                     <div class="dropdown">
@@ -80,11 +80,11 @@
                             <li>
                                 <div class="d-flex align-items-center">
                                     <div class="flex-shrink-0">
-                                        <img src="{{asset("storage/".$assignee->UserImage)}}" alt="" class="avatar-xs rounded-circle">
+                                        <img src="{{asset($assignee->UserImage)}}" alt="" class="avatar-xs rounded-circle">
                                     </div>
                                     <div class="flex-grow-1 ms-2">
                                         <h6 class="mb-1"><a href="javascript:void(0)">{{$assignee->fullname}}</a></h6>
-                                        <p class="text-muted mb-0">{{$assignee->designation->designation_name}}</p>
+                                        <p class="text-muted mb-0">{{$assignee->role_name}}</p>
                                     </div>
                                     <div class="flex-shrink-0">
                                         <div class="dropdown">
@@ -113,39 +113,39 @@
                             <h5 class="mt-3">Ticket Note</h5>
                             {{$ticket->ticket_note}}
                             @if($ticket->status == "opened" || $ticket->status == "reopened")
-                            <form class="mt-4" method="POST" id="updateForm" action="{{route("support-tickets.store")}}">
-                                @csrf
-                                <input type="hidden" name="id" value="{{$ticket->id}}">
-                                <input type="hidden" name="update_request" value="1">
-                                <div class="row g-3">
-                                    <div class="col-lg-6">
-                                        <label for="exampleFormControlTextarea1" class="form-label">Remarks</label>
-                                        <textarea name="remarks" class="form-control border-light" @if(!in_array(user()->id, $assigneeIds)) disabled @endif id="remarks" rows="3" placeholder="Enter remarks">{{$ticket->remarks}}</textarea>
-                                        <span class="input-note text-danger" id="error-remarks"> </span>
-                                        @error('remarks')
-                                        <span class="input-note text-danger">{{ $message }} </span>
-                                        @enderror
-                                    </div><!--end col-->
-
-                                    @if(in_array(user()->id, $assigneeIds) || user()->hasPermission('update-support-tickets'))
+                                <form class="mt-4" method="POST" id="updateForm" action="{{route("support-tickets.store")}}">
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{$ticket->id}}">
+                                    <input type="hidden" name="update_request" value="1">
+                                    <div class="row g-3">
                                         <div class="col-lg-6">
-                                            <label for="exampleFormControlTextarea1" class="form-label">Status</label>
-                                            <select class="form-control" name="status">
-                                                <option @selected("opened" == $ticket->status) value="opened">Opened</option>
-                                                <option @selected("closed" == $ticket->status) value="closed">Closed</option>
-                                                <option @selected("cancelled" == $ticket->status) value="cancelled">Cancelled</option>
-                                            </select>
-                                            <span class="input-note text-danger" id="error-status"> </span>
-                                            @error('status')
+                                            <label for="exampleFormControlTextarea1" class="form-label">Remarks</label>
+                                            <textarea name="remarks" class="form-control border-light" @if(!in_array(user()->id, $assigneeIds) && !user()->can('update-support-tickets')) disabled @endif id="remarks" rows="3" placeholder="Enter remarks">{{$ticket->remarks}}</textarea>
+                                            <span class="input-note text-danger" id="error-remarks"> </span>
+                                            @error('remarks')
                                             <span class="input-note text-danger">{{ $message }} </span>
                                             @enderror
                                         </div><!--end col-->
-                                    @endif
-                                    <div class="col-12">
-                                        <button type="submit" class="btn btn-primary"> Save changes</button>
-                                    </div>
-                                </div><!--end row-->
-                            </form>
+
+                                        @if(in_array(user()->id, $assigneeIds) || user()->can('update-support-tickets'))
+                                            <div class="col-lg-6">
+                                                <label for="exampleFormControlTextarea1" class="form-label">Status</label>
+                                                <select class="form-control" name="status">
+                                                    <option @selected("opened" == $ticket->status) value="opened">Opened</option>
+                                                    <option @selected("closed" == $ticket->status) value="closed">Closed</option>
+                                                    <option @selected("cancelled" == $ticket->status) value="cancelled">Cancelled</option>
+                                                </select>
+                                                <span class="input-note text-danger" id="error-status"> </span>
+                                                @error('status')
+                                                <span class="input-note text-danger">{{ $message }} </span>
+                                                @enderror
+                                            </div><!--end col-->
+                                        @endif
+                                        <div class="col-12">
+                                            <button type="submit" class="btn btn-primary"> Save changes</button>
+                                        </div>
+                                    </div><!--end row-->
+                                </form>
                             @else
                                 <h5 class="mt-3">Ticket Remarks</h5>
                                 {{$ticket->remarks??"N/A"}}
@@ -201,6 +201,13 @@
                     </div><!--end tab-content-->
                 </div>
             </div><!--end card-->
+           <div class="card">
+               <div class="card-body">
+                   @if($ticket->status == "opened" && $ticket->can_approve)
+                       @include("shared.approval", ['workflow_request_detail' => $ticket->workflow_request_detail?->id])
+                   @endif
+               </div>
+           </div>
         </div><!--end col-->
     </div><!--end row-->
 @endsection

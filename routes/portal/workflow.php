@@ -11,9 +11,15 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'workflow-requests', 'namespace' => 'App\Http\Controllers\WorkflowRequest'], function () {
+    Route::get('all', 'WorkflowRequestController@index')->name('workflow-requests.index');
+    Route::get('pending', 'WorkflowRequestController@pending')->name('workflow-requests.pending');
+    Route::get('my-requests', 'WorkflowRequestController@myRequests')->name('workflow-requests.myRequests');
+
+
+
     Route::get('employee-requests', 'EmployeeRequestController@index')->name('employee-requests.index');
-    Route::get('pending', 'EmployeeRequestController@pending')->name('employee-requests.pending');
-    Route::get('my-requests', 'EmployeeRequestController@myRequests')->name('employee-requests.my-requests');
+    Route::get('pending-requests', 'EmployeeRequestController@pending')->name('employee-requests.pending');
+    Route::get('my-request', 'EmployeeRequestController@myRequests')->name('employee-requests.my-requests');
     Route::get('all-requests', 'EmployeeRequestController@allRequests')->name('employee-requests.all-requests');
     Route::get('all-requests/{id}', 'EmployeeRequestController@getRequest')->name('employee-requests.show');
     Route::get('update-request/{id}', 'EmployeeRequestController@resendRequest')->name('employee-requests.resend');

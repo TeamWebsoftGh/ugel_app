@@ -82,9 +82,6 @@
                         ajax: {
                             url: "{{ route('employee-requests.all-requests') }}",
                             data: {
-                                filter_company: filter_company,
-                                filter_department: filter_department,
-                                filter_location: filter_location,
                                 filter_request_type: filter_request_type,
                                 "_token": "{{ csrf_token()}}"
                             }

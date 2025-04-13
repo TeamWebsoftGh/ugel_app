@@ -36,6 +36,7 @@ Route::group(['namespace' => 'App\Http\Controllers\CustomerService', 'prefix' =>
     Route::get('my-maintenance-requests', 'MaintenanceRequestController@myTickets')->name('maintenance-requests.my-tickets');
     Route::get('maintenance-requests/pending', 'MaintenanceRequestController@pending')->name('maintenance-requests.pending');
     Route::get('maintenance-requests/assigned', 'MaintenanceRequestController@assigned')->name('maintenance-requests.assigned');
+    Route::get('maintenance-requests/show', 'MaintenanceRequestController@show')->name('maintenance-requests.show');
     Route::delete('maintenance-requests/delete/selected', 'MaintenanceRequestController@bulkDelete')->name('maintenance-requests.delete.selected');
     Route::resource('maintenance-requests', 'MaintenanceRequestController')->except(['update']);
 

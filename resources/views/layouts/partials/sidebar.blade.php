@@ -194,16 +194,11 @@
             <div class="collapse menu-dropdown {{ (request()->is('*workflow-requests*')) ? 'show' : '' }}" id="requests">
                 <ul class="nav nav-sm flex-column">
                     <li class="nav-item">
-                        <a href="{{route("employee-requests.my-requests")}}" class="nav-link {{ (request()->is('*my-requests*')) ? 'active' : '' }}" data-key="t-login_activity"> My Request </a>
+                        <a href="{{route("workflow-requests.pending")}}" class="nav-link" data-key="t-user_activity"> Pending Approval </a>
                     </li>
                     <li class="nav-item">
-                        <a href="{{route("employee-requests.index")}}" class="nav-link" data-key="t-user_activity"> Pending Approval </a>
+                        <a href="{{route("workflow-requests.index")}}" class="nav-link {{ (request()->is('*all-requests*')) ? 'active' : '' }}" data-key="t-error_logs"> All Request </a>
                     </li>
-                    @if(user()->can('read-workflow-requests'))
-                        <li class="nav-item">
-                            <a href="{{route("employee-requests.all-requests")}}" class="nav-link {{ (request()->is('*all-requests*')) ? 'active' : '' }}" data-key="t-error_logs"> All Request </a>
-                        </li>
-                    @endif
                 </ul>
             </div>
         </li>

@@ -132,7 +132,7 @@ return new class extends Migration
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedBigInteger('import_id')->nullable();
 
-            $table->UnsignedBiginteger('workflow_id')->index();
+            $table->UnsignedBiginteger('workflow_id')->nullable()->index();
             $table->foreign('workflow_id')->references('id')->on('workflows')->onDelete('cascade');
 
             $table->UnsignedBiginteger('client_id')->nullable();
@@ -162,6 +162,7 @@ return new class extends Migration
             $table->text('approver_comment')->nullable();
             $table->text('requestor_comment')->nullable();
             $table->text('approval_route')->nullable();
+            $table->integer('flow_sequence')->nullable();
             $table->timestamp('approved_at')->nullable();
             $table->timestamp('forwarded_at')->nullable();
             $table->unsignedBigInteger('old_implementor_id')->nullable();

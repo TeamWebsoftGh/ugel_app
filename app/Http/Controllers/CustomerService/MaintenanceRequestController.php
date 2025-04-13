@@ -6,6 +6,7 @@ use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Http\Requests\MaintenanceRequestRequest;
 use App\Models\Audit\LogActivity;
+use App\Models\CustomerService\MaintenanceRequest;
 use App\Services\CustomerService\Interfaces\IMaintenanceService;
 use App\Services\Helpers\PropertyHelper;
 use App\Traits\TaskUtil;
@@ -195,17 +196,17 @@ class MaintenanceRequestController extends Controller
      */
     public function show($id)
     {
-        $ticket = $this->ticketService->findSupportTicketById($id);
+        $ticket = $this->maintenanceService->findMaintenanceById($id);
 
         $logs = LogActivity::orderBy('id', 'desc')
             ->where([
-                ['subject_type', 'App\Models\SupportTicket'],
+                ['subject_type', MaintenanceRequest::class],
                 ['subject_id', $ticket->id],
             ])->get();
-        $files = $ticket->documents()->orderByDesc('created_at')->get();
-        $comments = $ticket->ticketComments();
+        $files = $ticket->attachments()->orderByDesc('created_at')->get();
+        $comments = $ticket->comments();
         $assigneeIds =  $ticket->assignees()->pluck("id")->toArray();
-        return view("customer-service.support-tickets.show", compact("ticket", "logs", 'files', 'comments', 'assigneeIds'));
+        return view("customer-service.maintenance-requests.show", compact("ticket", "logs", 'files', 'comments', 'assigneeIds'));
     }
 
     /**

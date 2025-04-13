@@ -94,10 +94,12 @@ use App\Services\TaskService;
 use App\Services\VisitorLogService;
 use App\Services\Workflow\Interfaces\IWorkflowPositionService;
 use App\Services\Workflow\Interfaces\IWorkflowPositionTypeService;
+use App\Services\Workflow\Interfaces\IWorkflowRequestService;
 use App\Services\Workflow\Interfaces\IWorkflowService;
 use App\Services\Workflow\Interfaces\IWorkflowTypeService;
 use App\Services\Workflow\WorkflowPositionService;
 use App\Services\Workflow\WorkflowPositionTypeService;
+use App\Services\Workflow\WorkflowRequestService;
 use App\Services\Workflow\WorkflowService;
 use App\Services\Workflow\WorkflowTypeService;
 use Illuminate\Support\ServiceProvider;
@@ -132,6 +134,7 @@ class IOCServiceProvider extends ServiceProvider
         $this->app->bind(IWorkflowPositionTypeService::class, WorkflowPositionTypeService::class);
         $this->app->bind(IWorkflowTypeService::class, WorkflowTypeService::class);
         $this->app->bind(IWorkflowService::class, WorkflowService::class);
+        $this->app->bind(IWorkflowRequestService::class, WorkflowRequestService::class);
 
         //User
         $this->app->bind(IPermissionService::class, PermissionService::class);

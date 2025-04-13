@@ -150,7 +150,7 @@ Trait WorkflowUtil
 
     public function getGeneralPositions($code, $employee, $class = null)
     {
-        $subjectTypesToCodes = ['hod', 'division-head', 'branch-manager', 'unit-head', 'country-manager']; // Define which codes require special handling
+        $subjectTypesToCodes = ['hod', 'branch-manager', 'unit-head', 'country-manager']; // Define which codes require special handling
 
         // Direct handling for specific codes without needing to loop or check multiple conditions.
         if ($code == "assignees" && $class !== null) {
@@ -159,9 +159,7 @@ Trait WorkflowUtil
         {
             return collect([$this->getSupervisor($employee->id)]); // Ensure it returns a collection
         }
-
-
-        if(in_array($code, $subjectTypesToCodes)) {
+       else if(in_array($code, $subjectTypesToCodes)) {
             $subjectType = $this->getSubjectTypeFromCode($code);
 
             // Assume we also have a way to get the subject_id based on the employee and code
@@ -170,7 +168,11 @@ Trait WorkflowUtil
             $workflows = WorkflowPosition::where('subject_type', $subjectType)
                 ->where(['subject_id' => $subjectId, 'is_active' => 1])
                 ->get();
-        } else {
+        }
+       else if($team = Team::firstWhere("code", $code)) {
+           return $team->users;
+       }
+       else {
             // Fallback or default handling if the code is not in the special array
             $workflows = WorkflowPosition::whereHas('workflowPositionType', function ($query) use ($code) {
                 $query->where('code', '=', $code);

@@ -14,6 +14,8 @@ class WorkflowType extends Model
         'is_active',
         'subject_type',
         'company_id',
+        'created_by',
+        'created_from',
         'sort_order',
         'approval_route'
     ];

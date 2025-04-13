@@ -32,7 +32,7 @@
                                         <th>#</th>
                                         <th>Staff Id</th>
                                         <th>Employee Name</th>
-                                        <th>Department</th>
+                                        <th>Client Name</th>
                                         <th>Status</th>
                                         <th>Request Date</th>
                                         <th>Action</th>
@@ -45,7 +45,7 @@
                                         <th>#</th>
                                         <th>Staff Id</th>
                                         <th>Employee Name</th>
-                                        <th>Department</th>
+                                        <th>Client Name</th>
                                         <th>Status</th>
                                         <th>Request Date</th>
                                         <th>Action</th>
@@ -100,8 +100,8 @@
                         name: 'employee_name'
                     },
                     {
-                        data: 'department',
-                        name: 'department'
+                        data: 'client_name',
+                        name: 'client_name'
                     },
                     {
                         data: 'status',

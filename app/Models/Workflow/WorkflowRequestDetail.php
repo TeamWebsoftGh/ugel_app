@@ -3,7 +3,7 @@
 namespace App\Models\Workflow;
 
 use App\Abstracts\Model;
-use App\Models\Employees\Employee;
+use App\Models\Auth\User;
 use Carbon\Carbon;
 
 class WorkflowRequestDetail extends Model
@@ -28,12 +28,12 @@ class WorkflowRequestDetail extends Model
 
     public function employee()
     {
-        return $this->belongsTo(Employee::class)->withDefault();
+        return $this->belongsTo(User::class, 'user_id')->withDefault();
     }
 
     public function implementor()
     {
-        return $this->hasOne(Employee::class,'id', 'implementor_id')->withDefault();
+        return $this->hasOne(User::class,'id', 'implementor_id')->withDefault();
     }
 
     public function workflowPositionType(): \Illuminate\Database\Eloquent\Relations\HasOne

@@ -4,12 +4,10 @@ namespace App\Models\Workflow;
 
 use App\Abstracts\Model;
 use App\Models\Auth\User;
-use App\Models\Employees\Employee;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class WorkflowPosition extends Model
 {
-    use HasFactory;
 
     protected $fillable = [
         'workflow_position_type_id',
