@@ -11,5 +11,7 @@ class WorkflowPositionType extends Model
         'description',
         'is_active',
         'is_workflow_only',
+        'company_id',
+        'created_by',
     ];
 }

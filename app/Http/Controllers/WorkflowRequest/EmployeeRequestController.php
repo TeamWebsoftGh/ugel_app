@@ -50,10 +50,6 @@ class EmployeeRequestController extends Controller
                 {
                     return $row->employee->fullname;
                 })
-                ->addColumn('department', function ($row)
-                {
-                    return $row->employee->department->department_name;
-                })
                 ->addColumn('staff_id', function ($row)
                 {
                     return $row->employee->staff_id;
@@ -68,11 +64,7 @@ class EmployeeRequestController extends Controller
                 })
                 ->addColumn('action', function ($data)
                 {
-                    if(isset($data->approval_route))
-                    {
-                        $button = '<a href="'.route($data->approval_route, ['id' => $data->id, 'q' => $data->workflow_requestable_id]).'" class="show_new btn btn-info btn-sm"><i class="dripicons-preview"></i></a>';
-                    }else
-                        $button = '<a href="'.route("leaves.detail", ['id' => $data->workflow_requestable_id, 'q' => $data->id]).'" class="show_new btn btn-info btn-sm"><i class="dripicons-preview"></i></a>';
+                    $button = '<a href="'.route($data->approval_route, ['id' => $data->id, 'q' => $data->workflow_requestable_id]).'" class="show_new btn btn-info btn-sm"><i class="dripicons-preview"></i></a>';
                     return $button;
                 })
                 ->rawColumns(['action'])
@@ -151,7 +143,7 @@ class EmployeeRequestController extends Controller
      */
     public function myRequests()
     {
-        $workflowRequests = WorkflowRequest::where(['employee_id' => user()->id])->latest();
+        $workflowRequests = WorkflowRequest::where(['user_id' => user()->id])->orWhere(['created_by' => user()->id])->latest();
         if (request()->ajax())
         {
             return datatables()->of($workflowRequests)
@@ -219,23 +211,6 @@ class EmployeeRequestController extends Controller
             });
         }
 
-        if (!empty($data['filter_company']))
-        {
-            $workflowRequests = $workflowRequests->where('company_id', $data['filter_company']);
-        }
-        if (!empty($data['filter_department']))
-        {
-            $workflowRequests = $workflowRequests->whereHas('employee', function ($query) use($data) {
-                return $query->where('department_id', '=', $data['filter_department']);
-            });
-        }
-        if (!empty($data['filter_location']))
-        {
-            $workflowRequests = $workflowRequests->whereHas('employee', function ($query) use($data) {
-                return $query->where('location_id', '=', $data['filter_location']);
-            });
-        }
-
         if ($request->has('search')&&!empty($request->search['value']))
         {
             $s = $request->search['value'];
@@ -274,7 +249,7 @@ class EmployeeRequestController extends Controller
                 {
                     $staff_id = "<span>Staff Id: ".($row->employee->staff_id ?? '')."</span>";
                     $employee = "<span>Name : ".($row->employee->fullname ?? '')."</span>";
-                    $department  = "<span>Department : ".($row->employee->department->department_name ?? '')."</span>";
+                    $department  = "<span>Team : ".($row->employee->team->department_name ?? '')."</span>";
                     $designation = "<span>Designation : ".($row->employee->designation->designation_name ?? '')."</span>";
 
                     return $staff_id.'</br>'.$employee.'</br>'.$department.'</br>'.$designation;

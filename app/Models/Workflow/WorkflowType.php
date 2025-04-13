@@ -15,7 +15,6 @@ class WorkflowType extends Model
         'subject_type',
         'company_id',
         'sort_order',
-        'created_at',
-        'updated_at',
+        'approval_route'
     ];
 }

@@ -18,33 +18,6 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-4 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
-                                <label>{{__('Subsidiary')}}</label>
-                                <select name="filter_company" id="filter_company_er" data-live-search="true" class="form-control selectpicker">
-                                    <option selected value="">All {{trans('file.Company')}}</option>
-                                    @foreach($companies as $company)
-                                        <option @if($company->id == request()->filter_company) selected="selected" @endif value="{{ $company->id }}">{{ $company->company_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-4 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
-                                <label>Department</label>
-                                <select name="filter_department" id="filter_department" data-live-search="true" class="form-control selectpicker">
-                                    <option selected value="">All Departments</option>
-                                    @foreach($departments as $department)
-                                        <option @if($department->id == request()->filter_department) selected="selected" @endif value="{{ $department->id }}">{{ $department->department_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-4 col-xl-3 col-lg-3 col-sm-12 col-xs-12 mb-3">
-                                <label>Location</label>
-                                <select name="filter_location" id="filter_location" data-live-search="true" class="form-control selectpicker">
-                                    <option selected value="">All Locations</option>
-                                    @foreach($locations as $location)
-                                        <option @if($location->id == request()->filter_location) selected="selected" @endif value="{{ $location->id }}">{{ $location->location_name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
                             @yield("filter_form")
                             <div class="col-xl-1 col-lg-1 col-md-4 col-sm-1 col-xs-12 pl-md-3 mt-4">
                                 <button type="submit" name="btn" id="filter_form" title="Click to filter" class="btn btn-primary custom-btn-small mt-0 mr-0"><i class="fa fa-search"></i> {{__('Search')}}</button>

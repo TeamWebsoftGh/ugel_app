@@ -27,7 +27,7 @@ Trait WorkflowUtil
      * @param null $routeName
      * @return void/false
      */
-    public function addWorkflowRequest($class, $user)
+    public function addWorkflowRequest($class, $user, $propertyId = null, $routeName = null)
     {
         // Check if the workflow feature is enabled and if the class status allows for workflow processing
         if (!config('app.enable_workflow', true) || in_array($class->status ?? '', ['approved', 'declined', 'rejected'], true)) {
@@ -47,12 +47,14 @@ Trait WorkflowUtil
                 'current_flow_sequence' => 0,
                 'workflow_type_id' => $workflowType->id,
                 'company_id' => $user->company_id,
+                'client_id' => $user->client_id,
+                'property_id' => $propertyId,
                 'status' => 'pending',
             ]);
 
             $data['class'] = $class;
             $data['status'] = "approved";
-            $data['route'] = $routeName;
+            $data['route'] = $routeName??$workflowType->approval_route;
             $data["approved_at"] = Carbon::now();
 
             $this->sendNextWorkflowRequest($workflowRequest, $user, $data);
@@ -153,7 +155,8 @@ Trait WorkflowUtil
         // Direct handling for specific codes without needing to loop or check multiple conditions.
         if ($code == "assignees" && $class !== null) {
             return User::whereIn('id', $class->assignees()->pluck('id')->unique()->toArray())->get();
-        } elseif ($code == "supervisor") {
+        } elseif ($code == "supervisor" || $code == "team-lead")
+        {
             return collect([$this->getSupervisor($employee->id)]); // Ensure it returns a collection
         }
 

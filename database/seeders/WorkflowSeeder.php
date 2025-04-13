@@ -29,6 +29,7 @@ class WorkflowSeeder extends Seeder
             'name' => 'Maintenance Request',
             'code' => 'maintenance-request',
             'subject_type' => MaintenanceRequest::class,
+            'approval_route' => "maintenance-requests.show",
             'company_id' => $company_id,
             ]);
 
@@ -36,6 +37,7 @@ class WorkflowSeeder extends Seeder
             'name' => 'Support Ticket',
             'code' => 'support-ticket',
             'subject_type' => SupportTicket::class,
+            'approval_route' => "support-tickets.show",
             'company_id' => $company_id,
         ]);
     }

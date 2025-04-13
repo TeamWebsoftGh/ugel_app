@@ -71,6 +71,8 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
         {
             $maintenance->users()->sync($params['assignee_ids']);
         }
+        $user = $maintenance->client->users()->first();
+        $this->addWorkflowRequest($maintenance, $user, $maintenance->property_id);
 
         event(new NewMaintenanceRequestEvent($maintenance));
         return $this->buildCreateResponse($maintenance);
@@ -117,7 +119,9 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
           //  event(new TicketStatusChangeEvent($maintenance));
         }
 
-        $this->addWorkflowRequest($maintenance, $maintenance->owner);
+        $user = $maintenance->client->users()->first();
+        $this->addWorkflowRequest($maintenance, $user, $maintenance->property_id);
+
         return $this->buildUpdateResponse($maintenance, $result);
     }
 

@@ -8,7 +8,7 @@ use App\Abstracts\Model;
 class Team extends Model
 {
     //
-    protected $fillable = ['name', 'user_type', 'description', 'company_id', 'created_by', 'team_lead_id'];
+    protected $fillable = ['name', 'user_type','code', 'description', 'company_id', 'created_by', 'team_lead_id'];
 
     public function users()
     {

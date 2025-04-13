@@ -2,8 +2,7 @@
 
 namespace App\Events;
 
-use App\Models\Customer;
-use App\Models\WorkflowRequestDetail;
+use App\Models\Workflow\WorkflowRequestDetail;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -14,11 +13,11 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class WorkflowRequestEvent
 {
-    public $wf_request_detail;
+    public WorkflowRequestDetail $wf_request_detail;
 
     /**
      * Create a new event instance.
-     * @param Customer $customer
+     * @param WorkflowRequestDetail $wf_request_detail
      */
     public function __construct(WorkflowRequestDetail $wf_request_detail)
     {
