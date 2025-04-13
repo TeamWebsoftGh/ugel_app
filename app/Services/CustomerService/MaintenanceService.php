@@ -18,6 +18,7 @@ use App\Services\ServiceBase;
 use App\Traits\TaskUtil;
 use App\Traits\UploadableTrait;
 use App\Utilities\WorkflowUtil;
+use function Laravel\Prompts\password;
 
 class MaintenanceService extends ServiceBase implements IMaintenanceService
 {
@@ -102,7 +103,6 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
         //Declaration
         $result = false;
         $oldStatus = $maintenance->status;
-
         $result = $this->maintenanceRepo->updateMaintenance($params, $maintenance);
 
         if (isset($params['maintenance_subcategory_id']))

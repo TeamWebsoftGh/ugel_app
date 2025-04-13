@@ -1,10 +1,12 @@
-@extends('layouts.customer.main')
-
-@section("title", "Payment")
+@extends('layouts.main')
+@section('title', 'Manage Payments')
+@section('page-title', 'Make Payment')
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{route('payments.index')}}">Payments</a></li>
+@endsection
 
 @section("content")
     <!--about us section start-->
-    @include('layouts.website.includes.page-header')
     <!-- Main css -->
     <section class="about_section mt-60">
         <div class="container">
@@ -19,26 +21,26 @@
                             <div class="card">
                                 <div class="card-body">
                                     <div class="d-flex justify-content-between">
-                                        <h4 class="h4">{{isset($data['order_id'])?"Balance Due ": "Wallet Top Up Amount"}} </h4>
+                                        <h4 class="h4">{{isset($data['invoice_id'])?"Balance Due ": "Wallet Top Up Amount"}} </h4>
                                         <div class="h4">{{ format_money($data['amount']) }}</div>
                                     </div>
                                     <hr>
-                                    <form method="POST" enctype="multipart/form-data" action="{{route('customer.pay')}}">
+                                    <form method="POST" enctype="multipart/form-data" action="{{route('payments.store')}}">
                                         @csrf
                                         <input type="hidden" name="payment_method" value="{{ $data['paymentMethod']->slug }}">
-                                        <input type="hidden" name="order_id" value="{{$data['order_id']}}">
+                                        <input type="hidden" name="invoice_id" value="{{$data['invoice_id']}}">
                                         <div class="form-group">
                                             <label>Amount  <span class="required">*</span></label>
                                             <div class="input-group">
                                                 <button  class="btn border input-group-addon"> {{settings('currency_code')}}</button>
-                                                <input type="number" min="{{$data['minPayment']}}" class="form-control" name="amount" value="{{ old('amount', $data['amount']) }}">
+                                                <input type="number" class="form-control" name="amount" value="{{ old('amount', $data['amount']) }}">
                                             </div>
                                             <div class="invalid-feedback">
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label class="form-label">Email</label>
-                                            <input type="email" name="email" class="form-control" value="{{old('account_name', user('web')->email)}}" id="email" required/>
+                                            <input type="email" name="email" class="form-control" value="{{old('account_name', user()->email)}}" id="email" required/>
                                             <span class="input-note text-danger" id="error-email"> </span>
                                             @error('email')
                                             <span class="input-note text-danger">{{ $message }} </span>
@@ -46,7 +48,7 @@
                                         </div>
                                         <div class="row">
                                             <input type="hidden" name="quantity" value="100">
-                                            <input type="hidden" name="callback_url" value="{{route("customer.pay.status", ['order_id' => $data['order_id']])}}">
+{{--                                            <input type="hidden" name="callback_url" value="{{route("customer.pay.status", ['invoice_id' => $data['invoice_id']])}}">--}}
                                             <input type="hidden" name="currency" value="GHS">
                                             <input type="hidden" name="metadata" value="{{ json_encode($array = ['key_name' => 'value',]) }}" >
                                             {{-- For other necessary things you want to add to your payload. it is optional though --}}
@@ -60,7 +62,7 @@
                                     <br/>
                                     <div class="text-center">
                                         <h5>Powered by</h5>
-                                        <img src="/img/paystack.jpeg" width="200px">
+                                        <img src="/img/paystack.png" width="200px">
                                     </div>
                                 </div>
                             </div>
@@ -69,7 +71,7 @@
                 </div>
                 <div class="col-md-4" style="display: block">
                     @if(isset($order))
-{{--                        @include('customer.orders.partials.summary')--}}
+                        {{--                        @include('customer.orders.partials.summary')--}}
                     @endif
                 </div>
             </div>

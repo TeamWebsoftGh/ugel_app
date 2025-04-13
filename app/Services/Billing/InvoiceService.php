@@ -68,11 +68,26 @@ class InvoiceService extends ServiceBase implements IInvoiceService
      */
     public function updateInvoice(array $data, Invoice $invoice): Response
     {
+        // Compute total from items
+        $total = 0;
+        if (isset($data['items']) && is_array($data['items'])) {
+            foreach ($data['items'] as $item) {
+                $quantity = $item['quantity'] ?? 1;
+                $amount = $item['amount'] ?? 0;
+                $total +=$amount;
+            }
+        }
+
+        $data['total_amount'] = $total+$invoice->sub_total_amount; // set total before update
         $result = $this->invoiceRepo->update($data, $invoice->id);
 
+        // Refresh invoice instance in case relationships are cached
+        $invoice->refresh();
+
+        // Replace items
         $invoice->items()->delete();
 
-        if (isset($data['items']) && is_array($data['items'])) {
+        if (!empty($data['items']) && is_array($data['items'])) {
             foreach ($data['items'] as $item) {
                 $invoice->items()->create([
                     'invoice_item_lookup_id' => $item['lookup_id'] ?? null,
@@ -85,6 +100,7 @@ class InvoiceService extends ServiceBase implements IInvoiceService
 
         return $this->buildUpdateResponse($invoice, $result);
     }
+
 
     /**
      * @param int $id
