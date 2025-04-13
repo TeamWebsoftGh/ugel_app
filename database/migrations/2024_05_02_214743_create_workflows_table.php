@@ -136,6 +136,10 @@ return new class extends Migration
             $table->foreign('workflow_id')->references('id')->on('workflows')->onDelete('cascade');
 
             $table->UnsignedBiginteger('client_id')->nullable();
+            $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
+
+            $table->UnsignedBiginteger('property_id')->nullable();
+            $table->foreign('property_id')->references('id')->on('properties')->onDelete('cascade');
 
             $table->UnsignedBiginteger('user_id')->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
