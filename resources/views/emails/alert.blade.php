@@ -13,6 +13,9 @@
     @isset($alert->line_3)
         <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">{{$alert->line_3}}</p>
     @endisset
+    @isset($alert->line_4)
+        <p style="font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; margin-bottom: 15px;">{{$alert->line_4}}</p>
+    @endisset
     @isset($alert->button_url)
         <table border="0" cellpadding="0" cellspacing="0" class="btn btn-primary" style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box; margin-top: 20px">
             <tbody>
