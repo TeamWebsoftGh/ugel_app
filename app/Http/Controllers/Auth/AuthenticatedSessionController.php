@@ -102,7 +102,7 @@ class AuthenticatedSessionController extends Controller
     protected function getLocationFromIp(string $ip): string
     {
         try {
-            $geo = Http::timeout(5)->get("http://ip-api.com/json/{$ip}}")->json();
+            $geo = Http::timeout(5)->get("http://ip-api.com/json/{$ip}")->json();
             return ($geo['city'] ?? 'Unknown') . ', ' . ($geo['country'] ?? 'Unknown');
         } catch (\Exception $e) {
             return 'Unknown Location';
