@@ -32,7 +32,7 @@
                                            </div>
                                            <div class="card-footer">
                                                <a href="{{route("properties.show", $prop->id)}}" class="link-success float-end">View Details <i class="ri-arrow-right-s-line align-middle ms-1 lh-1"></i></a>
-                                               <p class="text-muted mb-0">1 days Ago</p>
+                                               <p class="text-muted mb-0">{{\Carbon\Carbon::parse($prop->created_at)->diffForHumans()}}</p>
                                            </div>
                                        </div>
                                    </div>

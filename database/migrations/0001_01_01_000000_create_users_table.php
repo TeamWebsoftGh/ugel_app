@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('user_type')->nullable();
+            $table->string('code')->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(1);
 

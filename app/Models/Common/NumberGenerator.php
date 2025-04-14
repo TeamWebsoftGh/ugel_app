@@ -5,8 +5,11 @@ namespace App\Models\Common;
 use App\Abstracts\Model;
 use App\Models\Billing\Booking;
 use App\Models\Billing\Invoice;
+use App\Models\Billing\Payment;
+use App\Models\Client\Client;
 use App\Models\CustomerService\MaintenanceRequest;
 use App\Models\CustomerService\SupportTicket;
+use App\Models\Payment\Wallet;
 use App\Models\Property\Property;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -44,9 +47,9 @@ class NumberGenerator extends Model
             Booking::class => 'B',
             Invoice::class => 'INV',
             SupportTicket::class => 'ST',
-            'App\Models\Payment' => 'PMT',
-            'App\Models\Wallet' => 'WAL',
-            'App\Models\SupportTicket' => 'ST',
+            Client::class => 'UG',
+            Payment::class => 'UGEL',
+            Wallet::class => 'WAL',
         ];
 
         return (isset($prefix_list[$generatable_type])) ? $prefix_list[$generatable_type] : NULL;
