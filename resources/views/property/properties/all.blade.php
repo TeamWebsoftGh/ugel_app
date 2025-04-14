@@ -19,10 +19,10 @@
                            <div class="col-md-6">
                                <div class="card">
                                    <div class="row g-0">
-                                       <div class="col-md-4">
-                                           <img class="rounded-start img-fluid object-fit-cover" src="{{asset($prop->cover_image)}}" alt="{{$prop->property_code}}">
+                                       <div class="col-md-5">
+                                           <img style="max-height: 150px!important;" class="rounded-start img-fluid object-fit-cover" src="{{asset($prop->cover_image)}}" alt="{{$prop->property_code}}">
                                        </div>
-                                       <div class="col-md-8">
+                                       <div class="col-md-7">
                                            <div class="card-header">
                                                <h5 class="card-title mb-0">{{$prop->property_name}}</h5>
                                            </div>
