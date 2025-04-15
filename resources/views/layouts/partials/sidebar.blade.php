@@ -309,9 +309,9 @@
                 <li class="nav-item">
                     <a href="{{route("court-hearings.index")}}" class="nav-link" data-key="t-hearings"> Hearings </a>
                 </li>
-                <li class="nav-item">
-                    <a href="{{route("court-cases.active")}}" class="nav-link" data-key="t-calendar"> Active Cases </a>
-                </li>
+{{--                <li class="nav-item">--}}
+{{--                    <a href="{{route("court-cases.active")}}" class="nav-link" data-key="t-calendar"> Active Cases </a>--}}
+{{--                </li>--}}
             </ul>
         </div>
     </li>

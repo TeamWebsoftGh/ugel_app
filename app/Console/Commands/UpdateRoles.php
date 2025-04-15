@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\User;
 use App\Traits\Permissions;
 use Exception;
 use Illuminate\Console\Command;
@@ -57,7 +56,7 @@ class UpdateRoles extends Command
                 'contacts' => 'c,r,u,d',
                 'whatsapps' => 'c,r,u,d',
                 'invoices' => 'c,r,u,d',
-                'bulk-sms' => 'c,r,u,d',
+                'bulk-smses' => 'c,r,u,d',
                 'companies' => 'c,r,u,d',
                 'invoice-items' => 'c,r,u,d',
                 'payments' => 'c,r,u,d',
@@ -66,6 +65,7 @@ class UpdateRoles extends Command
                 'payment-gateways' => 'c,r,u,d',
                 'enquiries' => 'c,r,u,d',
                 'maintenance-requests' => 'c,r,u,d',
+                'support-topics' => 'c,r,u,d',
                 'support-tickets' => 'c,r,u,d',
                 'mail-settings' => 'r,u',
                 'sms-settings' => 'r,u',
@@ -104,7 +104,7 @@ class UpdateRoles extends Command
                 'contacts' => 'c,r,u,d',
                 'whatsapps' => 'c,r,u,d',
                 'invoices' => 'c,r,u,d',
-                'bulk-sms' => 'c,r,u,d',
+                'bulk-smses' => 'c,r,u,d',
                 'companies' => 'c,r,u,d',
                 'invoice-items' => 'c,r,u,d',
                 'payments' => 'c,r,u,d',
@@ -114,6 +114,7 @@ class UpdateRoles extends Command
                 'enquiries' => 'c,r,u,d',
                 'maintenance-requests' => 'c,r,u,d',
                 'support-tickets' => 'c,r,u,d',
+                'support-topics' => 'c,r,u,d',
                 'mail-settings' => 'r,u',
                 'sms-settings' => 'r,u',
                 'property-reports' => 'r',
@@ -145,7 +146,7 @@ class UpdateRoles extends Command
                 'bookings' => 'c,r,u',
                 'contacts' => 'c,r,u',
                 'invoices' => 'r,u',
-                'bulk-sms' => 'c,r,u',
+                'bulk-smses' => 'c,r,u',
                 'invoice-items' => 'c,r,u',
                 'payments' => 'c,r,u',
                 'customers' => 'c,r,u',
@@ -153,6 +154,7 @@ class UpdateRoles extends Command
                 'payment-gateways' => 'r',
                 'enquiries' => 'c,r,u,d',
                 'maintenance-requests' => 'c,r,u',
+                'support-topics' => 'c,r',
                 'support-tickets' => 'c,r',
                 'property-reports' => 'r',
                 'maintenance-categories' => 'c,r,u',
