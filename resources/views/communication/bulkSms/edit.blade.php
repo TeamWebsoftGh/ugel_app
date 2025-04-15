@@ -119,7 +119,7 @@
                 </div>
             </div>
             <div class="form-group">
-                @if(user()->can('create-'.get_permission_name().'|update-'.get_permission_name()))
+                @if(user()->can('create-bulk-smses'))
                     <button type="submit" class="btn btn-success save_btn"><i class="mdi mdi-send-check"></i> Send</button>
                 @endif
             </div>
