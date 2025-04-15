@@ -168,18 +168,14 @@ class SupportTicketController extends Controller
     {
         $data = $request->except('_token', '_method', 'id');
 
-        if(!$request->has('update_request')){
-            $validatedData = $request->validate([
-                'subject' => 'required',
-                'ticket_note' => 'required',
-                'priority_id' => 'required',
-            ]);
-        }else{
-            $validatedData = $request->validate([
-                'status' => 'required',
-                'remarks' => 'required',
-            ]);
-        }
+        $validatedData = $request->validate([
+            'support_topic_id' => 'required',
+            'subject' => 'required',
+            'priority_id' => 'required',
+            'client_id' => 'required',
+            'ticket_note' => 'required',
+            'status' => 'required',
+        ]);
 
         if ($request->has("id") && $request->input("id") != null)
         {
