@@ -296,25 +296,25 @@
         </div>
     </li>
     @canany(['read-court-cases','read-court-hearings'])
-    <li class="nav-item">
-        <a class="nav-link menu-link" href="#legal" data-bs-toggle="collapse" role="button"
-           aria-expanded="false" aria-controls="legal">
-            <i class="ri-scales-line"></i> <span data-key="t-legal">Legal</span>
-        </a>
-        <div class="collapse menu-dropdown {{ (request()->is('*legal*')) ? 'show' : '' }}" id="legal">
-            <ul class="nav nav-sm flex-column">
-                <li class="nav-item">
-                    <a href="{{route("court-cases.index")}}" class="nav-link" data-key="t-user_activity"> Court Cases </a>
-                </li>
-                <li class="nav-item">
-                    <a href="{{route("court-hearings.index")}}" class="nav-link" data-key="t-hearings"> Hearings </a>
-                </li>
-{{--                <li class="nav-item">--}}
-{{--                    <a href="{{route("court-cases.active")}}" class="nav-link" data-key="t-calendar"> Active Cases </a>--}}
-{{--                </li>--}}
-            </ul>
-        </div>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link menu-link" href="#legal" data-bs-toggle="collapse" role="button"
+               aria-expanded="false" aria-controls="legal">
+                <i class="ri-scales-line"></i> <span data-key="t-legal">Legal</span>
+            </a>
+            <div class="collapse menu-dropdown {{ (request()->is('*legal*')) ? 'show' : '' }}" id="legal">
+                <ul class="nav nav-sm flex-column">
+                    <li class="nav-item">
+                        <a href="{{route("court-cases.index")}}" class="nav-link" data-key="t-user_activity"> Court Cases </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{route("court-hearings.index")}}" class="nav-link" data-key="t-hearings"> Hearings </a>
+                    </li>
+                    {{--                <li class="nav-item">--}}
+                    {{--                    <a href="{{route("court-cases.active")}}" class="nav-link" data-key="t-calendar"> Active Cases </a>--}}
+                    {{--                </li>--}}
+                </ul>
+            </div>
+        </li>
     @endcanany
     @canany(['read-booking-reports', 'read-property-reports', 'read-logs'])
         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-pages">Audit & Report</span></li>
@@ -360,10 +360,9 @@
             </div>
         </li>
     @endif
-
-    @if(user()->can('read-subsidiaries|read-departments|read-users|read-site-settings'))
+    @canany(['read-workflow-positions', 'read-users', 'read-teams', 'read-site-settings'])
         <li class="menu-title"><i class="ri-more-fill"></i> <span data-key="t-components">Configurations</span></li>
-    @endif
+    @endcanany
     {{--    @canany(['read-companies'])--}}
     {{--        <li class="nav-item">--}}
     {{--            <a class="nav-link menu-link" href="#organization" data-bs-toggle="collapse" role="button"--}}
@@ -410,7 +409,7 @@
             </div>
         </li>
     @endif
-    @if(user()->can('read-site-settings|read-mail-settings'))
+    @canany(['read-workflow-positions', 'read-site-settings'])
         <li class="nav-item">
             <a class="nav-link menu-link collapsed" href="#configurations" data-bs-toggle="collapse" role="button" aria-controls="sidebarMultilevel">
                 <i class="ri-share-line"></i> <span data-key="t-multi-level">Configuration</span>
@@ -440,38 +439,55 @@
                             </div>
                         </li>
                     @endcan
-                    <li class="nav-item">
-                        <a href="#workflowSettings" class="nav-link collapsed" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarAccount" data-key="t-level-1.2">Workflows</a>
-                        <div class="menu-dropdown collapse  {{ (request()->is('*workflows*'))? 'show' : '' }}" id="workflowSettings" style="">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="{{route('workflows.position-types.index')}}" class="nav-link" data-key="t-basic-tables">Position Types</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('workflows.positions.index')}}" class="nav-link" data-key="t-grid-js">Workflow Position</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('workflows.workflow-types.index')}}" class="nav-link" data-key="t-level-2.1">Workflow Types</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route('workflows.workflows.index')}}" class="nav-link" data-key="t-list-js">Workflows</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#paymentSettings" class="nav-link collapsed" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarAccount" data-key="t-level-1.2">Payment</a>
-                        <div class="menu-dropdown collapse  {{ (request()->is('*payment-gateways*'))? 'show' : '' }}" id="paymentSettings" style="">
-                            <ul class="nav nav-sm flex-column">
-                                <li class="nav-item">
-                                    <a href="{{route("configuration.currencies.index")}}" class="nav-link" data-key="t-level-2.1">Currencies</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{route("configuration.payment-gateways.index")}}" class="nav-link" data-key="t-level-2.1">Payment Gateways</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
+                    @canany(['read-workflow-positions', 'read-position-types', 'read-workflow-types', 'read-workflows'])
+                        <li class="nav-item">
+                            <a href="#workflowSettings" class="nav-link collapsed" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarAccount" data-key="t-level-1.2">Workflows</a>
+                            <div class="menu-dropdown collapse  {{ (request()->is('*workflows*'))? 'show' : '' }}" id="workflowSettings" style="">
+                                <ul class="nav nav-sm flex-column">
+                                    @can("read-position-types")
+                                        <li class="nav-item">
+                                            <a href="{{route('workflows.position-types.index')}}" class="nav-link" data-key="t-basic-tables">Position Types</a>
+                                        </li>
+                                    @endcan
+                                    @can("read-workflow-positions")
+                                        <li class="nav-item">
+                                            <a href="{{route('workflows.positions.index')}}" class="nav-link" data-key="t-grid-js">Workflow Position</a>
+                                        </li>
+                                    @endcan
+                                    @can("read-workflow-types")
+                                        <li class="nav-item">
+                                            <a href="{{route('workflows.workflow-types.index')}}" class="nav-link" data-key="t-level-2.1">Workflow Types</a>
+                                        </li>
+                                    @endcan
+                                    @can("read-workflows")
+                                        <li class="nav-item">
+                                            <a href="{{route('workflows.workflows.index')}}" class="nav-link" data-key="t-list-js">Workflows</a>
+                                        </li>
+                                    @endcan
+                                </ul>
+                            </div>
+                        </li>
+                    @endcanany
+                    @canany(['read-currencies', 'read-payment-gateways'])
+                        <li class="nav-item">
+                            <a href="#paymentSettings" class="nav-link collapsed" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="sidebarAccount" data-key="t-level-1.2">Payment</a>
+                            <div class="menu-dropdown collapse  {{ (request()->is('*payment-gateways*'))? 'show' : '' }}" id="paymentSettings" style="">
+                                <ul class="nav nav-sm flex-column">
+                                    @can("read-currencies")
+                                        <li class="nav-item">
+                                            <a href="{{route("configuration.currencies.index")}}" class="nav-link" data-key="t-level-2.1">Currencies</a>
+                                        </li>
+                                    @endcan
+                                    @can("read-payment-gateways")
+                                        <li class="nav-item">
+                                            <a href="{{route("configuration.payment-gateways.index")}}" class="nav-link" data-key="t-level-2.1">Payment Gateways</a>
+                                        </li>
+                                    @endcan
+
+                                </ul>
+                            </div>
+                        </li>
+                    @endcanany
                 </ul>
             </div>
         </li>
