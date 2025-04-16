@@ -72,8 +72,8 @@ class BookingController extends MobileController
             'property_unit_id' => 'required|exists:property_units,id',
             'room_id' => 'nullable|exists:rooms,id',
             // 'client_id' => 'required|exists:clients,id',
-            'lease_start_date' => 'required|date',
-            'lease_end_date' => 'required|date|after_or_equal:lease_start_date',
+            'lease_start_date' => 'sometimes|date',
+            'lease_end_date' => 'sometimes|date|after_or_equal:lease_start_date',
         ]);
 
         $data = $request->except('_token', '_method', 'id', 'client_id');
@@ -92,13 +92,13 @@ class BookingController extends MobileController
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'booking_period_id' => 'required|exists:booking_periods,id',
+            'booking_period_id' => 'sometimes|exists:booking_periods,id',
             'property_id' => 'nullable|exists:properties,id',
             'property_unit_id' => 'required|exists:property_units,id',
             'room_id' => 'nullable|exists:rooms,id',
            // 'client_id' => 'required|exists:clients,id',
-            'lease_start_date' => 'required|date',
-            'lease_end_date' => 'required|date|after_or_equal:lease_start_date',
+            'lease_start_date' => 'sometimes|date',
+            'lease_end_date' => 'sometimes|date|after_or_equal:lease_start_date',
         ]);
 
         $data = $request->except('_token', '_method', 'id');
