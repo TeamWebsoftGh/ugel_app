@@ -126,7 +126,8 @@ class PropertyController extends Controller
             'country_id' => 'required|integer',
             'region_id' => 'required|integer',
             'city_id' => 'required|integer',
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 2MB max
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // 2MB max
+            'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,webp', 'max:2048']
         ]);
 
         $data = $request->except('_token', '_method', 'id');

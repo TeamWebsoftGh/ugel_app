@@ -25,7 +25,7 @@
                             <th>Rent Type</th>
                             <th>Rent Amount</th>
                             <th>Last Modified</th>
-                            <th>Action</th>
+                            <th width="100px" class="not-exported">Action</th>
                         </tr>
                         </thead>
                         <tbody>

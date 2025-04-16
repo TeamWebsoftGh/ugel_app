@@ -81,6 +81,21 @@ class TaskUtil
             ->where(['is_active' => 1])->whereNull('parent_id')->get();
     }
 
+    public static function getSubMaintenanceCategories()
+    {
+        return MaintenanceCategory::select(
+            'maintenance_categories.id',
+            'maintenance_categories.name',
+            'parent.name as parent_name',
+            'parent.id as parent_id'
+        )
+            ->leftJoin('maintenance_categories as parent', 'maintenance_categories.parent_id', '=', 'parent.id')
+            ->where('maintenance_categories.is_active', 1)
+            ->whereNotNull('maintenance_categories.parent_id')
+            ->get();
+    }
+
+
 
     public static function getAllSupportTopics()
     {

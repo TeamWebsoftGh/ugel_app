@@ -10,6 +10,7 @@ class Room extends Model
     protected $fillable = [
         'room_name',
         'floor',
+        'block',
         'has_ac',
         'has_washroom',
         'status',
@@ -17,6 +18,9 @@ class Room extends Model
         'bed_count',
         'description',
         'property_unit_id',
+        'company_id',
+        'created_by',
+        'created_from',
     ];
 
     public function propertyUnit()

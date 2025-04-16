@@ -55,7 +55,13 @@ class PropertyUnitService extends ServiceBase implements IPropertyUnitService
             {
                 $params['image'] = $this->uploadPublic($params['photo'], Str::slug($params['short_name']), 'property_Units');
             }
+
             $propertyUnit = $this->propertyUnitRepo->createPropertyUnit($params);
+
+            if (isset($params['amenity_id']))
+            {
+                $propertyUnit->amenities()->sync($params['amenity_id']);
+            }
 
         }catch (\Exception $ex){
             log_error(format_exception($ex), new PropertyUnit(), 'create-property-Unit-failed');
@@ -101,6 +107,11 @@ class PropertyUnitService extends ServiceBase implements IPropertyUnitService
             }
 
             $result = $this->propertyUnitRepo->updatePropertyUnit($params, $propertyUnit);
+
+            if (isset($params['amenity_id']))
+            {
+                $propertyUnit->amenities()->sync($params['amenity_id']);
+            }
         }catch (\Exception $ex){
             log_error(format_exception($ex), new PropertyUnit(), 'create-property-Unit-failed');
         }

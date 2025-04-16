@@ -60,10 +60,9 @@ class Property extends Model
         return $this->hasMany(Review::class);
     }
 
-
-    public function amenities()
+    public function amenities(): \Illuminate\Database\Eloquent\Relations\MorphToMany
     {
-        return $this->morphMany(Amenity::class, 'amenitable');
+        return $this->morphToMany(Amenity::class, 'amenitable');
     }
 
     public function getCoverImageAttribute()

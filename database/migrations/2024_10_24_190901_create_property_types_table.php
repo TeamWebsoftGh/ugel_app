@@ -60,7 +60,7 @@ return new class extends Migration
             $this->empExtracted($table);
         });
 
-        Schema::create('amenitable', function (Blueprint $table) {
+        Schema::create('amenitables', function (Blueprint $table) {
             $table->id();
             $table->foreignId('amenity_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('amenitable_id');

@@ -49,4 +49,10 @@ class PropertyUnit extends Model
     {
         return $this->hasMany(Room::class);
     }
+
+    public function amenities(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphToMany(Amenity::class, 'amenitable');
+    }
+
 }

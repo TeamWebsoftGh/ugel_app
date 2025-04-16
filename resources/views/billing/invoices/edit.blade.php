@@ -34,9 +34,9 @@
     <div class="card-body p-4">
         <div class="row g-3">
             <x-form.input-field name="invoice_number_" label="Invoice No" type="text" :value="$item->invoice_number" readonly class="col-lg-3 col-sm-6" />
-            <x-form.input-field name="invoice_date_" label="Invoice Date" type="text" :value="$item->invoice_date" disabled class="col-lg-3 col-sm-6" />
+            <x-form.input-field name="invoice_date_" label="Invoice Date" type="date" :value="$item->invoice_date" class="col-lg-3 col-sm-6" />
             <x-form.input-field name="status_" label="Status" type="text" :value="$item->status" disabled class="col-lg-3 col-sm-6" />
-            <x-form.input-field name="due_date" label="Due Date" type="text" :value="$item->due_date" disabled class="col-lg-3 col-sm-6" />
+            <x-form.input-field name="due_date" label="Due Date" type="date" :value="$item->due_date" class="col-lg-3 col-sm-6" />
         </div>
     </div>
 
@@ -49,7 +49,7 @@
                     <th>Item Details</th>
                     <th style="width: 120px;">Rate (GHS)</th>
                     <th style="width: 120px;">Quantity</th>
-                    <th class="text-end" style="width: 150px;">Amount</th>
+                    <th style="width: 150px;">Amount</th>
                     <th class="text-end" style="width: 105px;"></th>
                 </tr>
                 </thead>

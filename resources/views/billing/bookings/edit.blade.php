@@ -48,6 +48,21 @@
             :options="[]"
             :value="$item->room_id"
         />
+
+        <x-form.input-field
+            name="rent_type"
+            label="Rent Type"
+            type="text"
+            readonly
+            :value="ucfirst($item->rent_type)"
+        />
+
+        <x-form.input-field
+            name="rent_duration"
+            label="Rent Duration"
+            type="number"
+            :value="$item->rent_duration"
+        />
         <x-form.input-field
             name="booking_date"
             label="Booking Date"
@@ -55,14 +70,25 @@
             :value="$item->booking_date"
             required
         />
+
         <!-- Lease Start Date -->
         <x-form.input-field
             name="sub_total"
-            label="Price"
+            label="Rate"
             type="text"
             readonly
             :value="$item->sub_total"
         />
+
+        <!-- Total Amount -->
+        <x-form.input-field
+            name="total_price"
+            label="Total Payable"
+            type="text"
+            readonly
+            :value="$item->total_price"
+        />
+
 
         <!-- Lease Start Date -->
         <x-form.input-field
@@ -92,6 +118,7 @@
             required
         />
         <hr/>
+        <h4>Total Payable: <span id="totalAmount">{{$item->total_price}}</span></h4>
 
         <!-- Save Button -->
         <div class="form-group col-12">
@@ -155,21 +182,43 @@
         });
     });
     function getUnitPrice(bookingPeriodId, propertyUnitId) {
-        if (!bookingPeriodId || !propertyUnitId) return;
+        if (!propertyUnitId) return;
 
-        const url = `/api/clients/common/getPrice?booking_period_id=${bookingPeriodId}&property_unit_id=${propertyUnitId}`;
+        const query = bookingPeriodId
+            ? `?booking_period_id=${bookingPeriodId}&property_unit_id=${propertyUnitId}`
+            : `?property_unit_id=${propertyUnitId}`;
+
+        const url = `/api/clients/common/getPrice${query}`;
 
         $.post(url)
             .done(function (response) {
                 if (response.status_code === '000' && response.data) {
-                    $('#sub_total').val(response.data);
+                    const price = parseFloat(response.data.price ?? 0);
+                    const rentType = capitalize(response.data.rent_type);
+                    const rentDurationRaw = response.data.rent_duration ?? '';
+
+                    $('#rent_type').val(rentType);
+                    $('#rent_duration').val(rentDurationRaw);
+                    $('#sub_total').val(price.toFixed(2));
+
+                    // Extract numeric value from rent_duration
+                    const duration = parseInt(rentDurationRaw); // works if rentDurationRaw = "4 months"
+
+                    const totalAmount = isNaN(duration) ? 0 : (price * duration);
+                    const totalFormatted = totalAmount.toFixed(2);
+
+                    // Display total
+                    $('#total_price').val(totalFormatted); // for input
+                    $('#totalAmount').text(totalFormatted); // for span
                 } else {
-                    $('#sub_total').val('');
+                    $('#rent_type, #rent_duration, #sub_total, #total_price').val('');
+                    $('#totalAmount').text('0.00');
                     console.warn("Price not found or invalid response.");
                 }
             })
             .fail(function (xhr) {
-                $('#sub_total').val('');
+                $('#rent_type, #rent_duration, #sub_total, #total_price').val('');
+                $('#totalAmount').text('0.00');
                 console.error("Error fetching price:", xhr.responseText);
             });
     }
@@ -184,5 +233,18 @@
 
         // Optional: Fetch price on page load if both are already selected
         fetchPriceIfReady();
+
+        // Add live calculation on change
+        $('#rent_duration, #sub_total').on('input', calculateTotalAmount);
     });
+
+    function calculateTotalAmount() {
+        const rentDuration = parseFloat($('#rent_duration').val()) || 0;
+        const subTotal = parseFloat($('#sub_total').val()) || 0;
+
+        const total = (rentDuration * subTotal).toFixed(2);
+        $('#total_price').val(total);      // update input
+        $('#totalAmount').text(total);     // update display span
+    }
+
 </script>

@@ -75,6 +75,10 @@ class PropertyService extends ServiceBase implements IPropertyService
             }
             $property = $this->propertyRepo->createProperty($params);
 
+            if(isset($params['amenity_id'])){
+                $property->amenities()->sync($params['amenity_id']);
+            }
+
         }catch (\Exception $ex){
             log_error(format_exception($ex), new Property(), 'create-property-failed');
         }
@@ -119,6 +123,10 @@ class PropertyService extends ServiceBase implements IPropertyService
             }
 
             $result = $this->propertyRepo->updateProperty($params, $property);
+
+            if(isset($params['amenity_id'])){
+                $property->amenities()->sync($params['amenity_id']);
+            }
         }catch (\Exception $ex){
             log_error(format_exception($ex), new Property(), 'create-property-failed');
         }

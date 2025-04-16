@@ -244,9 +244,6 @@
                         <div class="menu-dropdown collapse {{ (request()->is('*maintenance*')) ? 'show' : '' }}" id="maintenance" style="">
                             <ul class="nav nav-sm flex-column">
                                 <li class="nav-item">
-                                    <a href="{{route("maintenance-requests.create")}}" class="nav-link" data-key="t-hub">Add a Request </a>
-                                </li>
-                                <li class="nav-item">
                                     <a href="{{route("maintenance-requests.assigned")}}" class="nav-link" data-key="t-calendar"> Assigned Issues </a>
                                 </li>
                                 @if(user()->can('read-maintenance-requests'))

@@ -3,7 +3,6 @@
 namespace App\Models\Property;
 
 use App\Abstracts\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Amenity extends Model
 {
@@ -16,9 +15,8 @@ class Amenity extends Model
         'company_id'
     ];
 
-    public function amenentable()
+    public function amenitable()
     {
         return $this->morphTo();
     }
-
 }

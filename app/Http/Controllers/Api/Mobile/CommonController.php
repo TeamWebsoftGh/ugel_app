@@ -75,6 +75,7 @@ class CommonController extends MobileController
         ]);
 
         $item = PropertyHelper::getPropertyUnitPrice(request()->get('property_unit_id'), request()->get('booking_period_id'));
+
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }
     public function countries(Request $request)

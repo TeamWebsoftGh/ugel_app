@@ -25,6 +25,7 @@ class RoomResource extends JsonResource
             'rent_type' => $this->propertyUnit->rent_type,
             'bed_count' => $this->bed_count,
             'floor' => $this->floor,
+            'block' => $this->block,
             'has_ac' => $this->has_ac,
             'has_washroom' => $this->has_washroom,
             'is_active' => $this->is_active,

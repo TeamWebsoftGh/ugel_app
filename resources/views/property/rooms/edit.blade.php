@@ -8,7 +8,28 @@
         <x-form.input-field name="property_unit_id" label="Property Unit" type="select" :options="[]" :value="$room->property_unit_id" required />
         <x-form.input-field name="room_name" label="Room Name" type="text" placeholder="Enter Room Name" :value="$room->room_name" required />
         <x-form.input-field name="bed_count" label="Bed Count" type="text" placeholder="Enter Bed Count" :value="$room->bed_count" required />
-        <x-form.input-field name="floor" label="Floor" type="text" placeholder="Enter Floor" :value="$room->floor" required />
+        <x-form.input-field name="block" label="Block" type="text" placeholder="Enter Block" :value="$room->block" />
+        <x-form.input-field
+            name="floor"
+            label="Floor"
+            type="select"
+            :options="[
+        0 => 'Ground Floor',
+        1 => 'First Floor',
+        2 => 'Second Floor',
+        3 => 'Third Floor',
+        4 => 'Fourth Floor',
+        5 => 'Fifth Floor',
+        6 => 'Sixth Floor',
+        7 => 'Seventh Floor',
+        8 => 'Eighth Floor',
+        9 => 'Ninth Floor',
+        10 => 'Tenth Floor'
+    ]"
+            :value="$room->floor"
+            required
+        />
+
         <x-form.input-field name="has_ac" label="Has Ac" type="select" :options="['1' => 'Yes', '0' => 'No']" :value="$room->has_ac" required />
         <x-form.input-field name="has_washroom" label="Has Washroom?" type="select" :options="['1' => 'Yes', '0' => 'No']" :value="$room->has_washroom" required />
         <x-form.input-field name="is_active" label="Status" type="select" :options="['1' => 'Active', '0' => 'Inactive']" :value="$room->is_active" required />

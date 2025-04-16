@@ -23,9 +23,10 @@
                             <th>Client Number</th>
                             <th>Property Name</th>
                             <th>Rating</th>
+                            <th>Subject</th>
                             <th>Comment</th>
                             <th>Date Added</th>
-                            <th>Action</th>
+                            <th width="100px" class="not-exported">Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -52,6 +53,7 @@
                         {data: 'client_number', name: 'client_number'},
                         {data: 'property_name', name: 'property_name'},
                         {data: 'rating', name: 'rating'},
+                        {data: 'subject', name: 'subject'},
                         {data: 'comment', name: 'comment'},
                         {data: 'created_at', name: 'created_at'},
                         {data: 'action', name: 'action', orderable: false }

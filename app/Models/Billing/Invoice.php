@@ -15,6 +15,7 @@ class Invoice extends Model
         'invoice_date',
         'invoice_number',
         'due_date',
+        'invoice_item_total',
         'sub_total_amount',
         'is_active',
         'created_by',

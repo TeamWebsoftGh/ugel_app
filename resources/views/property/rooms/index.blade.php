@@ -27,7 +27,7 @@
                             <th>Floor</th>
                             <th>Status</th>
                             <th>Date Added</th>
-                            <th>Action</th>
+                            <th width="100px" class="not-exported">Action</th>
                         </tr>
                         </thead>
                         <tbody>

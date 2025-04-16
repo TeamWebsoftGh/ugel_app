@@ -75,7 +75,10 @@ class InvoiceController extends Controller
     public function create()
     {
         $item = new Invoice();
+        $item->status = "pending";
         $item->is_active = 1;
+        $item->invoice_date = Carbon::now()->format('Y-m-d');
+        $item->due_date = Carbon::now()->addDays(7)->format('Y-m-d');
         $invoiceItemLookups = PropertyHelper::getAllInvoiceItems();
 
         return view('billing.invoices.edit', compact('item', 'invoiceItemLookups'));

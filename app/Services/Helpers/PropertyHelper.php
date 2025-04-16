@@ -9,6 +9,7 @@ use App\Models\Billing\InvoiceItemLookup;
 use App\Models\Billing\PropertyUnitPrice;
 use App\Models\Client\Client;
 use App\Models\Client\ClientType;
+use App\Models\Property\Amenity;
 use App\Models\Property\Property;
 use App\Models\Property\PropertyCategory;
 use App\Models\Property\PropertyPurpose;
@@ -86,6 +87,13 @@ class PropertyHelper
             ->get();
     }
 
+    public static function getAllAmenities(): Collection
+    {
+        return Amenity::select('id', 'name', 'short_name')
+            ->where('is_active', 1)
+            ->get();
+    }
+
     /**
      * Get All Active Property Categories
      */
@@ -159,19 +167,45 @@ class PropertyHelper
         $cacheKey = "property_unit_price:{$propertyUnitId}:{$bookingPeriodId}";
 
         return Cache::remember($cacheKey, 3600, function () use ($propertyUnitId, $bookingPeriodId) {
+            $unit = PropertyUnit::select('id', 'rent_amount', 'rent_type', 'rent_duration')
+                ->where('id', $propertyUnitId)
+                ->first();
+
+            if (!$unit) {
+                return null;
+            }
+
+            $price = $unit->rent_amount;
+            $rent_type = $unit->rent_type;
+
             if ($bookingPeriodId) {
-                $propertyUnitPrice = PropertyUnitPrice::where([
+                $bp = BookingPeriod::find($bookingPeriodId);
+                $customPrice = PropertyUnitPrice::firstWhere([
                     ['property_unit_id', '=', $propertyUnitId],
                     ['booking_period_id', '=', $bookingPeriodId],
-                ])->value('price');
+                ]);
 
-                if ($propertyUnitPrice !== null) {
-                    return $propertyUnitPrice;
+                if ($customPrice != null) {
+                    $rent_type = $customPrice->rent_type;
+                    $price = $customPrice->price;
+
+                    // Adjust price based on mismatched rent_type and period
+                    if ($bp && $bp->type === 'year' && $rent_type === 'semester') {
+                        $price *= 2;
+                    } elseif ($bp && $bp->type === 'semester' && $rent_type === 'year') {
+                        $price /= 2;
+                    }
                 }
             }
-            return PropertyUnit::where('id', $propertyUnitId)->value('rent_amount');
+
+            return [
+                'price' => $price, // Safe formatting
+                'rent_type' => $rent_type,
+                'rent_duration' =>1,
+            ];
         });
     }
+
 
     /**
      * Retrieve all active booking periods within the specified date range

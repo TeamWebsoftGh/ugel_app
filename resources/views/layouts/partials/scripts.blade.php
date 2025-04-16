@@ -56,6 +56,10 @@
 
 <script>
     var dateFormat = @json(env('Date_Format'));
+    function capitalize(str) {
+        return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+    }
+
     function ShowItem(url, target)
     {
         $.ajax({

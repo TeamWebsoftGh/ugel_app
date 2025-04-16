@@ -82,9 +82,8 @@ class MaintenanceRequestController extends MobileController
         $bookings = $customer->bookings;
 
         $latestBooking = $bookings->sortByDesc('lease_start_date')->first();
-        $data['properties'] = PropertyHelper::getAllProperties();
         $data['categories'] = TaskUtil::getMaintenanceCategories();
-        $data['property_units'] = TaskUtil::getMaintenanceCategories();
+        $data['subcategories'] = TaskUtil::getSubMaintenanceCategories();
         $data['booking'] = $latestBooking;
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $data);

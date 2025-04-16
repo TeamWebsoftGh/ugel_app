@@ -21,7 +21,7 @@
             label="Type"
             type="select"
             id="type"
-            :options="['vacation' => 'Vacation Stay', 'student' => 'Student Accommodation', 'other' => 'Other']"
+            :options="['vacation' => 'Vacation Stay', 'semester' => 'Semester', 'year' => 'Academic Year']"
             :value="$item->type"
             required
         />

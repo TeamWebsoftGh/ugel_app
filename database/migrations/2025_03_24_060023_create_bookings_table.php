@@ -73,6 +73,7 @@ return new class extends Migration
             $table->date('invoice_date');
             $table->date('due_date');
             $table->decimal('sub_total_amount', 18, 2);
+            $table->decimal('invoice_item_total', 18, 2);
             $table->string('status')->default('pending');
             $this->empExtracted($table);
         });

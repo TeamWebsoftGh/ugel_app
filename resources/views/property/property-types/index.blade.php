@@ -23,7 +23,7 @@
                             <th>Category</th>
                             <th>Status</th>
                             <th>Last Modified</th>
-                            <th class="not-exported">Action</th>
+                            <th width="100px" class="not-exported">Action</th>
                         </tr>
                         </thead>
                         <tbody>

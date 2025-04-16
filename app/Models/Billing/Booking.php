@@ -29,6 +29,8 @@ class Booking extends Model
         'booking_date',
         'company_id',
         'created_by',
+        'rent_type',
+        'rent_duration',
         'status'
     ];
 

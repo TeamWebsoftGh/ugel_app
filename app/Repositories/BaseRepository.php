@@ -184,7 +184,15 @@ abstract class BaseRepository implements IBaseRepository
         if ($files) {
             $files = is_array($files) ? $files : [$files];
             foreach ($files as $file) {
-                $this->saveDocuments(collect([$file]), $model, $model->id, $model->client_id);
+                $this->saveDocuments(collect([$file]), $model, $model->id);
+            }
+        }
+
+        $images = $attributes['images'] ?? null;
+        if ($images) {
+            $images = is_array($images) ? $images : [$images];
+            foreach ($images as $image) {
+                $this->saveDocuments(collect([$image]), $model, $model->id, "image");
             }
         }
     }

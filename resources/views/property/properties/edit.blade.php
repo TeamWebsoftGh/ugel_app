@@ -21,9 +21,10 @@
         <x-form.input-field name="google_map" label="Google Map" type="text" placeholder="Enter Google Map" :value="$property->google_map" />
         <h5>Property Images</h5>
         <x-form.input-field
-            name="attachments"
+            name="images"
             label="Upload Images"
             type="multifile"
+            accept="image/*"
             :value="$property->attachments"
         />
     </div>
@@ -32,7 +33,6 @@
     </div>
 </form>
 <script>
-    $('.dropify').dropify();
     function updateDropdown(url, targetDropdown, defaultOption = 'Select an option', selectedValue = null) {
         $.ajax({
             url: url,
@@ -108,4 +108,5 @@
             updateDropdown(`/api/clients/common/cities?filter_region=${regionId}`, 'city_id', 'Select City');
         });
     });
+    $('.dropify').dropify();
 </script>

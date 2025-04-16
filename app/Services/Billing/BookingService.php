@@ -165,7 +165,7 @@ class BookingService extends ServiceBase implements IBookingService
             $data = $this->prepareBookingData($data, $booking);
             $result = $this->bookingRepo->updateBooking($data, $booking);
 
-            $invoiceData = $this->prepareInvoiceData($booking);
+            $invoiceData = $this->prepareInvoiceData($booking->refresh());
             $booking->invoice()->updateOrCreate(['booking_id' => $booking->id], $invoiceData);
 
             DB::commit();
@@ -220,11 +220,12 @@ class BookingService extends ServiceBase implements IBookingService
     private function prepareBookingData(array $data, Booking $booking = null): array
     {
         if (isset($data['booking_period_id'])) {
+            $priceDate = PropertyHelper::getPropertyUnitPrice($data['property_unit_id'], $data['booking_period_id']);
             $period = BookingPeriod::find($data['booking_period_id']);
             $data['lease_start_date'] = $data['lease_start_date']??$period?->lease_start_date;
             $data['lease_end_date'] = $data['lease_end_date']??$period?->lease_end_date;
-            $data['sub_total'] = PropertyHelper::getPropertyUnitPrice($data['property_unit_id'], $data['booking_period_id']);
-            $data['total_price'] = $data['sub_total'];
+            $data['sub_total'] = $data['sub_total']??$priceDate['price'];
+            $data['total_price'] = $data['total_price']??($priceDate['price']*$data['rent_duration']);
         }
 
         $data['status'] = $data['status'] ?? 'pending';
@@ -234,20 +235,28 @@ class BookingService extends ServiceBase implements IBookingService
     /**
      * Prepare Invoice Data for Booking
      */
-    private function prepareInvoiceData(Booking $booking): array
+    private function prepareInvoiceData(Booking $booking, Invoice $invoice = null): array
     {
+        $invoiceNumber = $invoice?->invoice_number ?? NumberGenerator::gen(Invoice::class);
+        $invoiceDate = $invoice?->invoice_date ?? $booking->booking_date;
+        $subTotal = $booking->total_price;
+        $additionalTotal = $invoice?->invoice_item_total ?? 0;
+        $totalAmount = $subTotal + $additionalTotal;
+
         return [
-            'booking_id' => $booking->id,
-            'invoice_number' => NumberGenerator::gen(Invoice::class),
-            'client_id' => $booking->client_id,
-            'sub_total_amount' => $booking->sub_total,
-            'total_amount' => $booking->total_price,
-            'created_by' => $booking->created_by,
-            'invoice_date' => $booking->booking_date,
-            'due_date' => $booking?->lease_start_date,
-            'company_id' => $booking->company_id,
+            'booking_id'        => $booking->id,
+            'invoice_number'    => $invoiceNumber,
+            'client_id'         => $booking->client_id,
+            'sub_total_amount'  => $subTotal,
+            'total_amount'      => $totalAmount,
+            'created_by'        => $booking->created_by,
+            'invoice_date'      => $invoiceDate,
+            'due_date'          => $booking->lease_start_date,
+            'company_id'        => $booking->company_id,
         ];
     }
+
+
 
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\Billing;
 
+use App\Models\Property\PropertyUnit;
 use Illuminate\Database\Eloquent\Model;
 
 class PropertyUnitPrice extends Model
@@ -13,4 +14,9 @@ class PropertyUnitPrice extends Model
         'price',
         'rent_type'
     ];
+
+    public function propertyUnit()
+    {
+        return $this->belongsTo(PropertyUnit::class)->withDefault();
+    }
 }

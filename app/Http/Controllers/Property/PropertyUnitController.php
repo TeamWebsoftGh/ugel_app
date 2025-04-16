@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Property;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Property\PropertyUnit;
+use App\Services\Helpers\PropertyHelper;
 use App\Services\Properties\Interfaces\IPropertyService;
 use App\Services\Properties\Interfaces\IPropertyUnitService;
 use Illuminate\Contracts\View\Factory;
@@ -94,9 +95,9 @@ class PropertyUnitController extends Controller
     {
         $property_unit = new PropertyUnit();
         $properties = $this->propertyService->listProperties();
-
+        $amenities = PropertyHelper::getAllAmenities();
         if (request()->ajax()){
-            return view('property.property-units.edit', compact('property_unit', 'properties'));
+            return view('property.property-units.edit', compact('property_unit', 'properties','amenities'));
         }
 
         return redirect()->route("property-units.index");
@@ -168,9 +169,10 @@ class PropertyUnitController extends Controller
 	{
         $property_unit = $this->propertyUnitService->findPropertyUnitById($id);
         $properties = $this->propertyService->listProperties();
+        $amenities = PropertyHelper::getAllAmenities();
 
         if (request()->ajax()){
-            return view('property.property-units.edit', compact('property_unit', 'properties'));
+            return view('property.property-units.edit', compact('property_unit', 'properties','amenities'));
         }
 
         return redirect()->route("property-units.index");

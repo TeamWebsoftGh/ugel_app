@@ -20,16 +20,19 @@
         <x-form.input-field name="total_bathroom" label="Bathroom" type="number"
                             placeholder="Enter number of bathrooms" :value="$property_unit->total_bathroom" required />
 
+        <x-form.input-field name="rent_type" label="Rent Type" type="select"
+                            :options="['monthly' => 'Monthly', 'yearly' => 'Yearly', 'semester' => 'Per Semester']"
+                            :value="$property_unit->rent_type" required />
+
         <x-form.input-field name="rent_amount" label="Rent Amount" type="number"
                             placeholder="Enter unit rent" :value="$property_unit->rent_amount" required />
 
-        <x-form.input-field name="rent_type" label="Rent Type" type="select"
-                            :options="['monthly' => 'Monthly', 'weekly' => 'Weekly', 'yearly' => 'Yearly', 'semester' => 'Per Semester']"
-                            :value="$property_unit->rent_type" required />
-
-        <x-form.input-field name="rent_duration" label="Rent Duration" type="number"
+        <x-form.input-field name="rent_duration" label="Max Rent Duration" type="number"
                             placeholder="Enter day of month between 1 to 30" min="1" max="30"
                             :value="$property_unit->rent_duration" required />
+
+        <x-form.input-field name="general_rent" label="Daily Rent Amount(Vacation Stay)" type="number"
+                             :value="$property_unit->general_rent" />
 
         <x-form.input-field name="deposit_type" label="Deposit Type" type="select"
                             :options="['fixed' => 'Fixed', 'percentage' => 'Percentage']"
@@ -45,8 +48,19 @@
         <x-form.input-field name="late_fee" label="Late Fee" type="number"
                             placeholder="Enter late fee" :value="$property_unit->late_fee" required />
 
+        <x-form.input-field
+            name="amenity_id"
+            label="Amenities"
+            id="amenity_id"
+            type="multiselect"
+            :options="$amenities->pluck('name', 'id')"
+            multiple
+            :value="$property_unit->amenities()->pluck('id')->toArray()"
+        />
+
         <x-form.input-field name="description" class="col-md-12" label="Notes" type="textarea"
                             placeholder="Enter additional notes" :value="$property_unit->description" />
+
 
         <div class="form-group col-12">
             @include("shared.save-button")
