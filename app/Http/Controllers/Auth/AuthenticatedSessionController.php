@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         $user = Auth::user();
-        $this->enforceSingleSession($user);
+        //$this->enforceSingleSession($user);
         $this->updateLoginMetadata($user, $request);
         $this->handleNewDeviceDetection($user, $request);
 
