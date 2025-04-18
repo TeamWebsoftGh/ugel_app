@@ -133,7 +133,7 @@
             </div>
             <div class="form-group">
                 @if(user()->canany(['create-'.get_permission_name(), 'update-'.get_permission_name()]))
-                    <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+                    <button type="submit" class="btn btn-success hide_show"><i class="fa fa-save"></i> Save</button>
                 @endif
             </div>
         </div>

@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-md-12 ">
             <div class="card">
-                @include("layouts.partials.dt-header")
+                @include("layouts.partials.dt-header", ["hide" => 1])
                 <div class="card-body">
                     <p class="card-subtitle mb-4"></p>
                     <table id="payment-table" class="table dt-responsive" style="box-shadow: none">

@@ -273,6 +273,11 @@ class CustomerController extends Controller
     public function edit(Request $request, $id)
     {
         $client = $this->clientService->findClientById($id);
+
+        if ($request->ajax()){
+            return view('client.clients.edit', compact('client'));
+        }
+
         return view('client.clients.create', compact("client"));
     }
 
