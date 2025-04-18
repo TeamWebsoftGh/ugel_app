@@ -1,4 +1,4 @@
-@extends('layouts.portal.main')
+@extends('layouts.main')
 
 @section('title', 'All Notifications')
 @section('page-title', 'Notifications')
@@ -11,7 +11,7 @@
                     <h4 class="card-title"> All Notifications {{isset($user)?' for '.$user->username: ''}} </h4>
                 </div>
                 <div class="card-body">
-                    @include('portal.notifications.list', ['notifications' => $notifications])
+                    @include('notifications.list', ['notifications' => $notifications])
                 </div>
             </div>
         </div>

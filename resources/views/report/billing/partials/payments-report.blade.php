@@ -40,6 +40,6 @@
             </div>
         </div>
     @else
-        <h5 style="text-align:center;color:darkred">INFORMATION NOT AVAILABLE</h5>
+        <h5 style="text-align:center;color:darkred">NO RECORD AVAILABLE</h5>
     @endif
 </div>

@@ -22,7 +22,7 @@ class ReviewResource extends JsonResource
             'subject' => $this->subject,
             'comment' => $this->comment,
             'user' => $this->comment,
-            'user_image' => $this->owner->user_image,
+            'user_image' => asset($this->owner->user_image),
             'created_at' => $this->created_at,
         ];
     }

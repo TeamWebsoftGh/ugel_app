@@ -81,6 +81,7 @@
             label="Upload Document"
             type="file"
             :value="$resource->file_path"
+            required
         />
         <div class="form-group col-12">
             @include("shared.save-button")

@@ -77,4 +77,13 @@ class AccountController extends Controller
 
         return redirect()->back();
     }
+
+    public function notifications(Request $request)
+    {
+        $notifications =  Message::where('user_id', user()->id)->where('guard', 'user');
+        $notifications->update(['status'=>'read']);
+        $notifications = $notifications->paginate(20);
+
+        return view('admin.account.notifications',compact('notifications'));
+    }
 }
