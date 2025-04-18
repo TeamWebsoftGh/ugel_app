@@ -73,7 +73,6 @@ class BookingController extends Controller
         return request()->ajax()
             ? view('billing.bookings.edit', compact('item', 'properties', 'booking_periods'))
             : redirect()->route('bookings.index');
-
     }
 
     /**
@@ -85,7 +84,7 @@ class BookingController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'booking_period_id' => 'required|exists:booking_periods,id',
+            'booking_period_id' => 'nullable|exists:booking_periods,id',
             'property_id' => 'required|exists:properties,id',
             'property_unit_id' => 'required|exists:property_units,id',
             'room_id' => 'nullable|exists:rooms,id',

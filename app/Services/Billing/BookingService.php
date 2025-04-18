@@ -56,6 +56,11 @@ class BookingService extends ServiceBase implements IBookingService
             return $this->errorResponse("Another booking is being processed. Please try again.");
         }
 
+        if(!isset($data['booking_period_id']))
+        {
+            $data['booking_period_id'] = PropertyHelper::getActiveBookingPeriods()->first()?->id;
+        }
+
         try {
             DB::beginTransaction();
 
@@ -64,6 +69,11 @@ class BookingService extends ServiceBase implements IBookingService
                     ->where('is_active', 1)
                     ->lockForUpdate()
                     ->first();
+
+                $data['property_unit_id'] = $room?->property_unit_id;
+                $data['property_id'] = $room?->propertyUnit?->property_id;
+
+                $data = $this->prepareBookingData($data);
 
                 if (!$room || !PropertyHelper::isRoomAvailable($room->id, $data['lease_start_date'], $data['lease_end_date'])) {
                     DB::rollBack();
@@ -74,6 +84,9 @@ class BookingService extends ServiceBase implements IBookingService
                    // ->where('status', 'active')
                     ->lockForUpdate()
                     ->first();
+
+                $data['property_id'] = $unit->property_id;
+                $data = $this->prepareBookingData($data);
 
                 if(count($unit->rooms) > 0)
                 {
@@ -86,14 +99,12 @@ class BookingService extends ServiceBase implements IBookingService
                 }
             }
 
-            if ($this->bookingExists($data['client_id'], $data['booking_period_id'])) {
+            if (isset($data['booking_period_id']) && $this->bookingExists($data['client_id'], $data['booking_period_id'])) {
                 DB::rollBack();
                 return $this->errorResponse("You have already booked this property.");
             }
 
             $data['booking_number'] = NumberGenerator::gen(Booking::class);
-            $data = $this->prepareBookingData($data);
-
             $booking = $this->bookingRepo->createBooking($data);
             if (!$booking) {
                 DB::rollBack();
@@ -136,6 +147,11 @@ class BookingService extends ServiceBase implements IBookingService
         if (!$lock->get()) {
             return $this->errorResponse("Another booking is being processed. Please try again.");
         }
+
+        if(!isset($data['booking_period_id']))
+        {
+            $data['booking_period_id'] = PropertyHelper::getActiveBookingPeriods()?->first()?->id;
+        }
         try {
             DB::beginTransaction();
             if ($isHostel && $data['room_id'] != $booking->room_id) {
@@ -143,6 +159,11 @@ class BookingService extends ServiceBase implements IBookingService
                     ->where('is_active', 1)
                     ->lockForUpdate()
                     ->first();
+
+                $data['property_unit_id'] = $room?->property_unit_id;
+                $data['property_id'] = $room?->propertyUnit?->property_id;
+
+                $data = $this->prepareBookingData($data, $booking);
 
                 if (!$room || !PropertyHelper::isRoomAvailable($room->id, $data['lease_start_date'], $data['lease_end_date'])) {
                     DB::rollBack();
@@ -155,14 +176,14 @@ class BookingService extends ServiceBase implements IBookingService
                     ->lockForUpdate()
                     ->first();
 
+                $data['property_id'] = $unit->property_id;
+                $data = $this->prepareBookingData($data, $booking);
+
                 if (!$unit || !PropertyHelper::isPropertyUnitAvailable($unit->id, $data['lease_start_date'], $data['lease_end_date'])) {
                     DB::rollBack();
                     return $this->errorResponse("Property unit is no longer available.");
                 }
             }
-
-
-            $data = $this->prepareBookingData($data, $booking);
             $result = $this->bookingRepo->updateBooking($data, $booking);
 
             $invoiceData = $this->prepareInvoiceData($booking->refresh());
@@ -219,16 +240,19 @@ class BookingService extends ServiceBase implements IBookingService
      */
     private function prepareBookingData(array $data, Booking $booking = null): array
     {
+        $priceDate = PropertyHelper::getPropertyUnitPrice($data['property_unit_id'], $data['booking_period_id']??null);
+        $data['rent_type'] = $data['rent_type']??$priceDate['rent_type'];
+        $data['rent_duration'] = $data['rent_duration']??$priceDate['rent_duration'];
+        $data['sub_total'] = $data['sub_total']??$priceDate['price'];
+        $data['total_price'] = $data['total_price']??($priceDate['price']*$data['rent_duration']);
+        $data['booking_date'] = $data['booking_date']??Carbon::now()->format('Y-m-d');
+        $data['status'] = $data['status'] ?? 'pending';
+
         if (isset($data['booking_period_id'])) {
-            $priceDate = PropertyHelper::getPropertyUnitPrice($data['property_unit_id'], $data['booking_period_id']);
             $period = BookingPeriod::find($data['booking_period_id']);
             $data['lease_start_date'] = $data['lease_start_date']??$period?->lease_start_date;
             $data['lease_end_date'] = $data['lease_end_date']??$period?->lease_end_date;
-            $data['sub_total'] = $data['sub_total']??$priceDate['price'];
-            $data['total_price'] = $data['total_price']??($priceDate['price']*$data['rent_duration']);
         }
-
-        $data['status'] = $data['status'] ?? 'pending';
         return $data;
     }
 
