@@ -49,11 +49,15 @@ class ResourceController extends Controller
                 ->setRowId(fn($row) => $row->id)
                 ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
                 ->addColumn('category_name', fn($row) => $row->category->name)
-                ->addColumn('client_type_name', fn($row) => $row->category->name)
-                ->addColumn('property_name', fn($row) => $row->category->name)
-                ->addColumn('property__type_name', fn($row) => $row->category->name)
+                ->addColumn('client_type_name', fn($row) => $row->clientType?->name)
+                ->addColumn('property_name', fn($row) => $row->property->property_name??"All")
+                ->addColumn('file_path', fn($row) =>
+                    '<a href="' . asset($row->file_path) . '" download class="btn btn-sm btn-primary">
+        Download
+    </a>'
+                )
                 ->addColumn('action', fn($data) => $this->getActionButtons($data, "resources"))
-                ->rawColumns(['action'])
+                ->rawColumns(['action','file_path'])
                 ->make(true);
         }
 

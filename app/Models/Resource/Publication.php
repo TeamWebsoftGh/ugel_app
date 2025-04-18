@@ -14,7 +14,7 @@ class Publication extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class)->withDefault(['name' => 'All']);
+        return $this->belongsTo(Category::class)->withDefault(['property_name' => 'All']);
     }
 
     public function team()

@@ -12,23 +12,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-//        Schema::table('rooms', function (Blueprint $table) {
-//            //
-//            $table->string('block')->nullable();
-//        });
-//
-//        Schema::table('reviews', function (Blueprint $table) {
-//            //
-//            $table->string('block')->nullable()->after('comment');
-//        });
-//
-//        Schema::dropIfExists('amenitable');
-//        Schema::create('amenitables', function (Blueprint $table) {
-//            $table->foreignId('amenity_id')->constrained()->onDelete('cascade');
-//            $table->unsignedBigInteger('amenitable_id');
-//            $table->string('amenitable_type');
-//            $this->empExtracted($table);
-//        });
+        Schema::table('rooms', function (Blueprint $table) {
+            //
+            $table->string('block')->nullable();
+        });
+
+        Schema::table('reviews', function (Blueprint $table) {
+            //
+            $table->string('subject')->nullable()->after('comment');
+        });
+
+        Schema::dropIfExists('amenitable');
+        Schema::create('amenitables', function (Blueprint $table) {
+            $table->foreignId('amenity_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('amenitable_id');
+            $table->string('amenitable_type');
+            $this->empExtracted($table);
+        });
 
         Schema::table('bookings', function (Blueprint $table) {
             //

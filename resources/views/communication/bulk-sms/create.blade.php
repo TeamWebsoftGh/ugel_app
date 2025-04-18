@@ -13,7 +13,7 @@
                     <h4 class="card-title">Bulk Sms Details</h4>
                     <p class="card-subtitle mb-4"></p>
                     <div id="product-content">
-                        @include("communication.bulkSms.edit")
+                        @include("communication.bulk-sms.edit")
                     </div>
                 </div>
             </div> <!-- end card-body-->

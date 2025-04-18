@@ -15,7 +15,7 @@
             </a>
             <div class="collapse menu-dropdown {{ (request()->is('*communication*')||request()->is('*popups*')) ? 'show' : '' }}" id="announcement">
                 <ul class="nav nav-sm flex-column">
-                    @can("read-bulk-smses")
+                    @can("read-bulk-sms")
                         <li class="nav-item">
                             <a class="nav-link menu-link" href="#sms" data-bs-toggle="collapse" role="button"
                                aria-expanded="false" aria-controls="sms">

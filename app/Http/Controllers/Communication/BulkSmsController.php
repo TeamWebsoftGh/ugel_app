@@ -67,7 +67,7 @@ class BulkSmsController extends Controller
     {
         $announcement = new Announcement();
         $announcement->is_active = 1;
-        return view('communication.announcements.create', compact('announcement'));
+        return view('communication.bulk-sms.create', compact('announcement'));
     }
 
     public function quickSms()
@@ -76,7 +76,7 @@ class BulkSmsController extends Controller
         $sms->is_active = 1;
         $contact_groups = ContactGroup::where('is_active', 1)->get();
 
-        return view('communication.announcements.quick', compact('sms', 'contact_groups'));
+        return view('communication.bulk-sms.quick', compact('sms', 'contact_groups'));
     }
 
     public function quickSmsPost(Request $request)

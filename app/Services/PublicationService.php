@@ -10,12 +10,14 @@ use App\Repositories\Interfaces\IPublicationRepository;
 use App\Repositories\PublicationRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IPublicationService;
+use App\Traits\UploadableTrait;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class PublicationService  extends ServiceBase implements IPublicationService
 {
+    use UploadableTrait;
     private $publicationRepo;
 
     /**
@@ -66,7 +68,7 @@ class PublicationService  extends ServiceBase implements IPublicationService
             $params['type'] = optional(Category::find($params['category_id']))->name;
 
             if (isset($params['file']) && $params['file'] instanceof UploadedFile) {
-                $params['file_path'] = $params['file']->storeAs("publications/".$params['type'], $params['slug'] . "." . $params['file']->getClientOriginalExtension(), "public");
+                $params['file_path'] = $this->uploadPublic($params['file'], $params['slug'], "resources");
             }
 
             $publication = $this->publicationRepo->createPublication($params);
@@ -131,7 +133,7 @@ class PublicationService  extends ServiceBase implements IPublicationService
                 if(isset($publication->file)){
                     $this->publicationRepo->deleteCoverImage($publication);
                 }
-                $params['file_path'] = $params['file']->storeAs("publications/".$params['type'], $params['slug'] . "." . $params['file']->getClientOriginalExtension(), "public");
+                $params['file_path'] = $this->uploadPublic($params['file'], $params['slug'], "resources");
             }
 
             $publicationRepo = new PublicationRepository($publication);

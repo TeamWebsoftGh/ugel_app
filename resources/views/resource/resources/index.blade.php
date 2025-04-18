@@ -21,9 +21,9 @@
                             <th>Title</th>
                             <th>Category Name</th>
                             <th>Publish Date</th>
-                            <th>Publish Date</th>
+                            <th>Property</th>
                             <th>Status</th>
-                            <th>Last Modified</th>
+                            <th>Resource File</th>
                             <th class="not-exported">Action</th>
                         </tr>
                         </thead>
@@ -49,10 +49,10 @@
                         {data: null, orderable: false, searchable: false},
                         {data: 'title', name: 'title'},
                         {data: 'category_name', name: 'category_name'},
+                        {data: 'created_at', name: 'created_at'},
                         {data: 'property_name', name: 'property_name'},
-                        {data: 'client_type_name', name: 'client_type_name'},
                         {data: 'status', name: 'status'},
-                        {data: 'updated_at', name: 'updated_at'},
+                        {data: 'file_path', name: 'file_path'},
                         {data: 'action', name: 'action', orderable: false }
                     ];
                 loadDataAndInitializeDataTable("resource", "{{ route('resource.resources.index') }}", cols);
