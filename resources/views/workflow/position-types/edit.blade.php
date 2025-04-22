@@ -8,10 +8,8 @@
         <x-form.input-field name="is_active" label="Status" type="select" :options="['1' => 'Active', '0' => 'Inactive']" :value="$workflowPositionType->is_active" required />
         <x-form.input-field name="description" class="col-md-12" rows="3" label="Description" type="textarea" placeholder="Enter a description" :value="$workflowPositionType->description" />
     </div>
-    <div class="form-group">
-        <div class="form-group col-12">
-            @include("shared.save-button")
-        </div>
+    <div class="form-group col-12">
+        @include("shared.save-button")
     </div>
 </form>
 <script>

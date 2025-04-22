@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Ajax\DynamicDependentController;
 use App\Http\Controllers\Ajax\DynamicPropertyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -14,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'ajax', 'namespace' => 'App\Http\Controllers\Ajax'], function (){
     Route::get('/get-customer-details/{id}', [DynamicPropertyController::class, 'getDetails'])->name('customers.details');
     Route::get('/get-maintenance-categories/{id}', [DynamicPropertyController::class, 'getMaintenanceCategories'])->name('customers.details');
-    Route::post('dynamic_dependent/fetch_subsidiary', 'DynamicDependent@fetchSubsidiaries')->name('dynamic_subsidiary');
+    Route::get('/workflow/return-to-options/{workflowTypeId}', [DynamicDependentController::class, 'getReturnToOptions'])->name('workflows.return-to-options');
     Route::post('dynamic_dependent/fetch_department', 'DynamicDependent@fetchDepartment')->name('dynamic_department');
     Route::post('dynamic_dependent/fetch_teams', 'DynamicDependentController@fetchTeams')->name('dynamic_team');
     Route::post('dynamic_dependent/fetch_employee', 'DynamicDependent@fetchEmployee')->name('dynamic_employee');

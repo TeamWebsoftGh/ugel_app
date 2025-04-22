@@ -23,7 +23,7 @@ Trait WorkflowUtil
      * Returns Walk In Customer for a Business
      *
      * @param $class
-     * @param $employee
+     * @param $user
      * @param null $routeName
      * @return void/false
      */
@@ -114,7 +114,6 @@ Trait WorkflowUtil
 
                 $workflowRequest->workflow_requestable->status = $data['status'];
                 $workflowRequest->workflow_requestable->save();
-
             }
         }
     }
@@ -141,34 +140,34 @@ Trait WorkflowUtil
             ->get(); // Get all records with the smallest next sequence
     }
 
-    public function getImplementorsFromWorkflow($workflow, $employee, $class = null)
+    public function getImplementorsFromWorkflow($workflow, $user, $class = null)
     {
         $wf_position_type = WorkflowPositionType::find($workflow->workflow_position_type_id);
 
-        return $this->getGeneralPositions($wf_position_type->code, $employee, $class);
+        return $this->getGeneralPositions($wf_position_type->code, $user, $class);
     }
 
-    public function getGeneralPositions($code, $employee, $class = null)
+    public function getGeneralPositions($code, $user, $class = null)
     {
-        $subjectTypesToCodes = ['hod', 'branch-manager', 'unit-head', 'country-manager']; // Define which codes require special handling
+        $subjectTypesToCodes = ['team-lead']; // Define which codes require special handling
 
         // Direct handling for specific codes without needing to loop or check multiple conditions.
         if ($code == "assignees" && $class !== null) {
             return User::whereIn('id', $class->assignees()->pluck('id')->unique()->toArray())->get();
-        } elseif ($code == "supervisor" || $code == "team-lead")
+        } elseif ($code == "team-lead")
         {
-            return collect([$this->getSupervisor($employee->id)]); // Ensure it returns a collection
+            return collect([$this->getSupervisor($user->id)]); // Ensure it returns a collection
         }
-       else if(in_array($code, $subjectTypesToCodes)) {
-            $subjectType = $this->getSubjectTypeFromCode($code);
-
-            // Assume we also have a way to get the subject_id based on the employee and code
-            $subjectId = $this->getSubjectIdFromEmployeeAndCode($employee, $code);
-
-            $workflows = WorkflowPosition::where('subject_type', $subjectType)
-                ->where(['subject_id' => $subjectId, 'is_active' => 1])
-                ->get();
-        }
+//       else if(in_array($code, $subjectTypesToCodes)) {
+//            $subjectType = $this->getSubjectTypeFromCode($code);
+//
+//            // Assume we also have a way to get the subject_id based on the employee and code
+//            $subjectId = $this->getSubjectIdFromEmployeeAndCode($user, $code);
+//
+//            $workflows = WorkflowPosition::where('subject_type', $subjectType)
+//                ->where(['subject_id' => $subjectId, 'is_active' => 1])
+//                ->get();
+//        }
        else if($team = Team::firstWhere("code", $code)) {
            return $team->users;
        }
@@ -180,30 +179,20 @@ Trait WorkflowUtil
         }
 
         // Extract employee_ids from the workflows
-        $employeeIds = $workflows->pluck('employee_id')->unique()->toArray();
+        $userIds = $workflows->pluck('user_id')->unique()->toArray();
 
         // Fetch all Employees matching the employee_ids
-        $employees = User::whereIn('id', $employeeIds)->get();
+        $users = User::whereIn('id', $userIds)->get();
 
-        return $employees;
+        return $users;
     }
 
-    public function getSubjectIdFromEmployeeAndCode($employee, $code)
+    public function getSubjectIdFromEmployeeAndCode($user, $code)
     {
         // Placeholder logic: adjust based on your application's needs
         switch ($code) {
-            case 'hod':
-                return $employee->department_id;
-            case 'country-manager':
-                return $employee->company_id;
-            case 'division-head':
-                return $employee->subsidiary_id;
-            case 'branch-manager':
-                return $employee->location_id;
-            case 'unit-head':
-                return $employee->department_unit_id;
             case 'team-lead':
-                return $employee->team_id;
+                return $user->team_id;
             default:
                 return null;
         }
@@ -225,14 +214,14 @@ Trait WorkflowUtil
         return $mapping[$code] ?? null;
     }
 
-    public function getSupervisor($employee_id)
+    public function getSupervisor($user_id)
     {
-        $employee = User::find($employee_id);
-        $supervisor = User::find($employee->supervisor_id);
-        if (!$supervisor || $supervisor->id == $employee->id) {
-            $unitHead = $this->getGeneralPositions("unit-head", $employee)->first();
-            $hod = $this->getGeneralPositions("hod", $employee)->first();
-            $hrManager = $this->getGeneralPositions("hr-manager", $employee)->first();
+        $user = User::find($user_id);
+        $supervisor = User::find($user->supervisor_id);
+        if (!$supervisor || $supervisor->id == $user->id) {
+            $unitHead = $this->getGeneralPositions("unit-head", $user)->first();
+            $hod = $this->getGeneralPositions("hod", $user)->first();
+            $hrManager = $this->getGeneralPositions("hr-manager", $user)->first();
 
             $supervisor = $unitHead ?: $hod ?: $hrManager;
 
@@ -247,7 +236,7 @@ Trait WorkflowUtil
         $result->status = ResponseType::SUCCESS;
         try {
             $workflowRequest = $detail->workflowRequest;
-            $employee = $workflowRequest->employee;
+            $user = $workflowRequest->employee;
 
             if($data['status'] != $detail->status)
             {
@@ -263,7 +252,7 @@ Trait WorkflowUtil
             if($data['status'] == "approved")
             {
                 $data['route'] = $detail->approval_route;
-                $this->sendNextWorkflowRequest($workflowRequest, $employee, $data);
+                $this->sendNextWorkflowRequest($workflowRequest, $user, $data);
             }
             else
             {
@@ -276,8 +265,8 @@ Trait WorkflowUtil
                 $workflowRequest->workflow_requestable->save();
 
                 if (company_code() == 'nicktc') {
-                    $sms = "Hello {{$employee->firstname}}! Your leave request has been approved";
-                    $this->sendSMSViaTwilio($sms, $employee->contact_no);
+                    $sms = "Hello {{$user->firstname}}! Your leave request has been approved";
+                    $this->sendSMSViaTwilio($sms, $user->contact_no);
                 }
             }
         }catch (\Exception $ex){
@@ -292,7 +281,7 @@ Trait WorkflowUtil
         $result = new Response();
 
         try {
-            $employee = $workflowRequest->employee;
+            $user = $workflowRequest->employee;
 
             $wf_req_detail =  $workflowRequest->workflowRequestDetails()
                 ->whereIn('status', ['pending'])->get();
@@ -307,7 +296,7 @@ Trait WorkflowUtil
                 $data['status'] = "approved";
                 $data["approved_at"] = Carbon::now();
 
-                $this->sendNextWorkflowRequest($workflowRequest, $employee, $data);
+                $this->sendNextWorkflowRequest($workflowRequest, $user, $data);
             }
             $result->status = ResponseType::SUCCESS;
             $result->message = "Operation successful";
@@ -320,9 +309,9 @@ Trait WorkflowUtil
         return $result;
     }
 
-    public function canAccessItem($employee_id, $exempt = null)
+    public function canAccessItem($user_id, $exempt = null)
     {
-        if($employee_id == user()->id){
+        if($user_id == user()->id){
             return true;
         }
 
@@ -334,17 +323,17 @@ Trait WorkflowUtil
             return true;
         }
 
-        $employee = User::find($employee_id);
+        $user = User::find($user_id);
 
         $result = WorkflowPosition::where('is_active', 1);
 
-        $result = $result->where(function ($query) use ($employee){
-            return $query->where(['subject_type' => Subsidiary::class, 'subject_id' => $employee->subsidiary_id]);
-        })->orWhere(function ($query) use ($employee){
-            return $query->where(['subject_type' => Department::class, 'subject_id' => $employee->department_id]);
-        })->orWhere(function ($query) use ($employee){
-            return $query->where(['subject_type' => DepartmentUnit::class, 'subject_id' => $employee->unit_id]);
-        })->orWhere(function ($query) use ($employee){
+        $result = $result->where(function ($query) use ($user){
+            return $query->where(['subject_type' => Subsidiary::class, 'subject_id' => $user->subsidiary_id]);
+        })->orWhere(function ($query) use ($user){
+            return $query->where(['subject_type' => Department::class, 'subject_id' => $user->department_id]);
+        })->orWhere(function ($query) use ($user){
+            return $query->where(['subject_type' => DepartmentUnit::class, 'subject_id' => $user->unit_id]);
+        })->orWhere(function ($query) use ($user){
             return $query->whereHas('workflowPositionType', function ($query) {
                 return $query->whereIn('code', ['ceo', 'hr-manager', 'finance-manager']);
             });
@@ -358,7 +347,7 @@ Trait WorkflowUtil
 
     /**
      * @param $workflow
-     * @param $employee
+     * @param $user
      * @param $workflowRequest
      * @param $data
      * @return void

@@ -5,7 +5,6 @@ namespace App\Repositories\Workflow;
 use App\Models\Workflow\Workflow;
 use App\Repositories\BaseRepository;
 use App\Repositories\Workflow\Interfaces\IWorkflowRepository;
-use Illuminate\Support\Collection;
 
 class WorkflowRepository extends BaseRepository implements IWorkflowRepository
 {
@@ -24,63 +23,22 @@ class WorkflowRepository extends BaseRepository implements IWorkflowRepository
     /**
      * List all Companies
      *
+     * @param array $filter
      * @param string $order
      * @param string $sort
      *
-     * @param array $columns
-     * @return Collection
+     * @return mixed
      */
-    public function listWorkflows(string $order = 'id', string $sort = 'desc', array $columns = ['*']): Collection
+    public function listWorkflows(array $filter=[], string $order = 'updated_at', string $sort = 'desc')
     {
-        return $this->all($columns, $order, $sort);
-    }
+        $query = $this->getFilteredList();
 
-    /**
-     * Create the Workflow
-     *
-     * @param array $data
-     *
-     * @return Workflow
-     */
-    public function createWorkflow(array $data): Workflow
-    {
-        return $this->create($data);
-    }
+        $query->when(!empty($filter['filter_workflow_type']), function ($q) use ($filter) {
+            $q->where('workflow_type_id', $filter['filter_workflow_type']);
+        });
 
+        $query =$query->orderBy("workflow_type_id", "desc");
 
-    /**
-     * Find the Workflow by id
-     *
-     * @param int $id
-     *
-     * @return Workflow
-     */
-    public function findWorkflowById(int $id): Workflow
-    {
-        return $this->findOneOrFail($id);
-    }
-
-    /**
-     * Update Workflow
-     *
-     * @param array $params
-     * @param int $id
-     *
-     * @return bool
-     */
-    public function updateWorkflow(array $params, int $id): bool
-    {
-        return $this->update($params, $id);
-    }
-
-
-    /**
-     * @param int $id
-     * @return bool
-     * @throws \Exception
-     */
-    public function deleteWorkflow(int $id): bool
-    {
-        return $this->delete($id);
+        return $query->orderBy($order, $sort);
     }
 }

@@ -88,8 +88,9 @@ return new class extends Migration
         Schema::create('workflows', function (Blueprint $table) {
             $table->id();
             $table->string('workflow_name')->nullable();
-            $table->string('action')->default("approve");
+            $table->string('action_type')->default("approve");
             $table->text('description')->nullable();
+            $table->mediumText('always_copy')->nullable();
             $table->mediumText('submit_message')->nullable();
             $table->mediumText('approve_message')->nullable();
             $table->mediumText('decline_message')->nullable();
@@ -97,6 +98,8 @@ return new class extends Migration
             $table->mediumText('inform_message')->nullable();
             $table->integer('flow_sequence')->default(1);
             $table->boolean('can_update')->default(0);
+            $table->boolean('send_email')->default(1);
+            $table->boolean('send_sms')->default(0);
             $table->boolean('requires_comment')->default(0);
             $table->boolean('is_active')->default(1);
 
@@ -106,6 +109,8 @@ return new class extends Migration
             $table->string('created_from', 100)->nullable();
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedBigInteger('import_id')->nullable();
+
+            $table->unsignedBigInteger('return_to')->nullable();
 
             $table->UnsignedBiginteger('workflow_position_type_id')->index();
             $table->foreign('workflow_position_type_id')->references('id')->on('workflow_position_types')->onDelete('cascade');

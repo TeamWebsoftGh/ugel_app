@@ -114,21 +114,7 @@
     });
     function getCategory(type){
         let _token = $('input[name="_token"]').val();
-        if (type == 'hod') {
-            $('#cat_container').show();
-            $.ajax({
-                url:"{{ route('dynamic_department') }}",
-                method:"POST",
-                data:{ _token:_token},
-                success:function(result)
-                {
-                    $('#category').selectpicker("destroy");
-                    $('#category').html(result);
-                    $('#category').selectpicker();
-                    $('#category').selectpicker('val', '{{$workflowPosition->subject_id}}');
-                }
-            });
-        }else if(type == 'team'){
+        if(type == 'team'){
             $('#cat_container').show();
             $.ajax({
                 url:"{{ route('dynamic_team') }}",
@@ -142,21 +128,7 @@
                     $('#category').selectpicker('val', '{{$workflowPosition->subject_id}}');
                 }
             });
-        } else if(type == 'general-manager'){
-            $('#cat_container').show();
-            $.ajax({
-                url:"{{ route('dynamic_subsidiary') }}",
-                method:"POST",
-                data:{ _token:_token},
-                success:function(result)
-                {
-                    $('#category').selectpicker("destroy");
-                    $('#category').html(result);
-                    $('#category').selectpicker();
-                    $('#category').selectpicker('val', '{{$workflowPosition->subject_id}}');
-                }
-            });
-        }else if(type == 'unit-head'){
+        } else if(type == 'unit-head'){
             $('#cat_container').show();
             $.ajax({
                 url:"{{ route('dynamic_unit') }}",

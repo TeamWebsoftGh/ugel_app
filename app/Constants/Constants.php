@@ -160,15 +160,13 @@ class Constants
 
     public const POSITION_TYPES = [
         'general-manager' => 'General Manager',
-        'hr-manager' => 'HR Manager',
         'finance-manager' => 'Finance Manager',
         'operations-manager' => 'Operations Manager',
-        'team-lead' => 'Supervisor',
+        'team-lead' => 'Team Lead',
         'assignees' => 'Assignees',
         'requester' => 'Requester',
+        'responsible' => 'Responsible',
         'team' => 'Team',
-        'cfo' => 'CFO',
-        'ceo' => 'CEO'
     ];
 
     public const CONTACT_TYPES = [

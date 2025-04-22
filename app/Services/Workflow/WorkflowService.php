@@ -16,8 +16,6 @@ use Illuminate\Support\Collection;
 
 class WorkflowService extends ServiceBase implements IWorkflowService
 {
-    use UploadableTrait;
-
     private IWorkflowRepository $workflowRepo;
 
     /**
@@ -33,15 +31,15 @@ class WorkflowService extends ServiceBase implements IWorkflowService
     /**
      * List all the Workflows
      *
+     * @param array $filter
      * @param string $order
      * @param string $sort
      *
-     * @param array $columns
-     * @return Collection
+     * @return
      */
-    public function listWorkflows(string $order = 'id', string $sort = 'desc', $columns = ['*']): Collection
+    public function listWorkflows(array $filter = [], string $order = 'updated_at', string $sort = 'desc')
     {
-        return $this->workflowRepo->listWorkflows($order, $sort, $columns);
+        return $this->workflowRepo->listWorkflows($filter, $order, $sort);
     }
 
     /**
@@ -53,9 +51,9 @@ class WorkflowService extends ServiceBase implements IWorkflowService
      * @param array $columns
      * @return Collection
      */
-    public function listActiveWorkflows(string $order = 'id', string $sort = 'desc', $columns = ['*']): Collection
+    public function listActiveWorkflows(array $filter = [], string $order = 'updated_at', string $sort = 'desc'): Collection
     {
-        return $this->listWorkflows($order, $sort, $columns)
+        return $this->listWorkflows($filter, $sort, $sort)
             ->where('is_active', '==', 1);
     }
 
@@ -69,36 +67,8 @@ class WorkflowService extends ServiceBase implements IWorkflowService
     public function createWorkflow(array $params): Response
     {
         //Declaration
-        $workflow = null;
-
-        //Process Request
-        try {
-            $params['is_active'] = $params['status'];
-
-            $workflow = $this->workflowRepo->createWorkflow($params);
-        } catch (\Exception $e) {
-            log_error(format_exception($e), new Workflow(), 'create-workflow-failed');
-        }
-
-        //Check if Workflow was created successfully
-        if (!$workflow)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERROR;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'create-workflow-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_CREATE;
-
-        log_activity($auditMessage, $workflow, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-        $this->response->data = $workflow;
-
-        return $this->response;
+        $workflow = $this->workflowRepo->create($params);
+        return $this->buildCreateResponse($workflow);
     }
 
 
@@ -111,7 +81,7 @@ class WorkflowService extends ServiceBase implements IWorkflowService
      */
     public function findWorkflowById(int $id): Workflow
     {
-        return $this->workflowRepo->findWorkflowById($id);
+        return $this->workflowRepo->findOneOrFail($id);
     }
 
 
@@ -125,35 +95,9 @@ class WorkflowService extends ServiceBase implements IWorkflowService
      */
     public function updateWorkflow(array $params, Workflow $workflow): Response
     {
-        //Declaration
-        $result = false;
+        $result = $this->workflowRepo->update($params, $workflow->id);
 
-        //Process Request
-        try {
-            $params['is_active'] = $params['status'];
-            $result = $this->workflowRepo->updateWorkflow($params, $workflow->id);
-        } catch (\Exception $e) {
-            log_error(format_exception($e), $workflow, 'update-workflow-position-failed');
-        }
-
-        //Check if Workflow was updated successfully
-        if (!$result)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERROR;
-
-            return $this->response;
-        }
-
-        //Audit Trail
-        $logAction = 'update-workflow-position-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
-
-        log_activity($auditMessage, $workflow, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-
-        return $this->response;
+        return $this->buildUpdateResponse($workflow, $result);
     }
 
     /**
@@ -163,47 +107,14 @@ class WorkflowService extends ServiceBase implements IWorkflowService
     public function deleteWorkflow(Workflow $workflow): Response
     {
         //Declaration
-        if ($this->workflowRepo->deleteWorkflow($workflow->id))
-        {
-            //Audit Trail
-            $logAction = 'delete-workflow-position-successful';
-            $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
-
-            log_activity($auditMessage, $workflow, $logAction);
-            $this->response->status = ResponseType::SUCCESS;
-            $this->response->message = $auditMessage;
-
-            return $this->response;
-        }
-
-        $this->response->status = ResponseType::ERROR;
-        $this->response->message = ResponseMessage::DEFAULT_CANNOT_DELETE;
-
-        return $this->response;
+        $result = $this->workflowRepo->delete($workflow->id);
+        return $this->buildDeleteResponse($result);
     }
 
-    /**
-     * @param array $params
-     * @return array
-     */
-    private function getCategory(array $params): array
+    public function deleteMultiple(array $ids)
     {
-        if ($params['position_type'] == 'hod') {
-            $department = Department::find($params['category']);
-            $department->department_head = $params['employee_id'];
-            $department->save();
-
-            $params['subject_type'] = get_class($department);
-            $params['subject_id'] = $department->id;
-        }
-        if ($params['position_type'] == 'branch-manager') {
-            $location = Branch::find($params['category']);
-            $location->location_head = $params['employee_id'];
-            $location->save();
-
-            $params['subject_type'] = get_class($location);
-            $params['subject_id'] = $location->id;
-        }
-        return $params;
+        //Declaration
+        $result = $this->workflowRepo->deleteMultipleById($ids);
+        return $this->buildDeleteResponse($result, "Records deleted successfully.");
     }
 }

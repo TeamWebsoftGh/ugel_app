@@ -8,9 +8,9 @@ use Illuminate\Support\Collection;
 
 interface IWorkflowService extends IBaseService
 {
-    public function listWorkflows(string $order = 'id', string $sort = 'desc', $columns = []) : Collection;
+    public function listWorkflows(array $filter = [], string $order = 'updated_at', string $sort = 'desc');
 
-    public function listActiveWorkflows(string $order = 'id', string $sort = 'desc', $columns = []) : Collection;
+    public function listActiveWorkflows(array $filter = [], string $order = 'updated_at', string $sort = 'desc') : Collection;
 
     public function createWorkflow(array $params);
 
@@ -19,5 +19,7 @@ interface IWorkflowService extends IBaseService
     public function findWorkflowById(int $id);
 
     public function deleteWorkflow(Workflow $workflow);
+
+    public function deleteMultiple(array $ids);
 
 }
