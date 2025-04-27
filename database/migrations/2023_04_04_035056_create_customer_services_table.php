@@ -32,6 +32,11 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->boolean('is_notify')->nullable();
             $table->timestamp('closed_at')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->string('email')->nullable();
+
+            $table->unsignedBigInteger('support_topic_id')->nullable()->index();
+            $table->foreign('support_topic_id')->references('id')->on('support_topics')->onDelete('cascade');
 
             $table->unsignedBigInteger('priority_id')->nullable()->index();
             $table->foreign('priority_id')->references('id')->on('priorities')->onDelete('cascade');
@@ -78,6 +83,7 @@ return new class extends Migration
             $table->string('client_ip')->nullable();
             $table->string('client_agent')->nullable();
             $table->string('form_id')->unique();
+            $table->text('reply')->nullable();$table->text('reply')->nullable();
 
             $table->unsignedBigInteger('client_id')->nullable()->index();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
@@ -115,6 +121,9 @@ return new class extends Migration
             $table->timestamp('closed_at')->nullable();
             $table->timestamp('completed_at')->nullable();
 
+            $table->string('type')->nullable();
+            $table->foreignId('property_unit_id')->nullable();
+            $table->foreignId('maintenance_category_id')->nullable();
             $table->foreignId('priority_id')->nullable()->constrained('priorities')->onDelete('cascade');
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('client_id')->nullable()->constrained('clients')->onDelete('cascade');

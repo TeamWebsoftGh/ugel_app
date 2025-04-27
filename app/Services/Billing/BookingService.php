@@ -2,7 +2,6 @@
 
 namespace App\Services\Billing;
 
-use App\Constants\ResponseType;
 use App\Events\BookingEvent;
 use App\Models\Billing\Booking;
 use App\Models\Billing\BookingPeriod;
@@ -206,6 +205,12 @@ class BookingService extends ServiceBase implements IBookingService
     {
         return $this->bookingRepo->findBookingById($id);
     }
+
+    public function findBooking(array $where)
+    {
+        return $this->bookingRepo->findOneByOrFail($where);
+    }
+
 
     /**
      * Delete a Booking

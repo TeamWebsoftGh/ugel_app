@@ -234,9 +234,9 @@ class MaintenanceRequestController extends Controller
             'support_ticket_id' => 'required'
         ]);
 
-        $task = $this->ticketService->findSupportTicketById($request->support_ticket_id);
+        $task = $this->maintenanceService->findMaintenanceById($request->support_ticket_id);
         $data = $request->except('_token', '_method');
-        $results = $this->ticketService->postComment($data, $task);
+        $results = $this->maintenanceService->postComment($data, $task);
 
         if($request->ajax()){
             return $this->responseJson($results);
@@ -249,10 +249,10 @@ class MaintenanceRequestController extends Controller
 
     public function deleteComment($task_id, $id)
     {
-        $task = $this->ticketService->findSupportTicketById($task_id);
-        $comment = $task->ticketComments()->findOrFail($id);
+        $task = $this->maintenanceService->findMaintenanceById($task_id);
+        $comment = $task->comments()->findOrFail($id);
 
-        $result = $this->ticketService->deleteComment($comment, $task);
+        $result = $this->maintenanceService->deleteComment($comment, $task);
 
         return $this->responseJson($result);
     }

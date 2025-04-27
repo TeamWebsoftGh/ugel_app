@@ -198,22 +198,6 @@ Trait WorkflowUtil
         }
     }
 
-    public function getSubjectTypeFromCode($code)
-    {
-        // Example mapping, adjust according to your application's logic
-        Log::info($code);
-        $mapping = [
-            'hod' => Department::class,
-            'country-manager' => Company::class,
-            'division-head' => Subsidiary::class,
-            'unit-head' => DepartmentUnit::class,
-            'branch-manager' => Location::class,
-            'team-lead' => Team::class,
-        ];
-
-        return $mapping[$code] ?? null;
-    }
-
     public function getSupervisor($user_id)
     {
         $user = User::find($user_id);

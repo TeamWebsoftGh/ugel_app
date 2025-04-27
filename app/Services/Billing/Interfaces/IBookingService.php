@@ -14,6 +14,8 @@ interface IBookingService extends IBaseService
 
     public function findBookingById($id);
 
+    public function findBooking(array $where);
+
     public function updateBooking(array $data, Booking $booking);
 
     public function deleteBooking(Booking $booking);

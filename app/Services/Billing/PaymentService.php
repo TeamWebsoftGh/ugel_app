@@ -11,9 +11,12 @@ use App\Repositories\Interfaces\IPaymentRepository;
 use App\Services\Billing\Interfaces\IPaymentService;
 use App\Services\Helpers\Response;
 use App\Services\ServiceBase;
+use App\Utilities\WorkflowUtil;
+use Carbon\Carbon;
 
 class PaymentService extends ServiceBase implements IPaymentService
 {
+    use WorkflowUtil;
     private IPaymentRepository $paymentRepo;
 
     /**
@@ -45,6 +48,9 @@ class PaymentService extends ServiceBase implements IPaymentService
         //Declaration
         $payment = null;
         try{
+            if(!isset($data['payment_date'])){
+                $data['payment_date'] = Carbon::now()->format('Y-m-d');
+            }
 //            if($data['payment_method'] == "wallet")
 //            {
 //                if($data['amount'] > $invoice->client->wallet()->balance())
@@ -78,6 +84,9 @@ class PaymentService extends ServiceBase implements IPaymentService
                     $data['transaction_id'] = generate_token();
                 }
                 $payment = $this->paymentRepo->create($data);
+                if($payment){
+                    $this->addWorkflowRequest($payment, $payment->user);
+                }
                 return $this->buildCreateResponse($payment);
             }
             else{
@@ -97,12 +106,14 @@ class PaymentService extends ServiceBase implements IPaymentService
     public function updatePayment(array $data, Payment $payment)
     {
         $result = $this->paymentRepo->update($data, $payment->id);
+        $this->addWorkflowRequest($payment, $payment->user);
         return $this->buildUpdateResponse($payment, $result);
     }
 
 
     /**
-     * @param Order $order
+     * @param Payment $payment
+     * @param $status
      * @return Response
      */
     public function changeStatus(Payment $payment, $status)
@@ -168,12 +179,17 @@ class PaymentService extends ServiceBase implements IPaymentService
     }
 
     /**
-     * @param int $id
-     * @return void
+     * @param Payment $item
+     * @return Response
      */
-    public function deletePayment(int $id)
+    public function deletePayment(Payment $item): Response
     {
-        // TODO: Implement deletePayment() method.
+        if($item->status != "pending")
+        {
+            return $this->errorResponse(ResponseMessage::DEFAULT_CANNOT_DELETE);
+        }
+        $result = $this->paymentRepo->delete($item->id);
+        return $this->buildDeleteResponse($result);
     }
 
     public function listPaymentsByCustomer()

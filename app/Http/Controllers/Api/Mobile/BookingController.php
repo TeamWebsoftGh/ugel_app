@@ -53,11 +53,7 @@ class BookingController extends MobileController
 
     public function show($id)
     {
-        $item = $this->bookingService->findBookingById($id);
-        if($item->client_id !=  user()->client_id){
-            abort(404);
-        }
-
+        $item = $this->bookingService->findBooking(['id' => $id, 'client_id' => user()->client_id]);
         $item = new BookingResource($item);
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
@@ -71,13 +67,12 @@ class BookingController extends MobileController
           //  'property_id' => 'required|exists:properties,id',
             'property_unit_id' => 'required|exists:property_units,id',
             'room_id' => 'nullable|exists:rooms,id',
-            // 'client_id' => 'required|exists:clients,id',
             'lease_start_date' => 'sometimes|date',
             'lease_end_date' => 'sometimes|date|after_or_equal:lease_start_date',
         ]);
 
         $data = $request->except('_token', '_method', 'id', 'client_id');
-        $item = $this->bookingService->findBookingById($data['booking_id']);
+        $item = $this->bookingService->findBooking(['id' => $data['booking_id'], 'client_id' => user()->client_id]);
 
         $results = $this->bookingService->updateBooking($data, $item);
 
@@ -102,6 +97,7 @@ class BookingController extends MobileController
 
         $data = $request->except('_token', '_method', 'id');
         $data['client_id'] = user()->client_id;
+        $data['created_from'] = "api";
         $results = $this->bookingService->createBooking($data);
 
         if(isset($results->data))
@@ -114,8 +110,8 @@ class BookingController extends MobileController
 
     public function destroy(int $id)
     {
-        $booking = $this->bookingService->findBookingById($id);
-        $results = $this->bookingService->deleteBooking($booking);
+        $item = $this->bookingService->findBooking(['id' => $id, 'client_id' => user()->client_id]);
+        $results = $this->bookingService->deleteBooking($item);
 
         return $this->apiResponseJson($results);
     }

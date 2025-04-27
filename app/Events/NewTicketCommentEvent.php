@@ -14,7 +14,6 @@ class NewTicketCommentEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public Comment $comment;
-    public SupportTicket $ticket;
 
 
     /**

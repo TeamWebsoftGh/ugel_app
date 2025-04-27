@@ -13,6 +13,7 @@ class Review extends Model
         'client_id',
         'property_id',
         'rating',
+        'subject',
         'comment',
         'company_id',
         'created_by',

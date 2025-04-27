@@ -28,7 +28,7 @@
                             <td>{{$task?->transaction_id}}</td>
                             <td>{{$task?->paymentGateway->name}}</td>
                             <td>{{$task?->client?->fullname}}</td>
-                            <td>{{$task->client->customer_number??$task->client->username}}</td>
+                            <td>{{$task->client->client_number??$task->client->username}}</td>
                             <td>{{$task->amount}}</td>
                             <td>{{$task->status}}</td>
                             <td>{{$task->payment_date}}</td>

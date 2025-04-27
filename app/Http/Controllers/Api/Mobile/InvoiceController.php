@@ -47,7 +47,6 @@ class InvoiceController extends MobileController
     public function create()
     {
         $data['hostels'] = PropertyHelper::getAllHostels();
-
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $data);
     }
 
@@ -97,6 +96,7 @@ class InvoiceController extends MobileController
 
         $data = $request->except('_token', '_method', 'id');
         $data['client_id'] = user()->client_id;
+        $data['created_from'] = "api";
         $results = $this->invoiceService->createInvoice($data);
 
         if(isset($results->data))

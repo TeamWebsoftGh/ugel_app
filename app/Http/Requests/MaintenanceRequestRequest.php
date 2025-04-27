@@ -22,7 +22,7 @@ class MaintenanceRequestRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id' => 'nullable|exists:clients,id',
+            'client_id' => 'sometimes|exists:clients,id',
             'property_id' => 'required',
             'priority_id' => 'required',
             'client_email' => 'required',

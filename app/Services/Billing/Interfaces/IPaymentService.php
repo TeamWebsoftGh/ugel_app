@@ -5,11 +5,13 @@ namespace App\Services\Billing\Interfaces;
 
 use App\Models\Billing\Invoice;
 use App\Models\Billing\Payment;
+use App\Services\Helpers\Response;
 use App\Services\Interfaces\IBaseService;
 
 interface IPaymentService extends IBaseService
 {
     public function listPayments(array $filters =[], string $orderBy = 'updated_at', string $sortBy = 'desc');
+
     public function listPaymentsByCustomer();
 
     public function createPayment(array $data, Invoice $invoice);
@@ -19,5 +21,7 @@ interface IPaymentService extends IBaseService
     public function findPayment(array $where);
 
     public function updatePayment(array $data, Payment $payment);
+
+    public function deletePayment(Payment $item): Response;
 
 }

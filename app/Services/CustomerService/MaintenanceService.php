@@ -5,7 +5,6 @@ namespace App\Services\CustomerService;
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Events\NewMaintenanceRequestEvent;
-use App\Events\NewTicketCommentEvent;
 use App\Models\Common\Comment;
 use App\Models\Common\DocumentUpload;
 use App\Models\Common\NumberGenerator;
@@ -18,7 +17,6 @@ use App\Services\ServiceBase;
 use App\Traits\TaskUtil;
 use App\Traits\UploadableTrait;
 use App\Utilities\WorkflowUtil;
-use function Laravel\Prompts\password;
 
 class MaintenanceService extends ServiceBase implements IMaintenanceService
 {
@@ -59,8 +57,7 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
     public function createMaintenance(array $params)
     {
         $params['reference'] = NumberGenerator::gen(MaintenanceRequest::class);
-        // $params['user_id'] = user()->id;
-        $params['status'] = 'opened';
+        $params['status'] = 'pending';
         $maintenance = $this->maintenanceRepo->createMaintenance($params);
 
         if (isset($params['maintenance_subcategory_id']))
@@ -161,19 +158,19 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
      * @param MaintenanceRequest $ticket
      * @return Response
      */
-    public function postComment(array $data, MaintenanceRequest $ticket)
+    public function postComment(array $data, MaintenanceRequest $maintenanceRequest)
     {
         //Declaration
         $result = false;
 
         try{
-            $data['user_id'] = user()->id;
-            $result = $ticket->comments()->create($data);
-            event(new NewTicketCommentEvent($result));
+            $data['user_id'] = $data['user_id']??user()->id;
+            $result = $maintenanceRequest->comments()->create($data);
+           // event(new NewTicketCommentEvent($result));
 
         }catch (\Exception $ex)
         {
-            log_error(format_exception($ex), $ticket, 'add-comment-failed');
+            log_error(format_exception($ex), $maintenanceRequest, 'add-comment-failed');
         }
 
         if (!$result)
@@ -188,7 +185,7 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
         $logAction = 'add-comment-successful';
         $auditMessage = "Comment added successfully.";
 
-        log_activity($auditMessage, $ticket, $logAction);
+        log_activity($auditMessage, $maintenanceRequest, $logAction);
         $this->response->status = ResponseType::SUCCESS;
         $this->response->message = $auditMessage;
 
@@ -206,6 +203,11 @@ class MaintenanceService extends ServiceBase implements IMaintenanceService
         $result = false;
 
         try{
+            if($comment->user_id != user()->id)
+            {
+                $this->response->status = ResponseType::ERROR;
+                $this->response->message = "You are not authorized to delete this comment.";
+            }
             $result = $comment->delete();
 
         }catch (\Exception $ex)

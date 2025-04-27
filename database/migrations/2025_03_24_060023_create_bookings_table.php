@@ -43,6 +43,8 @@ return new class extends Migration
             $table->foreignId('property_unit_id')->constrained()->onDelete('cascade');
             $table->foreignId('room_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('booking_period_id')->constrained()->onDelete('cascade');
+            $table->string('rent_type')->nullable();
+            $table->string('rent_duration')->nullable();
             $table->string('booking_type');
             $table->date('booking_date');
             $table->date('lease_start_date');
@@ -92,6 +94,7 @@ return new class extends Migration
             $table->id();
             $table->string('comment')->nullable();
             $table->integer('rating')->nullable();
+            $table->string('subject')->nullable();
             $table->bigInteger('parent_id')->nullable();
             $this->empExtracted($table);
 

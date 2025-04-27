@@ -75,7 +75,6 @@ class PaymentController extends Controller
     {
         $payments = $this->paymentService->listPayments()->where('status', '==', 'pending');
         //$payments = Payment::all();
-
         return view('admin.sales.payments.index', compact("payments"));
     }
 

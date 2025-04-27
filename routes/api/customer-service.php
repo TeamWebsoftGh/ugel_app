@@ -14,6 +14,8 @@ Route::group(['namespace' => 'Mobile\CustomerService', 'prefix' => 'customer-ser
     Route::apiResource('enquiries', 'EnquiryController')->except(['update']);
     Route::get('maintenance-categories', [MaintenanceRequestController::class, 'categories']);
     Route::get('maintenance-requests/lookup', [MaintenanceRequestController::class, 'lookup'])->name('maintenance-requests.lookup');
-    Route::post('maintenance-requests/update', [MaintenanceRequestController::class, 'update'])->name('maintenance-requests.update');
+    Route::post('maintenance-request/post-comment', [MaintenanceRequestController::class, 'postComment'])->name('maintenance-requests.postComment');
+    Route::delete('maintenance-request/post-comment', [MaintenanceRequestController::class, 'deleteComment'])->name('maintenance-requests.deleteComment');
+    Route::post('maintenance-request/update', [MaintenanceRequestController::class, 'update'])->name('maintenance-requests.update');
     Route::apiResource('maintenance-requests', MaintenanceRequestController::class)->except(['update']);
 });

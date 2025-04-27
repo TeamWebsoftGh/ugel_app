@@ -11,7 +11,6 @@ use App\Http\Resources\MaintenanceRequestResource;
 use App\Models\Client\Client;
 use App\Services\CustomerService\Interfaces\IMaintenanceCategoryService;
 use App\Services\CustomerService\Interfaces\IMaintenanceService;
-use App\Services\Helpers\PropertyHelper;
 use App\Traits\TaskUtil;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -102,6 +101,7 @@ class MaintenanceRequestController extends MobileController
         $data = $request->except('_token', '_method', 'id');
 
         $data['client_id'] =  user()->client_id;
+        $data['created_from'] = "api";
         $results = $this->maintenanceService->createMaintenance($data);
 
         if(isset($results->data))
@@ -112,12 +112,13 @@ class MaintenanceRequestController extends MobileController
         return $this->apiResponseJson($results);
     }
 
-    public function update(MaintenanceRequestRequest $request, $id)
+    public function update(MaintenanceRequestRequest $request)
     {
-        $data = $request->except('_token', '_method', 'id');
+        $data = $request->all();
 
-        $electionResult = $this->maintenanceService->findMaintenanceById($id);
-        $results = $this->maintenanceService->updateMaintenance($data, $electionResult);
+        $maintenance = $this->maintenanceService->findMaintenanceById($request->id);
+        $data['client_id'] =  user()->client_id;
+        $results = $this->maintenanceService->updateMaintenance($data, $maintenance);
 
         if(isset($results->data))
         {
@@ -126,6 +127,33 @@ class MaintenanceRequestController extends MobileController
 
         return $this->apiResponseJson($results);
     }
+
+    public function postComment(Request $request)
+    {
+        $validatedData = $request->validate([
+            'message' => 'required',
+            'maintenance_request_id' => 'required'
+        ]);
+
+        $maintenance = $this->maintenanceService->findMaintenanceById($request->maintenance_request_id);
+        $data = $request->all();
+        $data['user_id'] = user()?->id;
+        $data['created_from'] = "api";
+        $results = $this->maintenanceService->postComment($data, $maintenance);
+
+        return $this->apiResponseJson($results);
+    }
+
+    public function deleteComment(Request $request)
+    {
+        $task = $this->maintenanceService->findMaintenanceById($request->maintenance_request_id);
+        $comment = $task->comments()->findOrFail($request->comment_id);
+
+        $result = $this->maintenanceService->deleteComment($comment, $task);
+
+        return $this->apiResponseJson($result);
+    }
+
 
     public function destroy(int $id)
     {

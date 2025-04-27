@@ -57,6 +57,20 @@ return new class extends Migration
             $table->string('slug', 191)->unique();
             $this->empExtracted($table);
 
+            $table->unsignedBigInteger('property_type_id')->nullable();
+            $table->foreign('property_type_id')->references('id')->on('property_types');
+
+            $table->unsignedBigInteger('property_id')->nullable();
+            $table->foreign('property_id')->references('id')->on('properties');
+
+            $table->unsignedBigInteger('client_type_id')->nullable();
+            $table->foreign('client_type_id')->references('id')->on('client_types');
+
+            $table->unsignedBigInteger('team_id')->nullable();
+            $table->foreign('team_id')->references('id')->on('teams');
+
+            $table->string('target_group')->nullable();
+
             $table->unsignedBigInteger('category_id')->nullable();
             $table->foreign('category_id')->references('id')->on('categories');
         });

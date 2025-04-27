@@ -181,9 +181,16 @@ abstract class BaseRepository implements IBaseRepository
     private function saveAttachments(array &$attributes, Model $model)
     {
         $files = $attributes['attachments'] ?? $attributes['attachment'] ?? null;
+        $file_base64 = $attributes['attachment_base64'] ?? null;
+
+        if($file_base64)
+        {
+            $files = base64ToUploadedFile($file_base64);
+        }
         if ($files) {
             $files = is_array($files) ? $files : [$files];
-            foreach ($files as $file) {
+            foreach ($files as $file)
+            {
                 $this->saveDocuments(collect([$file]), $model, $model->id);
             }
         }
