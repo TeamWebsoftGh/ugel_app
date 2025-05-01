@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class NotificationHelper {
@@ -15,11 +16,13 @@ class NotificationHelper {
             $notifications[] = [
                 'id' => $notification->id,
                 'created_at' => $notification->created_at,
+                'created_at_ago' => Carbon::parse($notification->created_at)->diffForHumans(),
                 'type' => $notification->type,
-                'url' => $notification->data['url']??"/",
+                'message' => $notification->data['message'],
                 'read_at' => $notification->read_at,
-              //  'icon' => $notification->data['icon'],
-              //  'title' => $notification->data['title']??'',
+                'url' => $notification->data['url']??"/",
+                'icon' => $notification->data['icon'],
+                'title' => $notification->data['title']??'',
                 'user_id' => $user->id
             ];
         }
