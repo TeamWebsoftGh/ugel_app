@@ -44,7 +44,7 @@
                     :value="$ticket->client_id"
                     required
                 />
-                @if(user()->can('create-support-tickets|update-support-tickets'))
+                @if(user()->canany(['create-support-tickets','update-support-tickets']))
                     <div class="form-group col-12 col-md-4">
                         <label for="name" class="control-label">Assign To <span class="text-danger">*</span></label>
                         <select name="assigned_to" id="assignee" multiple data-live-search="true" class="form-control selectpicker">

@@ -8,6 +8,7 @@ use App\Models\Billing\Booking;
 use App\Models\Client\Client;
 use App\Models\Common\DocumentUpload;
 use App\Models\Communication\Announcement;
+use App\Models\Legal\CourtCase;
 use App\Models\Property\Property;
 use Illuminate\Support\Facades\Storage;
 
@@ -97,7 +98,7 @@ class HomeController extends Controller
 
         $attendance_count = 0;
 
-        $leave_count = 0;
+        $cases_count = CourtCase::count();
 
         $projects = Property::select('id', 'property_name')->get();
 
@@ -120,7 +121,7 @@ class HomeController extends Controller
         $ticket_count = 1;//SupportTicket::where('ticket_status', 'open')->count();
 
         return view('home', compact('customers', 'attendance_count',
-            'leave_count', 'dept_count_array', 'dept_name_array', 'dept_bgcolor_array', 'dept_hover_bgcolor_array',
+            'cases_count', 'dept_count_array', 'dept_name_array', 'dept_bgcolor_array', 'dept_hover_bgcolor_array',
             'desig_count_array', 'desig_name_array', 'desig_bgcolor_array', 'desig_hover_bgcolor_array',
             'p_customer_count', 'birthdays', 'projects','activities', 'project_count_array', 'project_name_array',
             'completed_projects', 'announcements', 'ticket_count','bookings'));

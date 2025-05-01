@@ -58,6 +58,9 @@
             :value="$property_unit->amenities()->pluck('id')->toArray()"
         />
 
+        <x-form.input-field name="total_units" label="Total Units" type="number"
+                            placeholder="Enter late fee" :value="$property_unit->total_units??1" required />
+
         <x-form.input-field name="description" class="col-md-12" label="Notes" type="textarea"
                             placeholder="Enter additional notes" :value="$property_unit->description" />
 

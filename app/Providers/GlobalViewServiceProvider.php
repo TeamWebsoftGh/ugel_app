@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use App\Http\View\Composers\PropertyComposer;
 use App\Http\View\Composers\LayoutComposer;
-use App\Models\Common\FinancialYear;
-use App\Models\Timesheet\LeaveType;
 use App\Services\Helpers\PropertyHelper;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;

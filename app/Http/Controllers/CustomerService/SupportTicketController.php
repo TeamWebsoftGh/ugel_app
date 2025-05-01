@@ -174,7 +174,7 @@ class SupportTicketController extends Controller
             'priority_id' => 'required',
             'client_id' => 'required',
             'ticket_note' => 'required',
-            'status' => 'required',
+            'status' => 'sometimes',
         ]);
 
         if ($request->has("id") && $request->input("id") != null)

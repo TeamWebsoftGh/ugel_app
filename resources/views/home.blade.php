@@ -168,7 +168,7 @@
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <a href="{{route("court-cases.index")}}" class="text-uppercase fw-semibold fs-12 text-muted mb-1">Court Cases</a>
-                                                    <h4 class=" mb-0"><span class="counter-value" data-target="{{$leave_count}}">0</span></h4>
+                                                    <h4 class=" mb-0"><span class="counter-value" data-target="{{$cases_count}}">0</span></h4>
                                                 </div>
                                             </div>
                                         </div><!-- end card body -->

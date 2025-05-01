@@ -3,9 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Traits\Permissions;
-use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 
 class UpdateRoles extends Command
 {
@@ -75,7 +73,7 @@ class UpdateRoles extends Command
                 'court-cases' => 'c,r,u,d',
                 'court-hearings' => 'c,r,u,d',
                 'resources' => 'c,r,u,d',
-                'popups' => 'c,r,u,d',
+                'pop-ups' => 'c,r,u,d',
                 'amenities' => 'c,r,u,d',
                 'property-categories' => 'c,r,u,d',
                 'property-types' => 'c,r,u,d',
@@ -123,7 +121,7 @@ class UpdateRoles extends Command
                 'court-cases' => 'c,r,u,d',
                 'court-hearings' => 'c,r,u,d',
                 'resources' => 'c,r,u,d',
-                'popups' => 'c,r,u,d',
+                'pop-ups' => 'c,r,u,d',
                 'amenities' => 'c,r,u,d',
                 'property-categories' => 'c,r,u,d',
                 'property-types' => 'c,r,u,d',
@@ -162,7 +160,7 @@ class UpdateRoles extends Command
                 'court-cases' => 'c,r,u',
                 'court-hearings' => 'c,r,u',
                 'resources' => 'c,r,u',
-                'popups' => 'c,r,u',
+                'pop-ups' => 'c,r,u',
                 'amenities' => 'c,r,u',
                 'property-categories' => 'r,u',
                 'property-types' => 'r,u',
