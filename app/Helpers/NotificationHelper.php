@@ -21,7 +21,7 @@ class NotificationHelper {
                 'message' => $notification->data['message'],
                 'read_at' => $notification->read_at,
                 'url' => $notification->data['url']??"/",
-                'icon' => $notification->data['icon'],
+                'icon' => $notification->data['icon']??'',
                 'title' => $notification->data['title']??'',
                 'user_id' => $user->id
             ];
