@@ -58,6 +58,22 @@ class InvoiceController extends MobileController
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }
 
+    public function showByBookingId($id)
+    {
+        $data['filter_client'] = user()->client_id;
+        $data['filter_booking'] = $id;
+        $item = $this->invoiceService->listInvoices($data);
+
+        if($item == null)
+        {
+            abort(404);
+        }
+        $item = new InvoiceResource($item->first());
+
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
+    }
+
+
     public function update(Request $request)
     {
         $validatedData = $request->validate([

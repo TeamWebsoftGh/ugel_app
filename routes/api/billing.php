@@ -18,6 +18,7 @@ Route::group(['namespace' => 'Mobile', 'prefix' => 'billing'], function () {
     Route::apiResource('bookings', BookingController::class)->except(['update']);
     Route::post('bookings/update', [BookingController::class, 'update'])->name('bookings.update');
 
+    Route::get('invoices/get-by-booking-id/{id}', [InvoiceController::class, 'showByBookingId']);
     Route::apiResource('invoices', InvoiceController::class)->except(['update']);
     Route::post('invoices/update', [InvoiceController::class, 'update'])->name('invoices.update');
     Route::get('maintenance-categories', [MaintenanceRequestController::class, 'categories']);
