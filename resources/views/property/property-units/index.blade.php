@@ -6,7 +6,7 @@
 @endsection
 
 @section('content')
-    @include("property.partials.filter", ["type" => true])
+    @include("property.partials.filter", ["type" => true, "property" => true])
     <div class="row">
         <div class="col-md-12 ">
             <div class="card">

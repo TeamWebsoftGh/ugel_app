@@ -36,27 +36,29 @@
                             </div>
                         </li>
                     @endcan
-                    @can("read-whatsapps")
-                        <li class="nav-item">
-                            <a class="nav-link menu-link" href="#whatsapp" data-bs-toggle="collapse" role="button"
-                               aria-expanded="false" aria-controls="whatsapp">
-                                <span data-key="t-my-requests">WhatsApp</span>
-                            </a>
-                            <div class="collapse menu-dropdown" id="whatsapp">
-                                <ul class="nav nav-sm flex-column">
-                                    <li class="nav-item">
-                                        <a href="{{route("whatsapp.quick")}}" class="nav-link {{ request()->is('*quick-whatsapp*') ? 'active' : '' }}" data-key="t-login_activity">Quick WhatsApp </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{route("whatsapp.create")}}" class="nav-link {{ request()->is('*whatsapp/create*') ? 'active' : '' }}" data-key="t-login_activity"> Send WhatsApp </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="{{route("whatsapp.index")}}" class="nav-link {{ request()->is('*whatsapp*') ? 'active' : '' }}" data-key="t-login_activity">All Messages </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    @endcan
+                    @if(settings('enable_whatsapp', 0))
+                        @can("read-whatsapps")
+                            <li class="nav-item">
+                                <a class="nav-link menu-link" href="#whatsapp" data-bs-toggle="collapse" role="button"
+                                   aria-expanded="false" aria-controls="whatsapp">
+                                    <span data-key="t-my-requests">WhatsApp</span>
+                                </a>
+                                <div class="collapse menu-dropdown" id="whatsapp">
+                                    <ul class="nav nav-sm flex-column">
+                                        <li class="nav-item">
+                                            <a href="{{route("whatsapp.quick")}}" class="nav-link {{ request()->is('*quick-whatsapp*') ? 'active' : '' }}" data-key="t-login_activity">Quick WhatsApp </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{route("whatsapp.create")}}" class="nav-link {{ request()->is('*whatsapp/create*') ? 'active' : '' }}" data-key="t-login_activity"> Send WhatsApp </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{route("whatsapp.index")}}" class="nav-link {{ request()->is('*whatsapp*') ? 'active' : '' }}" data-key="t-login_activity">All Messages </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+                        @endcan
+                    @endif
                     @can("read-contacts")
                         <li class="nav-item">
                             <a href="{{route("contacts.index")}}" class="nav-link {{ request()->is('*contacts*') ? 'active' : '' }}" data-key="t-user_activity"> Contacts </a>

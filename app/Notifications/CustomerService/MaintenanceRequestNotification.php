@@ -39,6 +39,9 @@ class MaintenanceRequestNotification extends Notification
             'reference'      => $this->maintenance->reference,
             'message'        => 'A new maintenance request with reference ' . $this->maintenance->reference . ' has been created.',
             'url'            => route('maintenance-requests.show', $this->maintenance->id),
+            'type'           => get_class($this->maintenance),
+            'icon'           => 'check',
+            'title'          => 'Maintenance request submitted by '.$this->maintenance?->client?->fullname??"user",
         ];
     }
 

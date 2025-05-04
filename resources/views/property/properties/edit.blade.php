@@ -17,7 +17,8 @@
         <x-form.input-field name="country_id" label="Country" type="select" :options="$countries->pluck('name', 'id')" :value="$property->city->region->country_id" required id="country_id" />
         <x-form.input-field name="region_id" label="Region/State" type="select" :options="[]" :value="$property->city->region_id" required />
         <x-form.input-field name="city_id" label="City" type="select" :options="[]" :value="$property->city_id" required />
-        <x-form.input-field name="physical_address" label="Property Address" type="text" placeholder="Enter Address" :value="$property->physical_address" />
+        <x-form.input-field name="digital_address" label="Digital Address" type="text" :value="$property->digital_address" />
+        <x-form.input-field name="physical_address" label="Physical Address" type="text" placeholder="Enter Address" :value="$property->physical_address" />
         <x-form.input-field name="google_map" label="Google Map" type="text" placeholder="Enter Google Map" :value="$property->google_map" />
         <h5>Property Images</h5>
         <x-form.input-field

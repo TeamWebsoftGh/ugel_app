@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\Mobile;
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
 use App\Http\Resources\InvoiceResource;
-use App\Services\Billing\Interfaces\IinvoiceService;
+use App\Services\Billing\Interfaces\IInvoiceService;
 use App\Services\Helpers\PropertyHelper;
 use Illuminate\Http\Request;
 

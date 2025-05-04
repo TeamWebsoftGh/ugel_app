@@ -22,6 +22,7 @@ class PropertyComposer
 	{
 		$view->with([
             'property_types' => PropertyHelper::getAllPropertyTypes(),
+            'all_properties' => PropertyHelper::getAllProperties(),
             'property_categories' => PropertyHelper::getAllPropertyCategories(),
             'users' => PropertyHelper::getAll(),
             'teams' => Team::where('is_active', 1)->get(),

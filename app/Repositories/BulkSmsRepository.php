@@ -49,11 +49,11 @@ class BulkSmsRepository extends BaseRepository implements IBulkSmsRepository
         });
 
         $result = $result->when($sd, function ($q, $sd) {
-            return $q->where('start_date', '>=', $sd);
+            return $q->where('created_at', '>=', $sd);
         });
 
         $result = $result->when($ed, function ($q, $ed) {
-            return $q->where('start_date', '<=', $ed);
+            return $q->where('created_at', '<=', $ed);
         });
 
         $result = $result->when($t, function ($q, $t) {

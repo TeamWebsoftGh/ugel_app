@@ -38,12 +38,12 @@ class Announcement extends Model
 		return $this->belongsTo(Property::class)->withDefault();
 	}
 
-    public function property_type()
+    public function propertyType()
     {
         return $this->belongsTo(PropertyType::class)->withDefault();
     }
 
-    public function client_type()
+    public function clientType()
     {
         return $this->belongsTo(ClientType::class)->withDefault();
     }

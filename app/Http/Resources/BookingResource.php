@@ -36,6 +36,9 @@ class BookingResource extends JsonResource
             'property_unit_name' => $this->propertyUnit->unit_name??"N/A",
             'room_id' => $this->room_id,
             'room_name' => $this->room->room_name,
+            'invoice_id' => $this->invoice->id,
+            'invoice_number' => $this->invoice->invoice_number,
+            'invoice_total_amount' => $this->invoice->total_amount,
             'created_at' => $this->created_at,
         ];
     }

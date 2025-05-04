@@ -8,7 +8,6 @@ use App\Models\Communication\Announcement;
 use App\Models\Communication\ContactGroup;
 use App\Models\Communication\SmsAlert;
 use App\Services\Interfaces\IBulkSmsService;
-use App\Traits\JsonResponseTrait;
 use App\Traits\SmsTrait;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
@@ -39,34 +38,64 @@ class BulkSmsController extends Controller
     public function index(Request $request)
     {
         $data = $request->all();
+        $data['filter_start_date'] = $request->get('filter_start_date', Carbon::now()->startOfYear()->format('Y-m-d'));
+        $data['filter_end_date'] = $request->get('filter_end_date', Carbon::now()->format('Y-m-d'));
+        $data['filter_property'] = $request->get('filter_property', '');
+        $data['filter_client_type'] = $request->get('filter_client_type', '');
+        $data['filter_property_type'] = $request->get('filter_property_type', '');
         $data['filter_type'] = "sms";
 
-        $announcements = $this->announcementService->listAnnouncements($data);
-
-        if (empty($data['filter_start_date']))
+        if (request()->ajax())
         {
-            $data['start_date'] = Carbon::now()->startOfYear()->format(env('Date_Format'));
-            $data['filter_start_date'] = Carbon::now()->startOfYear()->format('Y-m-d');
-        }else{
-            $data['start_date'] = Carbon::parse($data['filter_start_date'])->format(env('Date_Format'));
+            $announcements = $this->announcementService->listAnnouncements($data);
+            return datatables()->of($announcements)
+                ->setRowId(function ($row)
+                {
+                    return $row->id;
+                })
+                ->addColumn('property_type_name', function ($row)
+                {
+                    return $row->propertyType->name ?? 'All';
+                })
+                ->addColumn('property_name', function ($row)
+                {
+                    return $row->property->property_name ?? 'All';
+                })
+                ->addColumn('client_type_name', function ($row)
+                {
+                    return $row->clientType->name ?? 'All';
+                })
+                ->addColumn('action', function ($data)
+                {
+                    $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></button>';
+                    $button .= '&nbsp;';
+                    if (user()->can('update-bulk-sms'))
+                    {
+                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
+                        $button .= '&nbsp;';
+                    }
+                    if (user()->can('delete-bulk-sms'))
+                    {
+                        $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
+                    }
+
+                    return $button;
+                })
+                ->rawColumns(['action', 'document'])
+                ->make(true);
         }
 
-        if (empty($data['filter_end_date']))
-        {
-            $data['end_date'] = Carbon::now()->format(env('Date_Format'));
-            $data['filter_end_date'] = Carbon::now()->format('Y-m-d');
-        }else{
-            $data['end_date'] = Carbon::parse($data['filter_end_date'])->format(env('Date_Format'));
-        }
-
-        return view('communication.announcements.index', compact('announcements', 'data'));
+        return view('communication.bulk-sms.index', compact('data'));
     }
-
 
     public function create()
     {
         $announcement = new Announcement();
         $announcement->is_active = 1;
+
+        if (request()->ajax()){
+            return view('communication.bulk-sms.edit', compact("announcement"));
+        }
         return view('communication.bulk-sms.create', compact('announcement'));
     }
 
@@ -158,10 +187,10 @@ class BulkSmsController extends Controller
         $announcement = $this->announcementService->findAnnouncementById($id);
 
         if ($request->ajax()){
-            return view('communication.announcements.show', compact('announcement'));
+            return view('communication.bulk-sms.show', compact('announcement'));
         }
 
-        return view('communication.announcements.show', compact('announcement'));
+        return view('communication.bulk-sms.show', compact('announcement'));
 
     }
 
@@ -176,10 +205,10 @@ class BulkSmsController extends Controller
         $announcement = $this->announcementService->findAnnouncementById($id);
 
         if ($request->ajax()){
-            return view('communication.announcements.edit', compact('announcement'));
+            return view('communication.bulk-sms.edit', compact('announcement'));
         }
 
-        return view('communication.announcements.create', compact('announcement'));
+        return view('communication.bulk-sms.create', compact('announcement'));
     }
 
     /**

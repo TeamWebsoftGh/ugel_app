@@ -3,6 +3,7 @@
 namespace App\Models\Property;
 
 use App\Abstracts\Model;
+use App\Models\Billing\Booking;
 
 class PropertyUnit extends Model
 {
@@ -55,4 +56,8 @@ class PropertyUnit extends Model
         return $this->morphToMany(Amenity::class, 'amenitable');
     }
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
 }

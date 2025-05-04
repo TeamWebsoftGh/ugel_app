@@ -67,7 +67,7 @@ class Property extends Model
 
     public function getCoverImageAttribute()
     {
-        return $this->attributes['image'] ?? "assets/images/user.png";
+        return $this->image ?? "assets/images/user.png";
     }
 
     public function getNameAttribute()

@@ -1,16 +1,14 @@
 @extends('layouts.main')
 
-@section('title', 'Bulk SMS')
-@section('page-title', 'Bulk SMS')
+@section('title', 'Bulk Sms')
+@section('page-title', 'Bulk Sms')
 
 @section('content')
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header bg-white">
-                    <h4 class="card-title">
-                        Filter
-                    </h4>
+                    <h4 class="card-title">Filter</h4>
                 </div>
                 <div class="card-body">
                     @include('communication.partials.filter')
@@ -21,72 +19,50 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header bg-white">
-                    <h4 class="card-title">
-                        All Bulk Sms
-                        @if(user()->can('create-bulk-sms'))
-                            <span style="float: right"><a href="{{route('bulk-sms.create')}}" class="btn btn-primary">Create Bulk Sms</a></span>
-                        @endif
-                    </h4>
-                </div>
                 <div class="card-body">
-                    @include('communication.announcements.list', ['announcements' => $announcements])
+                    @include("layouts.partials.dt-header")
+                    <table id="bulk_sms-table" class="table dt-responsive">
+                        <thead>
+                        <tr>
+                            <th class="not-exported">
+                                <div class="form-check"><input type="checkbox" class="form-check-input fs-15 select-all"><label></label></div>
+                            </th>
+                            <th width="15%">Title</th>
+                            <th width="25%">Description</th>
+                            <th>Property Type</th>
+                            <th>Property</th>
+                            <th>Client Type</th>
+                            <th>Date Added</th>
+                            <th class="not-exported">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
 @section('js')
-    <script>
-        let baseUrl = '/bulk-sms';
-        let ctoken = $('meta[name="csrf-token"]').attr('content');
-        $(document).ready(function () {
-            const fp = flatpickr(".date", {
-                mode: "range",
-                dateFormat: '{{ env('Date_Format')}}',
-                autoclose: true,
-                todayHighlight: true,
-                defaultDate: ["{{$data['start_date']}}", "{{$data['end_date']}}"],
-                onChange: function (selectedDates, dateStr, instance) {
-                    const dateArr = selectedDates.map(date => this.formatDate(date, "Y-m-d"));
-                    $('#filter_start_date').val(dateArr[0])
-                    $('#filter_end_date').val(dateArr[1])
-                },
-            }); // flatpickr
-
-            $('.show_announcement').on('click', function () {
-                $('#FormModalLabel').text('{{__('Announcement Details')}}');
-                let url = $(this).attr('data-url');
-                ShowItem(url, '#modal_form_content');
-                $('#FormModal').modal('show');
-            });
-        });
-
-        function DeleteItem(name, url) {
-            bootbox.confirm("<h4>DELETE</h4><hr /><div>This is an irrevisable action that will delete <b>" + name.toUpperCase() + "</b>. Are you sure you want to <b><span style='color:red'>delete </span>" + name.toUpperCase() + "</b></div>", function (result) {
-                if (result === true) {
-                    $.ajax({
-                        type: "DELETE",
-                        url: url,
-                        data: ({_token: ctoken}),
-                        timeout: 60000,
-                        datatype: "json",
-                        cache: false,
-                        error: function (XMLHttpRequest, textStatus, errorThrown) {
-                            HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
-                        },
-                        success: function (data) {
-                            bootbox.alert(DetermineIconFromResult(data) + " " + data.Message, function () {
-                                window.location.reload();
-                            });
-                        },
-                    });
-                } else {
-                }
-            });
-        }
-
-    </script>
     @include("layouts.shared.dt-scripts")
-
+    <script>
+        (function($) {
+            "use strict";
+            $(document).ready(function () {
+                var cols =
+                    [
+                        { data: "id" },
+                        { data: "title" },
+                        { data: "short_message" },
+                        { data: "property_type_name" },
+                        { data: "property_name" },
+                        { data: "client_type_name" },
+                        { data: "created_at" },
+                        { data: "action", orderable: false, searchable: false }
+                    ];
+                loadDataAndInitializeDataTable("bulk_sms", "{{ route('bulk-sms.index') }}", cols);
+            });
+        })(jQuery);
+    </script>
 @endsection

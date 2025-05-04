@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Communication;
 
+use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Communication\Announcement;
 use App\Models\Communication\ContactGroup;
@@ -16,7 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 
-class WhatsappController extends \App\Http\Controllers\Controller
+class WhatsappController extends Controller
 {
     use JsonResponseTrait, SmsTrait;
     /**

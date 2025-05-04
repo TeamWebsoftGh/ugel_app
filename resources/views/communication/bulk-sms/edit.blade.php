@@ -63,9 +63,7 @@
                 </div>
             </div>
             <div class="form-group">
-                @if(user()->can('create-'.get_permission_name()))
-                    <button type="submit" class="btn btn-success save_btn"><i class="mdi mdi-send-check"></i> Send</button>
-                @endif
+               @include("shared.save-button")
             </div>
         </div>
     </div>

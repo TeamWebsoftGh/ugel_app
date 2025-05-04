@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'communication', 'namespace' => 'App\Http\Controllers\Communication'], function ()
 {
+    Route::get('bulk-sms/sms-history', 'BulkSmsController@history')->name('bulk-sms.history');
     Route::get('bulk-sms/quick-sms', 'BulkSmsController@quickSms')->name('bulk-sms.quick');
     Route::post('bulk-sms/quick-sms', 'BulkSmsController@quickSmsPost')->name('bulk-sms.bulk-voice');
     Route::resource('bulk-sms', 'BulkSmsController')->except(['update']);

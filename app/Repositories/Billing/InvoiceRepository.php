@@ -30,11 +30,18 @@ class InvoiceRepository extends BaseRepository implements IInvoiceRepository
     public function listInvoices(array $filter = [], string $order = 'updated_at', string $sort = 'desc'): \Illuminate\Database\Eloquent\Builder
     {
         $query = $this->getFilteredList();
-        $query->when(!empty($filter['filter_property_unit']), function ($q) use ($filter) {
-            $q->where('property_unit_id', $filter['filter_property_unit']);
-        });
+        // Join the bookings table if filtering by property unit
+        if (!empty($filter['filter_property_unit'])) {
+            $query->whereHas('booking.property', function ($q) use ($filter) {
+                $q->where('property_unit_id', $filter['filter_property_unit']);
+            });
+        }
         $query->when(!empty($filter['filter_client']), function ($q) use ($filter) {
             $q->where('client_id', $filter['filter_client']);
+        });
+
+        $query->when(!empty($filter['filter_booking']), function ($q) use ($filter) {
+            $q->where('booking_id', $filter['filter_booking']);
         });
         return $query->orderBy($order, $sort);
     }

@@ -30,74 +30,21 @@
                     @enderror
                     <span class="input-note text-danger" id="error-end_date"> </span>
                 </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Select Gender </label>
-                    <select name="gender" id="gender" data-live-search="true" class="form-control selectpicker constituency">
-                        <option selected value="">All</option>
-                        @foreach(\App\Constants\Constants::GENDER as $gender)
-                            <option @if($announcement->gender == $gender) selected="selected" @endif value="{{ $gender }}">{{ $gender }}</option>
-                        @endforeach
-                    </select>
-                    @error('gender')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-gender"> </span>
-                </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Select Constituency </label>
-                    <select name="constituency_id" id="constituency_id" data-live-search="true" class="form-control selectpicker constituency">
-                        <option selected value="">All</option>
-                        @foreach($constituencies as $constituency)
-                            <option @if($announcement->constituency_id == $constituency->id) selected="selected" @endif value="{{ $constituency->id }}">{{ $constituency->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('constituency_id')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-constituency_id"> </span>
-                </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Select Electoral Area </label>
-                    <select name="electoral_area_id" id="electoral_area_id" data-live-search="true" class="form-control selectpicker electoral_area">
-                        <option selected value="">All</option>
-                        @foreach($electoral_areas as $department)
-                            <option @if($announcement->electoral_area_id == $department->id) selected="selected" @endif value="{{ $department->id }}">{{ $department->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('electoral_area_id')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-electoral_area_id"> </span>
-                </div>
-                <div class="form-group col-12 col-md-4">
-                    <label for="name" class="control-label">Select Polling Station </label>
-                    <select name="polling_station_id" id="polling_station_id" data-live-search="true" class="form-control selectpicker polling_station">
-                        <option selected value="">All</option>
-                        @foreach($polling_stations as $branch)
-                            <option @if($announcement->polling_station_id == $branch->id) selected="selected" @endif value="{{ $branch->id }}">{{ $branch->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('polling_station_id')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-polling_station_id"> </span>
-                </div>
-                <div class="form-group col-6 col-md-4">
-                    <label for="name" class="control-label">Min Age </label>
-                    <input type="text" id="min_age" name="min_age" value="{{old('min_age', $announcement->min_age)}}" class="form-control">
-                    @error('min_age')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-min_age"> </span>
-                </div>
-                <div class="form-group col-6 col-md-4">
-                    <label for="max_age" class="control-label">Max Age </label>
-                    <input type="text" id="max_age" name="max_age" value="{{old('max_age', $announcement->max_age)}}" class="form-control">
-                    @error('max_age')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                    <span class="input-note text-danger" id="error-max_age"> </span>
-                </div>
+                <x-form.input-field name="property_type_id" label="Property Type" type="select" :options="$property_types->pluck('name', 'id')" :value="$announcement->property_type_id" />
+                <x-form.input-field
+                    name="property_id"
+                    label="Property"
+                    type="select"
+                    :options="[]"
+                    :value="$announcement->property_id"
+                />
+                <x-form.input-field
+                    name="client_type_id"
+                    label="Client Type"
+                    type="select"
+                    :options="$client_types->pluck('name', 'id')"
+                    :value="$announcement->client_type_id"
+                />
                 <div class="form-group col-6 col-md-4">
                     <label>Status</label>
                     <select name="is_active" id="is_active" class="form-control selectpicker">
@@ -158,7 +105,7 @@
 
             </div>
             <div class="form-group">
-                @if(user()->can('create-'.get_permission_name().'|update-'.get_permission_name()))
+                @if(user()->canany(['create-'.get_permission_name(), 'update-'.get_permission_name()]))
                     <button type="submit" class="btn btn-success save_btn"><i class="mdi mdi-send-check"></i> Send</button>
                 @endif
             </div>
@@ -174,68 +121,56 @@
         }); // flatpickr
     });
     $('#status').selectpicker('val', '{{$announcement->status}}');
-    $('#constituency_id').selectpicker('val', '{{$announcement->constituency_id}}');
-    $('#electoral_area_id').selectpicker('val', '{{$announcement->electoral_area_id}}');
-    $('#polling_station_id').selectpicker('val', '{{$announcement->polling_station_id}}');
     $('#tem_type').selectpicker('val', '{{$announcement->tem_type}}');
     $('#file_type').selectpicker('val', '{{$announcement->file_type}}');
 </script>
 
 <script>
-    $('.constituency').change(function () {
-        if ($(this).val() !== '') {
-            let value = $(this).val();
-            let _token = $('input[name="_token"]').val();
-            $.ajax({
-                url: "{{ route('ajax.electoralAreas') }}",
-                method: "POST",
-                data: {value: value, _token: _token},
-                success: function (result) {
-                    $('select').selectpicker("destroy");
-                    var allOption = '<option selected value="">All</option>';
-                    var updatedResult = allOption + result;
-                    $('#electoral_area_id').html(updatedResult);
-                    $('select').selectpicker();
-                }
-            });
-        }
-    });
+    function updateDropdown(url, targetDropdown, defaultOption = 'Select an option', selectedValue = null) {
+        $.ajax({
+            url: url,
+            type: 'GET',
+            success: function(response) {
+                if (response.status_code === '000') {
+                    let dropdown = $('#' + targetDropdown);
+                    dropdown.empty();
+                    dropdown.append(`<option value="">${defaultOption}</option>`);
 
-    $('.electoral_area').change(function () {
-        if ($(this).val() !== '') {
-            let value = $(this).val();
-            let _token = $('input[name="_token"]').val();
-            $.ajax({
-                url: "{{ route('ajax.pollingStations') }}",
-                method: "POST",
-                data: {value: value, _token: _token},
-                success: function (result) {
-                    $('select').selectpicker("destroy");
-                    var allOption = '<option selected value="">All</option>';
-                    var updatedResult = allOption + result;
-                    $('#polling_station_id').html(updatedResult);
-                    $('select').selectpicker();
-                }
-            });
-        }
-    });
+                    $.each(response.data, function(index, item) {
+                        let isSelected = selectedValue && selectedValue == item.id ? 'selected' : '';
+                        dropdown.append(`<option value="${item.id}" ${isSelected}>${item.name}</option>`);
+                    });
 
-    function toggleShortMessage() {
-        var selectedType = $('#tem_type').val();
-        if (selectedType === 'custom') {
-            $('#short_message_container').slideDown();
-            $('#short_message').attr('required', 'required');
-        } else {
-            $('#short_message_container').slideUp();
-            $('#short_message').removeAttr('required');
-        }
+                    dropdown.selectpicker('refresh');
+                } else {
+                    console.error("Error fetching data:", response.message);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Error fetching data:", error);
+            }
+        });
     }
 
-    // Initial check on page load
-    toggleShortMessage();
+    $(document).ready(function() {
+        let property = $('#property_id').val();
 
-    // Listen for changes on the tem_type select
-    $('#tem_type').on('change', function() {
-        toggleShortMessage();
+        // Load dropdowns with existing values on page load
+        if ($('#property_type_id').val()) {
+            updateDropdown(
+                `/api/clients/common/properties?filter_property_type=${$('#property_type_id').val()}`,
+                'property_id',
+                'Select Property',
+                property
+            );
+        }
+
+        // Update dropdowns dynamically when user changes selection
+        $('#property_type_id').change(function() {
+            let typeId = $(this).val();
+            updateDropdown(`/api/clients/common/properties?filter_property_type=${typeId}`, 'property_id', 'Select Property');
+        });
     });
+
 </script>
+

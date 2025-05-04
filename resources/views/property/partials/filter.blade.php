@@ -34,6 +34,9 @@
                                 <label>Property</label>
                                 <select name="filter_property" id="filter_property" data-live-search="true" class="form-control selectpicker">
                                     <option selected value="">All Properties</option>
+                                    @foreach($all_properties as $prop)
+                                        <option @if($prop->id == request()->filter_property) selected="selected" @endif value="{{ $prop->id }}">{{ $prop->property_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         @endif
