@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class InvoiceResource extends JsonResource
+class InvoiceDetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -24,7 +24,8 @@ class InvoiceResource extends JsonResource
             'total' => $this->total_amount,
             'client_id' => $this->client_id,
             'booking_id' => $this->booking_id,
-          //  'items' => InvoiceItemResource::collection($this->whenLoaded('items')),
+            'booking' => new BookingResource($this->booking),
+            'items' => InvoiceItemResource::collection($this->items),
             'created_at' => $this->created_at,
         ];
     }

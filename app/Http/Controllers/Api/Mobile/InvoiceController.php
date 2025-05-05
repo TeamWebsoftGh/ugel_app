@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Mobile;
 
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
+use App\Http\Resources\InvoiceDetailResource;
 use App\Http\Resources\InvoiceResource;
 use App\Services\Billing\Interfaces\IInvoiceService;
 use App\Services\Helpers\PropertyHelper;
@@ -53,7 +54,7 @@ class InvoiceController extends MobileController
     public function show($id)
     {
         $item = $this->invoiceService->findInvoiceById($id);
-        $item = new InvoiceResource($item);
+        $item = new InvoiceDetailResource($item);
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }
@@ -68,7 +69,7 @@ class InvoiceController extends MobileController
         {
             abort(404);
         }
-        $item = new InvoiceResource($item->first());
+        $item = new InvoiceDetailResource($item->first());
 
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }

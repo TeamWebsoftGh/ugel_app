@@ -15,4 +15,10 @@ class InvoiceItem extends Model
         'quantity',
     ];
 
+
+    public function invoiceItemLookup()
+    {
+        return $this->belongsTo(InvoiceItemLookup::class)->withDefault();
+    }
+
 }
