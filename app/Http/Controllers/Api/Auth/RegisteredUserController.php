@@ -10,6 +10,7 @@ use App\Services\Interfaces\IClientService;
 use App\Traits\CustomerTransformable;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 use Illuminate\Validation\Rules\Password;
 
 class RegisteredUserController extends MobileController
@@ -66,11 +67,12 @@ class RegisteredUserController extends MobileController
 
         if ($results->status == ResponseType::SUCCESS)
         {
-            $user = $results->data??null;
+            $client = $results->data??null;
+            $user = $user->users()->first();
             event(new Registered($user));
             $results->data = [
-                'token' => $user->users()->first()?->createToken('ApiToken')->plainTextToken,
-                'user' => $this->transformClient($user)
+                'token' => $user?->createToken('ApiToken')->plainTextToken,
+                'user' => new UserResource($user)
             ];
         }
 
