@@ -68,7 +68,7 @@ class RegisteredUserController extends MobileController
         if ($results->status == ResponseType::SUCCESS)
         {
             $client = $results->data??null;
-            $user = $user->users()->first();
+            $user = $client->users()->first();
             event(new Registered($user));
             $results->data = [
                 'token' => $user?->createToken('ApiToken')->plainTextToken,
