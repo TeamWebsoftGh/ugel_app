@@ -7,6 +7,7 @@ use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IBaseService;
+use Mpdf\Mpdf;
 
 class ServiceBase implements IBaseService
 {
@@ -54,14 +55,14 @@ class ServiceBase implements IBaseService
 
         // Common CSS setup
         $sidebar_color = Constants::PAYSLIP_COLOR;
-        $tr = ".headerRow td,.headerRow th{background-color:$sidebar_color;color:#FFFFFF;padding:1mm;}";
+        $tr = ".headerRow td,.headerRow th{background-color:$sidebar_color;color:#ffffff;padding:1mm;}";
 
         // Include external stylesheet
         $stylesheet = file_get_contents(public_path('css/print.css'));
         $stylesheet .= $tr;
 
         // Define footer
-        $emp_name = auth()->user() ? auth()->user()->username : '';
+        $emp_name = auth()->user() ? auth()->user()->fullname : '';
         $footer = "
             <table width='100%'>
                 <tr>
@@ -129,12 +130,12 @@ class ServiceBase implements IBaseService
      * @param mixed $data
      * @return Response
      */
-    public function buildCreateResponse($data): Response
+    public function buildCreateResponse($data, $message = null): Response
     {
         if ($data)
         {
             $this->response->status = ResponseType::SUCCESS;
-            $this->response->message = ResponseMessage::DEFAULT_SUCCESS_CREATE;
+            $this->response->message = $message??ResponseMessage::DEFAULT_SUCCESS_CREATE;
             $this->response->data = $data;
         } else
         {
@@ -151,7 +152,7 @@ class ServiceBase implements IBaseService
         {
             $this->response->status = ResponseType::SUCCESS;
             $this->response->message = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
-            $this->response->data = $data;
+            $this->response->data = $data?->refresh();
         } else
         {
             $this->response->status = ResponseType::ERROR;
@@ -176,4 +177,14 @@ class ServiceBase implements IBaseService
         return $this->response;
     }
 
+    /**
+     * Build error response
+     */
+    public function errorResponse(string $message): Response
+    {
+        $this->response->status = ResponseType::ERROR;
+        $this->response->message = $message;
+
+        return $this->response;
+    }
 }

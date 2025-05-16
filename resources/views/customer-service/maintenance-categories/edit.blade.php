@@ -4,6 +4,8 @@
     <input type="hidden" id="_id" name="id" value="{{$maintenance_category->id}}">
     <input type="hidden" id="_name" name="me" value=" award for {{$maintenance_category->name}}">
     <div class="row">
+        <x-form.input-field name="parent_id" label="Parent Category" type="select" :options="$categories->pluck('name', 'id')" :value="$maintenance_category->parent_id" />
+
         <x-form.input-field
             name="name"
             label="Name"
@@ -33,6 +35,7 @@
         <x-form.input-field
             name="description"
             label="Description"
+            class="col-md-8"
             type="textarea"
             placeholder="Enter a description"
             :value="$maintenance_category->description"

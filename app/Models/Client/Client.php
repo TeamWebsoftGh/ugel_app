@@ -4,13 +4,13 @@ namespace App\Models\Client;
 
 use App\Abstracts\Model;
 use App\Models\Auth\User;
+use App\Models\Billing\Booking;
 use App\Models\Settings\Country;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Traits\HasWalletTrait;
 
 class Client extends Model
 {
-    use HasFactory;
+    use HasWalletTrait;
 
     protected $appends =['full_name'];
 
@@ -18,6 +18,7 @@ class Client extends Model
         'title',
         'first_name',
         'last_name',
+        'client_number',
         'other_names',
         'email',
         'email_cc',
@@ -45,7 +46,7 @@ class Client extends Model
         'date_of_incorporation',
         'tin_number',
         'type_of_business',
-        'business_email',
+       // 'business_email',
         'client_type_id',
         'created_from',
         'created_by',
@@ -64,6 +65,12 @@ class Client extends Model
         return $this->belongsTo(Country::class);
     }
 
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
+    }
+
+
     public function users()
     {
         return $this->hasMany(User::class);
@@ -76,6 +83,15 @@ class Client extends Model
             return ucwords(strtolower($this->business_name));
         }
         return ucwords(strtolower($this->title)).' ' . ucwords(strtolower($this->first_name)) . ' ' . ucwords(strtolower($this->last_name));
+    }
+
+    public function getNameAttribute()
+    {
+        if(isset($this->business_name))
+        {
+            return ucwords(strtolower($this->business_name));
+        }
+        return ucwords(strtolower($this->title)).' ' . ucwords(strtolower($this->first_name)) . ' ' . ucwords(strtolower($this->last_name)). ' (' . ucwords(strtolower($this->client_number??$this->phone_number)).')';
     }
 
 

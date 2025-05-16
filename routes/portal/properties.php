@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::group(['prefix' => '', 'namespace' => 'App\Http\Controllers\Property'], function ()
+Route::group(['prefix' => 'facilities', 'namespace' => 'App\Http\Controllers\Property'], function ()
 {
     //Amenities
     Route::delete('amenities/delete/selected', 'AmenityController@bulkDelete')->name('amenities.delete.selected');
@@ -31,20 +31,15 @@ Route::group(['prefix' => '', 'namespace' => 'App\Http\Controllers\Property'], f
     Route::resource('property-types', 'PropertyTypeController')->except(['update']);
 
     //Properties
+    Route::get('properties/all', 'PropertyController@all')->name('properties.all');
     Route::get('properties/lease', 'PropertyController@propertyLease')->name('properties.lease');
     Route::resource('properties', 'PropertyController')->except(['update']);
 
     //Property Units
     Route::resource('property-units', 'PropertyUnitController')->except(['update']);
-
-    //service-types
-    Route::get('companies/kyc', 'AmenityController@kyc')->name('companies.kyc');
-    Route::get('offers/payment', 'AmenityController@payment')->name('offers.payment');
-    Route::get('offers/queued', 'AmenityController@queued')->name('offers.queued');
-    Route::get('offers/active', 'AmenityController@active')->name('offers.active');
-    Route::resource('service-types', 'PropertyController')->except(['update']);
-    Route::resource('offers', 'AmenityController')->except(['update']);
-    Route::resource('payments', 'PaymentController')->except(['update']);
+    Route::resource('rooms', 'RoomController')->except(['update']);
+    Route::delete('reviews/delete/selected', 'ReviewController@bulkDelete')->name('reviews.delete.selected');
+    Route::resource('reviews', 'ReviewController')->except(['update']);
 
 
 });

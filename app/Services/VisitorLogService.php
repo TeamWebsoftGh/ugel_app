@@ -4,11 +4,9 @@ namespace App\Services;
 
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
-use App\Models\CustomerService\Visitor;
 use App\Models\CustomerService\VisitorLog;
+use App\Repositories\Auth\Interfaces\IUserRepository;
 use App\Repositories\Interfaces\IVisitorLogRepository;
-use App\Repositories\Interfaces\IClientRepository;
-use App\Repositories\Interfaces\IUserRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IVisitorLogService;
 use Illuminate\Support\Collection;

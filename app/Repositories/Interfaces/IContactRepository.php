@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\Memo\Contact;
+use App\Models\Communication\Contact;
 use Illuminate\Support\Collection;
 
 interface IContactRepository extends IBaseRepository

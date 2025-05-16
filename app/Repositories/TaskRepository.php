@@ -3,10 +3,10 @@
 namespace App\Repositories;
 
 use App\Models\Task\Task;
-use App\Traits\UploadableTrait;
 use App\Models\Workflow\WorkflowPosition;
 use App\Repositories\Interfaces\ITaskRepository;
-use App\Traits\WorkflowUtil;
+use App\Traits\UploadableTrait;
+use App\Utilities\WorkflowUtil;
 use Illuminate\Support\Collection;
 
 /**

@@ -6,13 +6,14 @@
 @endsection
 
 @section('content')
+    @include("property.partials.filter", ["type" => true, "property" => true])
     <div class="row">
         <div class="col-md-12 ">
             <div class="card">
                 @include("layouts.partials.dt-header")
                 <div class="card-body">
                     <p class="card-subtitle mb-4"></p>
-                    <table id="property_type-table" class="table dt-responsive" style="box-shadow: none">
+                    <table id="property_unit-table" class="table dt-responsive" style="box-shadow: none">
                         <thead>
                         <tr>
                             <th class="not-exported">
@@ -24,7 +25,7 @@
                             <th>Rent Type</th>
                             <th>Rent Amount</th>
                             <th>Last Modified</th>
-                            <th>Action</th>
+                            <th width="100px" class="not-exported">Action</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -55,7 +56,7 @@
                         {data: 'updated_at', name: 'updated_at'},
                         {data: 'action', name: 'action', orderable: false }
                     ];
-                loadDataAndInitializeDataTable("property_type", "{{ route('property-units.index') }}", cols);
+                loadDataAndInitializeDataTable("property_unit", "{{ route('property-units.index') }}", cols);
             });
         })(jQuery);
     </script>

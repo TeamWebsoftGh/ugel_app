@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Memo\Event;
+use App\Models\Communication\Event;
 use App\Repositories\Interfaces\IEventRepository;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

@@ -14,18 +14,16 @@ use App\Models\Task\CheckListItem;
 use App\Models\Task\Task;
 use App\Models\Task\TaskComment;
 use App\Models\Task\Timesheet;
-use App\Services\Helpers\PropertyHelper;
-use App\Traits\TaskUtil;
-use App\Traits\UploadableTrait;
 use App\Repositories\Interfaces\ITaskRepository;
-use App\Repositories\Interfaces\IWorkflowPositionRepository;
+use App\Repositories\Workflow\Interfaces\IWorkflowPositionRepository;
+use App\Services\Helpers\PropertyHelper;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\ITaskService;
-use App\Traits\WorkflowUtil;
+use App\Traits\TaskUtil;
+use App\Traits\UploadableTrait;
+use App\Utilities\WorkflowUtil;
 use Carbon\Carbon;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 
 /**
  *

@@ -4,10 +4,11 @@ namespace App\Http\Controllers\WorkflowRequest;
 
 use App\Constants\ResponseType;
 use App\Http\Controllers\Controller;
+use App\Models\Auth\User;
 use App\Models\Workflow\WorkflowRequest;
 use App\Models\Workflow\WorkflowRequestDetail;
 use App\Models\Workflow\WorkflowType;
-use App\Traits\WorkflowUtil;
+use App\Utilities\WorkflowUtil;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -26,54 +27,37 @@ class EmployeeRequestController extends Controller
      */
     public function index(Request $request)
     {
-       $workflowRequests = WorkflowRequestDetail::where(['workflow_request_details.implementor_id' => user()->id])
-       ->join('workflow_requests as b','workflow_request_details.workflow_request_id','b.id')
-       ->whereIn('workflow_request_details.status', ['PENDING'])
-       ->whereIn('b.status', ['PENDING'])
-       ->selectRaw('workflow_request_details.*,b.workflow_requestable_type, b.workflow_requestable_id')
-       ->latest();
+        $userId = user()->id;
 
-        if($request->has("type"))
-        {
+        $query = WorkflowRequestDetail::query()
+            ->where('workflow_request_details.implementor_id', $userId)
+            ->where('workflow_request_details.status', 'PENDING')
+            ->join('workflow_requests as b', 'workflow_request_details.workflow_request_id', '=', 'b.id')
+            ->where('b.status', 'PENDING')
+            ->selectRaw('workflow_request_details.*, b.workflow_requestable_type, b.workflow_requestable_id');
+
+        // Filter by type if provided
+        if ($request->has('type')) {
             $type = WorkflowType::firstWhere('code', $request->get('type'));
-            $workflowRequests = $workflowRequests->where('b.workflow_requestable_type',optional($type)->subject_type);
+            if ($type) {
+                $query->where('b.workflow_requestable_type', $type->subject_type);
+            }
         }
-        if (request()->ajax())
-        {
+
+        $workflowRequests = $query->latest();
+
+        if ($request->ajax()) {
             return datatables()->of($workflowRequests)
                 ->addIndexColumn()
-                ->setRowId(function ($row)
-                {
-                    return $row->id;
-                })
-                ->addColumn('employee_name', function ($row)
-                {
-                    return $row->employee->fullname;
-                })
-                ->addColumn('department', function ($row)
-                {
-                    return $row->employee->department->department_name;
-                })
-                ->addColumn('staff_id', function ($row)
-                {
-                    return $row->employee->staff_id;
-                })
-                ->addColumn('request_type', function ($row)
-                {
-                    return $row->workflowRequest->workflowType->name;
-                })
-                ->addColumn('request_date', function ($row)
-                {
-                    return $row->workflowRequest->created_at;
-                })
-                ->addColumn('action', function ($data)
-                {
-                    if(isset($data->approval_route))
-                    {
-                        $button = '<a href="'.route($data->approval_route, ['id' => $data->id, 'q' => $data->workflow_requestable_id]).'" class="show_new btn btn-info btn-sm"><i class="dripicons-preview"></i></a>';
-                    }else
-                        $button = '<a href="'.route("leaves.detail", ['id' => $data->workflow_requestable_id, 'q' => $data->id]).'" class="show_new btn btn-info btn-sm"><i class="dripicons-preview"></i></a>';
-                    return $button;
+                ->setRowId(fn($row) => $row->id)
+                ->addColumn('client_name', fn($row) => optional($row->workflowRequest->client)->fullname)
+                ->addColumn('employee_name', fn($row) => optional($row->employee)->fullname)
+                ->addColumn('staff_id', fn($row) => optional($row->employee)->staff_id)
+                ->addColumn('request_type', fn($row) => optional($row->workflowRequest->workflowType)->name)
+                ->addColumn('request_date', fn($row) => optional($row->workflowRequest)->created_at)
+                ->addColumn('action', function ($data) {
+                    $route = route($data->approval_route, $data->workflow_requestable_id);
+                    return '<a href="' . $route . '" class="show_new btn btn-info btn-sm"><i class="dripicons-preview"></i></a>';
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -81,6 +65,7 @@ class EmployeeRequestController extends Controller
 
         return view('workflow-requests.employee-requests.index');
     }
+
 
 
     /**
@@ -151,7 +136,7 @@ class EmployeeRequestController extends Controller
      */
     public function myRequests()
     {
-        $workflowRequests = WorkflowRequest::where(['employee_id' => user()->id])->latest();
+        $workflowRequests = WorkflowRequest::where(['user_id' => user()->id])->orWhere(['created_by' => user()->id])->latest();
         if (request()->ajax())
         {
             return datatables()->of($workflowRequests)
@@ -204,7 +189,7 @@ class EmployeeRequestController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Application|Factory|Response|View
+     * @return \Illuminate\Http\JsonResponse
      */
     public function allRequests(Request $request)
     {
@@ -216,23 +201,6 @@ class EmployeeRequestController extends Controller
         {
             $workflowRequests = $workflowRequests->whereHas('workflowRequest', function ($query) use($data) {
                 return $query->where('workflow_type_id', '=', $data['filter_request_type']);
-            });
-        }
-
-        if (!empty($data['filter_company']))
-        {
-            $workflowRequests = $workflowRequests->where('company_id', $data['filter_company']);
-        }
-        if (!empty($data['filter_department']))
-        {
-            $workflowRequests = $workflowRequests->whereHas('employee', function ($query) use($data) {
-                return $query->where('department_id', '=', $data['filter_department']);
-            });
-        }
-        if (!empty($data['filter_location']))
-        {
-            $workflowRequests = $workflowRequests->whereHas('employee', function ($query) use($data) {
-                return $query->where('location_id', '=', $data['filter_location']);
             });
         }
 
@@ -253,7 +221,7 @@ class EmployeeRequestController extends Controller
 
         if (request()->ajax())
         {
-            return datatables()->of($workflowRequests->orderBy('id', 'desc')->get())
+            return datatables()->of($workflowRequests->orderBy('updated_at', 'desc')->get())
                 ->setRowAttr([
                     'data-target' => function($row) {
                         return '#wf_requests-content';
@@ -274,20 +242,17 @@ class EmployeeRequestController extends Controller
                 {
                     $staff_id = "<span>Staff Id: ".($row->employee->staff_id ?? '')."</span>";
                     $employee = "<span>Name : ".($row->employee->fullname ?? '')."</span>";
-                    $department  = "<span>Department : ".($row->employee->department->department_name ?? '')."</span>";
-                    $designation = "<span>Designation : ".($row->employee->designation->designation_name ?? '')."</span>";
+                    $department  = "<span>Team : ".($row->employee?->team?->department_name ?? '')."</span>";
 
-                    return $staff_id.'</br>'.$employee.'</br>'.$department.'</br>'.$designation;
+                    return $staff_id.'</br>'.$employee.'</br>'.$department;
                 })
                 ->addColumn('implementor_name', function ($row)
                 {
-                    $implementor = Employee::find($row->implementor_id);
+                    $implementor = User::find($row->implementor_id);
                     $employee = "<span>Name: ".(optional($implementor)->fullname??"N/A")."</span>";
                     $staff_id = "<span>Staff Id: ".(optional($implementor)->staff_id??"N/A")."</span>";
-                    $department  = "<span>Department: ".(optional($implementor)->department->department_name ?? '')."</span>";
-                    $designation = "<span>Designation: ".(optional($implementor)->designation->designation_name ?? '')."</span>";
 
-                    return $staff_id.'</br>'.$employee.'</br>'.$department.'</br>'.$designation;
+                    return $staff_id.'</br>'.$employee;
                 })
                 ->addColumn('request_type', function ($row)
                 {

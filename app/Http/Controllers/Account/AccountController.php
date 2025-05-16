@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Account;
 
 use App\Constants\ResponseType;
 use App\Http\Controllers\Controller;
-use App\Services\Interfaces\IUserService;
+use App\Services\Auth\Interfaces\IUserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -76,5 +76,14 @@ class AccountController extends Controller
         request()->session()->flash('message', "Profile updated successfully");
 
         return redirect()->back();
+    }
+
+    public function notifications(Request $request)
+    {
+        $notifications =  Message::where('user_id', user()->id)->where('guard', 'user');
+        $notifications->update(['status'=>'read']);
+        $notifications = $notifications->paginate(20);
+
+        return view('admin.account.notifications',compact('notifications'));
     }
 }

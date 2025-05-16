@@ -4,6 +4,7 @@ namespace App\Abstracts;
 
 use App\Models\Auth\User;
 use App\Models\Common\Company;
+use App\Models\Common\DocumentUpload;
 use App\Traits\DateTime;
 use App\Traits\Owners;
 use App\Traits\Tenants;
@@ -175,15 +176,6 @@ abstract class Model extends Eloquent
         return $query->where($this->qualifyColumn('is_active'), 0);
     }
 
-    public function scopeContact($query, $contacts)
-    {
-        if (empty($contacts)) {
-            return $query;
-        }
-
-        return $query->whereIn($this->qualifyColumn('contact_id'), (array) $contacts);
-    }
-
     public function scopeSource($query, $source)
     {
         return $query->where($this->qualifyColumn('created_from'), $source);
@@ -216,5 +208,16 @@ abstract class Model extends Eloquent
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->format(env('Date_Format').' h:mA');
+    }
+
+    public function attachments()
+    {
+        return $this->morphMany(DocumentUpload::class, 'documentable');
+    }
+
+
+    public function attachment()
+    {
+        return $this->morphMany(DocumentUpload::class, 'documentable')->latest();
     }
 }

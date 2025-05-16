@@ -21,6 +21,7 @@ class Constants
     const ITEMS_PER_PAGE = 25;
     const NOTIFICATIONS_MEDIUM = ['mail'];
     const BONUS_AMOUNT = 10;
+    const PAYSLIP_COLOR = "#153e6f";
     const DEVELOPER = "Websoft";
     const DEFAULT_CSS = "/public/css/style.red.css";
     const COMPANY_LOGO  = "/logo/logo.png";
@@ -159,15 +160,13 @@ class Constants
 
     public const POSITION_TYPES = [
         'general-manager' => 'General Manager',
-        'hod' => 'Head of Department',
-        'hr-manager' => 'HR Manager',
         'finance-manager' => 'Finance Manager',
-        'unit-head' => 'Unit Head',
-        'supervisor' => 'Supervisor',
-        'employee' => 'Employee',
+        'operations-manager' => 'Operations Manager',
+        'team-lead' => 'Team Lead',
+        'assignees' => 'Assignees',
+        'requester' => 'Requester',
+        'responsible' => 'Responsible',
         'team' => 'Team',
-        'cfo' => 'CFO',
-        'ceo' => 'CEO'
     ];
 
     public const CONTACT_TYPES = [

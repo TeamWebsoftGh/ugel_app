@@ -1,4 +1,4 @@
-<form method="POST" action="{{route('tasks.customers.store')}}" >
+<form method="POST" action="{{route('admin.customers.store')}}" >
     <p>All fields with <span class="text-danger">*</span> are required.</p>
     @csrf
     <input type="hidden" id="_id" name="id" value="{{$customer->id}}">

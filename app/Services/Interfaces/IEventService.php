@@ -2,7 +2,7 @@
 
 namespace App\Services\Interfaces;
 
-use App\Models\Memo\Event;
+use App\Models\Communication\Event;
 use Illuminate\Support\Collection;
 
 interface IEventService extends IBaseService

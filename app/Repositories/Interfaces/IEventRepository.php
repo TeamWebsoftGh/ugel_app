@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\Models\Memo\Event;
+use App\Models\Communication\Event;
 use Illuminate\Support\Collection;
 
 interface IEventRepository extends IBaseRepository

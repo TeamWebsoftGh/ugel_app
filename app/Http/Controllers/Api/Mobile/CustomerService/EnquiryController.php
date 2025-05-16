@@ -4,10 +4,9 @@ namespace App\Http\Controllers\Api\Mobile\CustomerService;
 
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
-use App\Constants\ResponseType;
 use App\Http\Resources\EnquiryResource;
 use App\Models\CustomerService\Enquiry;
-use App\Services\Interfaces\IEnquiryService;
+use App\Services\CustomerService\Interfaces\IEnquiryService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth')->group(function () {
@@ -17,9 +18,11 @@ Route::middleware('auth')->group(function () {
         Route::post('account/change-password', 'ChangePasswordController@update')->name('account.change-password');
     });
 
-    Route::get('markAsRead', 'RouteClosureHandlerController@markAsReadNotification')->name('markAsRead');
-    Route::get('/all/notifications', 'RouteClosureHandlerController@allNotifications')->name('seeAllNoti');
-    Route::get('clearAll', 'RouteClosureHandlerController@clearAll')->name('clearAll');
+    Route::get('markAsRead', [NotificationController::class, 'markAsReadNotification'])->name('markAsRead');
+    Route::get('/all/notifications', [NotificationController::class, 'index'])->name('seeAllNoti');
+    Route::get('clearAll', [NotificationController::class, 'clearAll'])->name('clearAll');
+    Route::delete('/attachments/{id}', [HomeController::class, 'deleteAttachment'])->name('attachments.destroy');
+
 
 });
 

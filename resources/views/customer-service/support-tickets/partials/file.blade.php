@@ -46,7 +46,7 @@
                             </div>
                         </td>
                         <td>{{$file->created_at}}</td>
-                        <td>{{$file->createdBy->fullname}}</td>
+                        <td>{{$file->owner->fullname}}</td>
                         <td class="table-action">
                             <div class="btn-group">
                                 <a class="btn btn-sm btn-info" target="_blank" href="{{asset($file->file_path)}}">View</a></li>

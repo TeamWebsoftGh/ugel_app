@@ -63,45 +63,4 @@ class ClientRepository extends BaseRepository implements IClientRepository
         return $result->orderBy($order, $sort);
     }
 
-    /**
-     * Create the Client
-     *
-     * @param array $data
-     *
-     * @return Client
-     */
-    public function createClient(array $data): Client
-    {
-        return $this->create($data);
-    }
-
-    /**
-     * Find the Client by id
-     *
-     * @param int $id
-     *
-     * @return Client
-     */
-    public function findClientById(int $id): Client
-    {
-        return $this->findOneOrFail($id);
-    }
-
-
-    /**
-     * Update Client
-     *
-     * @param array $data
-     * @param Client $client
-     * @return bool
-     */
-    public function updateClient(array $data, Client $client): bool
-    {
-        return $this->update($data, $client->id);
-    }
-
-    public function deleteClient(Client $client): bool
-    {
-        return $this->delete($client->id);
-    }
 }

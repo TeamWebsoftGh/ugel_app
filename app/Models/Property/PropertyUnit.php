@@ -3,7 +3,7 @@
 namespace App\Models\Property;
 
 use App\Abstracts\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Billing\Booking;
 
 class PropertyUnit extends Model
 {
@@ -20,6 +20,7 @@ class PropertyUnit extends Model
         'late_fee_type',
         'incident_receipt',
         'rent_type',
+        'rent_duration',
         'monthly_due_pay',
         'yearly_due_pay',
         'lease_start_date',
@@ -39,13 +40,24 @@ class PropertyUnit extends Model
 
     ];
 
-    public function getUpdatedAtAtAttribute($value)
-    {
-        return Carbon::parse($value)->format(env('Date_Format'));
-    }
 
     public function property()
     {
         return $this->belongsTo(Property::class)->withDefault(['name' => 'N/A']);
+    }
+
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
+
+    public function amenities(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphToMany(Amenity::class, 'amenitable');
+    }
+
+    public function bookings()
+    {
+        return $this->hasMany(Booking::class);
     }
 }

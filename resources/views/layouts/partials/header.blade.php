@@ -64,45 +64,49 @@
 
                         <div class="p-2">
                             <div class="row g-0">
+                                @can("read-bookings")
+                                    <div class="col">
+                                        <a class="dropdown-icon-item" href="{{route("bookings.index")}}">
+                                            <i class="las la-hotel la-2x"></i>
+                                            <span>Bookings</span>
+                                        </a>
+                                    </div>
+                                @endcan
                                 <div class="col">
-                                    <a class="dropdown-icon-item" href="{{route("properties.create")}}">
-                                        <i class="las la-plane la-2x"></i>
-                                        <span>Add new Delegate</span>
+                                    <a class="dropdown-icon-item" href="{{route("properties.index")}}">
+                                        <i class="las la-building la-2x"></i>
+                                        <span>Properties</span>
                                     </a>
                                 </div>
-{{--                                <div class="col">--}}
-{{--                                    <a class="dropdown-icon-item" href="#!">--}}
-{{--                                        <img src="/assets/images/brands/bitbucket.png" alt="bitbucket">--}}
-{{--                                        <span>Bitbucket</span>--}}
-{{--                                    </a>--}}
-{{--                                </div>--}}
-{{--                                <div class="col">--}}
-{{--                                    <a class="dropdown-icon-item" href="#!">--}}
-{{--                                        <img src="/assets/images/brands/dribbble.png" alt="dribbble">--}}
-{{--                                        <span>Dribbble</span>--}}
-{{--                                    </a>--}}
-{{--                                </div>--}}
+                                @can("read-customers")
+                                    <div class="col">
+                                        <a class="dropdown-icon-item" href="{{route("admin.customers.index")}}">
+                                            <i class="las la-users la-2x"></i>
+                                            <span>Customers</span>
+                                        </a>
+                                    </div>
+                                @endcan
                             </div>
 
                             <div class="row g-0">
-{{--                                <div class="col">--}}
-{{--                                    <a class="dropdown-icon-item" href="#!">--}}
-{{--                                        <img src="/assets/images/brands/dropbox.png" alt="dropbox">--}}
-{{--                                        <span>Dropbox</span>--}}
-{{--                                    </a>--}}
-{{--                                </div>--}}
-{{--                                <div class="col">--}}
-{{--                                    <a class="dropdown-icon-item" href="#!">--}}
-{{--                                        <img src="/assets/images/brands/mail_chimp.png" alt="mail_chimp">--}}
-{{--                                        <span>Mail Chimp</span>--}}
-{{--                                    </a>--}}
-{{--                                </div>--}}
-{{--                                <div class="col">--}}
-{{--                                    <a class="dropdown-icon-item" href="#!">--}}
-{{--                                        <img src="/assets/images/brands/slack.png" alt="slack">--}}
-{{--                                        <span>Slack</span>--}}
-{{--                                    </a>--}}
-{{--                                </div>--}}
+                                {{--                                <div class="col">--}}
+                                {{--                                    <a class="dropdown-icon-item" href="#!">--}}
+                                {{--                                        <img src="/assets/images/brands/dropbox.png" alt="dropbox">--}}
+                                {{--                                        <span>Dropbox</span>--}}
+                                {{--                                    </a>--}}
+                                {{--                                </div>--}}
+                                {{--                                <div class="col">--}}
+                                {{--                                    <a class="dropdown-icon-item" href="#!">--}}
+                                {{--                                        <img src="/assets/images/brands/mail_chimp.png" alt="mail_chimp">--}}
+                                {{--                                        <span>Mail Chimp</span>--}}
+                                {{--                                    </a>--}}
+                                {{--                                </div>--}}
+                                {{--                                <div class="col">--}}
+                                {{--                                    <a class="dropdown-icon-item" href="#!">--}}
+                                {{--                                        <img src="/assets/images/brands/slack.png" alt="slack">--}}
+                                {{--                                        <span>Slack</span>--}}
+                                {{--                                    </a>--}}
+                                {{--                                </div>--}}
                             </div>
                         </div>
                     </div>
@@ -182,7 +186,7 @@
                                     @empty
                                     @endforelse
                                     <div class="my-3 text-center">
-                                        <a href="" class="btn btn-soft-success waves-effect waves-light">View
+                                        <a href="{{route("seeAllNoti")}}" class="btn btn-soft-success waves-effect waves-light">View
                                             All Notifications <i class="ri-arrow-right-line align-middle"></i></a>
                                     </div>
                                 </div>
@@ -214,9 +218,6 @@
                                 class="mdi mdi-lock text-muted fs-16 align-middle me-1"></i> <span
                                 class="align-middle">Change Password</span></a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="javascript:void(0)"><i
-                                class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span
-                                class="align-middle">Settings</span></a>
                         <a class="dropdown-item" href="javascript:void(0)"><i
                                 class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i> <span
                                 class="align-middle" data-key="t-logout" onclick="event.preventDefault();

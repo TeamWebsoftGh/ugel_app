@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+    @include("property.partials.filter")
     <div class="row">
         <div class="col-md-12 ">
             <div class="card">
@@ -22,7 +23,7 @@
                             <th>Category</th>
                             <th>Status</th>
                             <th>Last Modified</th>
-                            <th class="not-exported">Action</th>
+                            <th width="100px" class="not-exported">Action</th>
                         </tr>
                         </thead>
                         <tbody>

@@ -7,7 +7,7 @@ use App\Constants\ResponseType;
 use App\Http\Requests\ImportRequest;
 use App\Imports\AmenitiesImport;
 use App\Models\Property\Amenity;
-use App\Services\Interfaces\Properties\IAmenityService;
+use App\Services\Properties\Interfaces\IAmenityService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;

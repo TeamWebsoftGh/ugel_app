@@ -34,9 +34,12 @@ Route::group(['namespace' => '\App\Http\Controllers\Api', 'prefix' => 'clients']
         Route::get('property-categories', [CommonController::class, 'propertyCategories']);
         Route::get('properties/{id}', [PropertyController::class, 'show']);
         Route::get('properties', [PropertyController::class, 'index']);
+        Route::get('property-units', [PropertyController::class, 'units']);
+        Route::get('rooms', [PropertyController::class, 'rooms']);
         Route::get('countries', [CommonController::class, 'countries']);
         Route::get('regions', [CommonController::class, 'regions']);
         Route::get('cities', [CommonController::class, 'cities']);
+        Route::post('getPrice', [CommonController::class, 'getPrice']);
 
     });
 

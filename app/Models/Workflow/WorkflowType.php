@@ -2,13 +2,10 @@
 
 namespace App\Models\Workflow;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use App\Abstracts\Model;
 
 class WorkflowType extends Model
 {
-    use HasFactory;
-
     protected $fillable= [
         'name',
         'code',
@@ -17,8 +14,9 @@ class WorkflowType extends Model
         'is_active',
         'subject_type',
         'company_id',
+        'created_by',
+        'created_from',
         'sort_order',
-        'created_at',
-        'updated_at',
+        'approval_route'
     ];
 }

@@ -7,7 +7,7 @@ use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Events\WorkflowStatusChanged;
 use App\Events\LeaveSubmittedEvent;
-use App\Helpers\LeaveTypeHelper;
+use App\Helpers\MaintenanceHelper;
 use App\Helpers\StatusHelper;
 use App\Repositories\Interfaces\IOrderRepository;
 use App\Repositories\Interfaces\IOffenseRepository;
@@ -67,7 +67,7 @@ class OrderService extends ServiceBase implements IOrderService
         //Process Request
         try {
             $params["order_no"] = generate_order_number();
-            $params["status_id"] = LeaveTypeHelper::INCOMPLETE;
+            $params["status_id"] = MaintenanceHelper::INCOMPLETE;
             $order = $this->orderRepo->createOrder($params);
 
             if (isset($params['customer_files'])) {
@@ -188,7 +188,7 @@ class OrderService extends ServiceBase implements IOrderService
             $status = StatusHelper::getById($status);
             $oldStatus =  $order->orderStatus->name;
 
-            if($status->id == LeaveTypeHelper::INCOMPLETE){
+            if($status->id == MaintenanceHelper::INCOMPLETE){
                 $this->response->status = ResponseType::ERROR;
                 $this->response->message = "You cannot update this order status. Complete the order and try again.";
 
@@ -239,7 +239,7 @@ class OrderService extends ServiceBase implements IOrderService
         $result = false;
 
         try{
-            if ($order->status_id != LeaveTypeHelper::INCOMPLETE)
+            if ($order->status_id != MaintenanceHelper::INCOMPLETE)
             {
                 $this->response->status = ResponseType::ERROR;
                 $this->response->message = "You cannot delete this Order.";
@@ -279,12 +279,12 @@ class OrderService extends ServiceBase implements IOrderService
      * @param int $status
      * @return Response
      */
-    public function submitOrder(Order $order, $status = LeaveTypeHelper::SUBMITTED)
+    public function submitOrder(Order $order, $status = MaintenanceHelper::SUBMITTED)
     {
         //Declaration
         $result = false;
 
-        if($order->status_id != LeaveTypeHelper::INCOMPLETE)
+        if($order->status_id != MaintenanceHelper::INCOMPLETE)
         {
             $this->response->status = ResponseType::SUCCESS;
             $this->response->message = "Order successfully updated for ".$order->service->name;
@@ -297,7 +297,7 @@ class OrderService extends ServiceBase implements IOrderService
             $result = $this->orderRepo->updateOrder([
                 'date_submitted' => Carbon::now(),
                 'status' => 1,
-                'status_id' => LeaveTypeHelper::SUBMITTED
+                'status_id' => MaintenanceHelper::SUBMITTED
             ], $order);
 
             event(new LeaveSubmittedEvent($order));

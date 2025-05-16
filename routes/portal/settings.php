@@ -39,8 +39,8 @@ Route::group(['prefix' => 'configurations', 'as' => 'configuration.', 'namespace
         Route::put('whatsapp', 'GeneralSettingController@updateSiteWhatsApp')->name('whatsapp.store');
     });
     Route::get('currencies/detail/{id}', 'CurrencyController@edit')->name('currencies.detail');
-    Route::resource('currencies', 'CurrencyController', ['except' => ['update', 'show', 'create']]);
-
+    Route::resource('currencies', 'CurrencyController', ['except' => ['update', 'show']]);
+    Route::resource('payment-gateways', 'PaymentGatewayController');
     Route::group(['prefix' => 'menus'], function(){
         Route::get('/main-menu', ['uses'=>'DynamicMenusController@createMainMenu'])->name('menu.create');
         Route::post('/main-menu', ['uses'=>'DynamicMenusController@storeMainMenu'])->name('menu.store');

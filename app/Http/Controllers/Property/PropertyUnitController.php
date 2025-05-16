@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Property;
 
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
+use App\Helpers\DataTableActionHelper;
 use App\Models\Property\PropertyUnit;
-use App\Services\Interfaces\IPropertyService;
-use App\Services\Interfaces\IPropertyUnitService;
+use App\Services\Helpers\PropertyHelper;
+use App\Services\Properties\Interfaces\IPropertyService;
+use App\Services\Properties\Interfaces\IPropertyUnitService;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -32,7 +34,7 @@ class PropertyUnitController extends Controller
     /**
 	 * Display a listing of the resource.
 	 *
-	 * @return \Illuminate\Http\JsonResponse
+	 * @return Factory|\Illuminate\Foundation\Application|object|View
      */
 	public function index(Request $request)
 	{
@@ -61,21 +63,20 @@ class PropertyUnitController extends Controller
                 {
                     return $row->is_active?"Active":"Inactive";
                 })
-                ->addColumn('action', function ($data)
-                {
-                    $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></button>';
-                    $button .= '&nbsp;';
-                    if (user()->can('update-property-units'))
-                    {
-                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
-                        $button .= '&nbsp;';
-                    }
-                    if (user()->can('delete-property-units'))
-                    {
-                        $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
-                    }
-
-                    return $button;
+                ->addColumn('action', function ($row) {
+                    return DataTableActionHelper::generate($row->id, [
+                        //'view' => true,
+                        'view' => [
+                            'url' => route('property-units.show', $row->id),
+                        ],
+                        'edit' => user()->can("update-property-units"),
+                        'delete' => user()->can("delete-property-units"),
+                    ],[
+                        [
+                            'label' => 'View Rooms',
+                            'icon' => 'ri-home-4-line',
+                            'url' => route("rooms.index", ['filter_property_unit' => $row->id])
+                        ]]);
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -88,15 +89,15 @@ class PropertyUnitController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param int $id
-     * @return Factory|\Illuminate\Foundation\Application|View
+     * @return Factory|\Illuminate\Foundation\Application|View|\Illuminate\Http\JsonResponse
      */
     public function create()
     {
         $property_unit = new PropertyUnit();
         $properties = $this->propertyService->listProperties();
-
+        $amenities = PropertyHelper::getAllAmenities();
         if (request()->ajax()){
-            return view('property.property-units.edit', compact('property_unit', 'properties'));
+            return view('property.property-units.edit', compact('property_unit', 'properties','amenities'));
         }
 
         return redirect()->route("property-units.index");
@@ -155,7 +156,7 @@ class PropertyUnitController extends Controller
             return view('property.property-units.edit', compact('property_unit'));
         }
 
-        return redirect()->route("property-units.index");
+        return view('property.property-units.show', compact('property_unit'));
 	}
 
 	/**
@@ -168,9 +169,10 @@ class PropertyUnitController extends Controller
 	{
         $property_unit = $this->propertyUnitService->findPropertyUnitById($id);
         $properties = $this->propertyService->listProperties();
+        $amenities = PropertyHelper::getAllAmenities();
 
         if (request()->ajax()){
-            return view('property.property-units.edit', compact('property_unit', 'properties'));
+            return view('property.property-units.edit', compact('property_unit', 'properties','amenities'));
         }
 
         return redirect()->route("property-units.index");

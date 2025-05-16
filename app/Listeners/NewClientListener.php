@@ -6,8 +6,7 @@ use App\Events\NewClientEvent;
 use App\Models\Common\Email;
 use App\Traits\SmsTrait;
 use Exception;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+
 
 class NewClientListener
 {
@@ -34,18 +33,19 @@ class NewClientListener
 
         // send email to job applicant
         try {
+            $companyName = settings("company_name");
             $data = new Email();
 
             $data['eloquentable_type'] = get_class($client);
             $data['eloquentable_id'] = $client ? optional($client)->id : null;;
-            $data['line_1'] = "Thank you for joining ".settings("company_name", "Forms Capital")." We are excited to have you as a member of our platform.";
-            $data['line_2'] = "With our services, you can access a wide range of investment packages and apply for loans conveniently.";
+            $data['line_1'] = "Welcome to {$companyName}! We're excited to have you onboard.";
+            $data['line_2'] = "You can now manage your bookings, track rent payments, request maintenance, and more – all from your dashboard.";
             $data['line_3'] = "If you have any questions or need assistance, please don't hesitate to reach out to our support team.";
             $data['emailable_id'] = $client->id;
             $data['emailable_type'] = get_class($client);
             $data['to'] = $client->email;
-            $data['button_url'] = route('client.login');
-            $data['button_name'] = "Login";
+//            $data['button_url'] = route('client.login');
+//            $data['button_name'] = "Login";
             $data['subject'] = "Welcome to ".settings("company_name");
             $data['company_id'] = company_id()??1;
 

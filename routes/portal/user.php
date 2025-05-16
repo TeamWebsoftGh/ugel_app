@@ -27,6 +27,13 @@ Route::group(['prefix' => 'user-access', 'namespace' => 'App\Http\Controllers\Us
     Route::get('permissions/{id}/delete', 'PermissionController@destroy')->name('permissions.destroy');
     Route::resource('permissions', 'PermissionController', ['only' => ['index', 'edit', 'store', 'destroy']]);
 
+
+    //Teams
+    Route::delete('teams/delete/selected', 'TeamController@bulkDelete')->name('teams.delete.selected');
+    Route::get('teams/import', 'TeamController@import')->name('teams.import');
+    Route::post('teams/import', 'TeamController@importPost')->name('teams.importPost');
+    Route::resource('teams', 'TeamController')->except(['update']);
+
 //    Route::get('/detail/{id}', 'UserController@show')->name('get-user');
 //    Route::post('/reset-password/{id}', 'UserController@resetPassword')->name('user.reset-password');
 //    Route::get('/bulk-password-reset', 'UserController@bulkPasswordReset')->name('user.bulk-password-reset');

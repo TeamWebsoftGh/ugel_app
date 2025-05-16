@@ -1,108 +1,77 @@
-<form method="POST" action="{{route('workflows.workflows.store')}}"  class="form-horizontal">
+<form method="POST" id="workflow" action="{{route('workflows.workflows.store')}}"  class="form-horizontal">
     @csrf
     <input type="hidden" id="_id" name="id" value="{{$workflow->id}}">
     <input type="hidden" id="_name" name="me" value="{{$workflow->workflow_name}}">
     <div class="row">
-        <div class="col-md-4 col-6 form-group">
-            <label>{{__('Workflow Type')}} <span class="text-danger">*</span></label>
-            <select name="workflow_type" id="workflow_type" class="form-control selectpicker"
-                    data-live-search="true" title='{{__('Selecting',['key'=>__('Workflow Type')])}}...'>
-                @forelse($workflowTypes as $workflowType)
-                    <option value="{{$workflowType->id}}">{{$workflowType->name}}</option>
-                @empty
-                @endforelse
-            </select>
-            <span class="input-note text-danger" id="error-workflow_type"> </span>
-            @error('workflow_type')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
-        <div class="col-md-4 col-6 form-group">
-            <label>{{__('Workflow Name')}} <span class="text-danger">*</span></label>
-            <input type="text" name="workflow_name" id="workflow_name" value="{{$workflow->workflow_name}}"
-                   class="form-control" placeholder="Eg. First Leave Approver">
-            <span class="input-note text-danger" id="error-workflow_name"> </span>
-            @error('workflow_name')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
-        <div class="col-md-4 col-6 form-group">
-            <label>{{__('Position Type(Approver)')}} <span class="text-danger">*</span></label>
-            <select name="workflow_position_type" id="workflow_position_type" class="form-control selectpicker"
-                    data-live-search="true"
-                    title='{{__('Selecting',['key'=>__('Position Type')])}}...'>
-                <option value="" disabled selected>{{__('Select Position Type')}}</option>
-                @forelse($positionTypes as $positionType)
-                    <option value="{{$positionType->id}}">{{$positionType->name}}</option>
-                @empty
-                @endforelse
-            </select>
-            <span class="input-note text-danger" id="error-workflow_position_type"> </span>
-            @error('workflow_position_type')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
-        <div class="col-md-4 col-6 form-group">
-            <label>{{__('Action')}} <span class="text-danger">*</span></label>
-            <select name="action" id="action" class="form-control selectpicker"
-                    data-live-search="true" data-live-search-style="begins"
-                    title='{{__('Selecting',['key'=>__('')])}}...'>
-                <option value="approve">{{__('Approve')}}</option>
-                <option value="inform">{{__('Inform')}}</option>
-            </select>
-            <span class="input-note text-danger" id="error-action"> </span>
-            @error('action')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
-        <div class="col-md-4 col-6 form-group">
-            <label>{{__('Flow Sequence')}} <span class="text-danger">*</span></label>
-            <select name="flow_sequence" id="flow_sequence_k" class="form-control selectpicker"
-                    data-live-search="true" title='{{__('Selecting',['key'=>__('flow sequence')])}}...'>
-                @for ($i = 1; $i <= 10; $i++)
-                    <option value={{$i}}>Sequence {{$i}}</option>
-                @endfor
-            </select>
-            <span class="input-note text-danger" id="error-flow_sequence"> </span>
-            @error('flow_sequence')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
-        <div class="col-md-4 col-6 form-group">
-            <label>{{__('Status')}} *</label>
-            <select name="status" id="status" class="form-control selectpicker" data-ignore="1"
-                    data-live-search="true" data-live-search-style="begins"
-                    title='{{__('Selecting',['key'=>__('')])}}...'>
-                <option value="" disabled selected>{{__('Select Status...')}}</option>
-                <option value="1">{{__('Active')}}</option>
-                <option value="0">{{__('Inactive')}}</option>
-            </select>
-            <span class="input-note text-danger" id="error-status"> </span>
-            @error('status')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
-        <div class="form-group col-sm-12 col-xl-8">
-            <label for="description" class="control-label">Description</label>
-            <textarea class="form-control" rows="2" name="description">{{old("remarks", $workflow->description)}}</textarea>
-            <span class="input-note text-danger" id="error-description"> </span>
-            @error('description')
-            <span class="input-note text-danger">{{ $message }} </span>
-            @enderror
-        </div>
+        <x-form.input-field
+            name="workflow_type"
+            label="Workflow Type"
+            type="select"
+            :options="$workflowTypes->pluck('name', 'id')"
+            :value="$workflow->workflow_type_id"
+            required
+        />
+        <x-form.input-field
+            name="workflow_name"
+            label="Workflow Name"
+            type="text"
+            :value="$workflow->workflow_name"
+            required
+        />
+        <x-form.input-field
+            name="workflow_position_type"
+            label="Position Type(Approver)"
+            type="select"
+            :options="$positionTypes->pluck('name', 'id')"
+            :value="$workflow->workflow_position_type_id"
+            required
+        />
+        <x-form.input-field name="action_type" label="Action Type" type="select" :options="['approve' => 'Approve', 'inform' => 'Inform']" :value="$workflow->action_type" required />
+        <x-form.input-field name="flow_sequence" label="Flow Sequence" type="select" :options="$flowSequenceOptions" :value="$workflow->flow_sequence" required />
+
+        <x-form.input-field
+            name="return_to"
+            label="Return to"
+            type="select"
+            :options="[]"
+            :value="$workflow->return_to"
+        />
+        <x-form.input-field name="send_email" label="Send Email" type="select" :options="['1' => 'Yes', '0' => 'No']" :value="$workflow->send_email" required />
+        <x-form.input-field name="is_active" label="Status" type="select" :options="['1' => 'Active', '0' => 'Inactive']" :value="$workflow->is_active" required />
+        <x-form.input-field name="description" class="col-md-12" rows="3" label="Description" type="textarea" placeholder="Enter a description" :value="$workflow->description" />
+
     </div>
-    <div class="form-group">
-        <div class="form-group col-12">
-            @include("shared.new-controls")
-        </div>
+    <div class="form-group col-12">
+        @include("shared.save-button")
     </div>
 </form>
 <script>
     $(document).ready(function () {
+        const selectedWorkflowType = $('#workflow_type').val();
         $('#action').selectpicker('val', '{{$workflow->action}}');
-        $('#status').selectpicker('val', '{{$workflow->is_active}}');
-        $('#workflow_type').selectpicker('val', '{{$workflow->workflow_type_id}}');
-        $('#flow_sequence_k').selectpicker('val', {{$workflow->flow_sequence}});
-        $('#workflow_position_type').selectpicker('val', '{{$workflow->workflow_position_type_id}}');
+        $('#flow_sequence_k').selectpicker('val', '{{$workflow->flow_sequence}}');
+
+        // Initial load
+        if (selectedWorkflowType) {
+            loadReturnToOptions(selectedWorkflowType);
+        }
+
+        // On change
+        $('#workflow_type').on('change', function () {
+            loadReturnToOptions($(this).val());
+        });
+
+        function loadReturnToOptions(workflowTypeId) {
+            if (!workflowTypeId) return;
+
+            $.get(`/ajax/workflow/return-to-options/${workflowTypeId}`, function (data) {
+                let options = `<option value="" disabled selected>Select...</option>`;
+                $.each(data, function (id, name) {
+                    options += `<option value="${id}">${name}</option>`;
+                });
+                $('#return_to').html(options).selectpicker?.('refresh');
+            });
+        }
     });
+
 </script>

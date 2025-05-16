@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Workflow;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Workflow\WorkflowPositionType;
-use App\Services\Interfaces\IWorkflowPositionTypeService;
+use App\Services\Workflow\Interfaces\IWorkflowPositionTypeService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
@@ -40,34 +40,11 @@ class PositionTypeController extends Controller
     {
         if (request()->ajax())
         {
-            $workflowPositionTypes = $this->workflowPositionTypeService->listWorkflowPositionTypes();
-            return datatables()->of($workflowPositionTypes)
-                ->setRowId(function ($award)
-                {
-                    return $award->id;
-                })
-                ->addIndexColumn()
-                ->setRowAttr([
-                    'data-target' => function($travel) {
-                        return '#wf_position-content';
-                    },
-                ])
-                ->addColumn('action', function ($data)
-                {
-                    $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-info btn-sm" data-toggle="tooltip" data-placement="top" title="Show"><i class="las la-eye"></i></button>';
-                    $button .= '&nbsp;';
-                    if (user()->can('update-workflow-position-types'))
-                    {
-                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
-                        $button .= '&nbsp;';
-                    }
-                    if (user()->can('delete-workflow-position-types'))
-                    {
-                        $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
-                    }
-
-                    return $button;
-                })
+            $items = $this->workflowPositionTypeService->listWorkflowPositionTypes();
+            return datatables()->of($items)
+                ->setRowId(fn($row) => $row->id)
+                ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
+                ->addColumn('action', fn($data) => $this->getActionButtons($data, "workflow-position-types"))
                 ->rawColumns(['action'])
                 ->make(true);
         }
@@ -166,6 +143,18 @@ class PositionTypeController extends Controller
         $workflowPositionType = $this->workflowPositionTypeService->findWorkflowPositionTypeById($id);
         $result = $this->workflowPositionTypeService->deleteWorkflowPositionType($workflowPositionType);
 
+        return $this->responseJson($result);
+    }
+
+    /**
+     * Bulk delete resources from storage.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $result = $this->workflowPositionTypeService->deleteMultiple($request->ids);
         return $this->responseJson($result);
     }
 }

@@ -2,47 +2,39 @@
 
 namespace App\Http\Controllers\Ajax;
 
-use App\Http\Controllers\Controller;
-use App\Services\Interfaces\IConstituencyService;
-use App\Services\Interfaces\IElectoralAreaService;
-use App\Services\Interfaces\IPollingStationService;
+use App\Abstracts\Http\MobileController;
+use App\Constants\ResponseMessage;
+use App\Models\Auth\Team;
+use App\Models\CustomerService\MaintenanceCategory;
+use App\Models\Workflow\Workflow;
+use App\Services\Workflow\Interfaces\IWorkflowService;
 use Illuminate\Http\Request;
 
-class DynamicDependentController extends Controller
+class DynamicDependentController extends MobileController
 {
     /**
-     * @var IConstituencyService
+     * @var DynamicDependentController
      */
-    private IConstituencyService $constituencyService;
-    private IElectoralAreaService $electoralAreaService;
-    private IPollingStationService $pollingStationService;
-
     /**
      * CategoryController constructor.
      *
-     * @param IConstituencyService $constituencyService
      */
-    public function __construct(IConstituencyService $constituencyService,
-                                IElectoralAreaService $electoralAreaService,  IPollingStationService $pollingStationService)
+    public function __construct()
     {
         parent::__construct();
-        $this->constituencyService = $constituencyService;
-        $this->electoralAreaService = $electoralAreaService;
-        $this->pollingStationService = $pollingStationService;
     }
     //
-    public function getConstituencies(Request $request)
+    public function getReturnToOptions($workflowTypeId)
     {
-        $value = $request->get('value');
-        $data = $this->constituencyService->listConstituencies(['filter_status' => 1, 'filter_region' => $value]);
-        $output = '';
-        foreach ($data as $row)
-        {
-            $output .= '<option value=' . $row->id . '>' . $row->name . '</option>';
-        }
+        $workflows = Workflow::where('workflow_type_id', $workflowTypeId)
+            ->orderBy('flow_sequence')
+            ->get();
 
-        return $output;
+        return response()->json(
+            $workflows->pluck('workflow_name', 'id')
+        );
     }
+
 
     public function getElectoralAreas(Request $request)
     {
@@ -58,10 +50,9 @@ class DynamicDependentController extends Controller
     }
 
 
-    public function getPollingStations(Request $request)
+    public function fetchTeams(Request $request)
     {
-        $value = $request->get('value');
-        $data = $this->pollingStationService->listPollingStations(['filter_status' => 1, 'filter_electoral_area' => $value]);
+        $data = Team::where('is_active', 1)->get();
         $output = '';
         foreach ($data as $row)
         {

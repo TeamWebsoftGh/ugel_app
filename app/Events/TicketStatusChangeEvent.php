@@ -2,7 +2,8 @@
 
 namespace App\Events;
 
-use App\Models\SupportTicket;
+
+use App\Models\CustomerService\SupportTicket;
 
 class TicketStatusChangeEvent
 {

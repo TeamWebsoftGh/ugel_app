@@ -88,7 +88,7 @@ function DetermineIconFromResult(data) {
         error: "<h4><i class='fa fa-remove' style='font-size:23px;color:red'></i> ERROR</h4><hr />",
     };
 
-    return icons[data.Result] || icons.error;
+    return icons[data.status] || icons.error;
 }
 
 // Function to Print a Document
@@ -151,4 +151,53 @@ $(document).on("click", ".print-btn", function () {
     $('body').html(printcontent);
     window.print();
     window.location.reload();
+});
+
+function updateDropdown(url, targetId, placeholder = 'Select an option', selected = null) {
+    const dropdown = $('#' + targetId);
+
+    $.get(url)
+        .done(function(response) {
+            if (response.status_code === '000') {
+                dropdown.empty().append(`<option value="">${placeholder}</option>`);
+                response.data.forEach(item => {
+                    const isSelected = selected && selected == item.id ? 'selected' : '';
+                    dropdown.append(`<option value="${item.id}" ${isSelected}>${item.name}</option>`);
+                });
+            } else {
+                console.warn(`Warning: ${response.message}`);
+            }
+        })
+        .fail(function(xhr) {
+            console.error("Failed to load dropdown:", xhr.responseText);
+        })
+        .always(function() {
+            dropdown.selectpicker?.('refresh');
+        });
+}
+
+// Handle attachment deletion
+$(document).on('click', '.delete-attachment', function () {
+    const $btn = $(this);
+    const url = $btn.data('url');
+    const container = $btn.closest('.s_attach');
+
+    if (!confirm("Are you sure you want to delete this attachment?")) return;
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: {
+            _method: 'DELETE',
+            _token: $('meta[name="csrf-token"]').attr('content'),
+        },
+        success: function (response) {
+            container.fadeOut(300, function () {
+                $(this).remove();
+            });
+        },
+        error: function () {
+            alert('Failed to delete the attachment.');
+        }
+    });
 });

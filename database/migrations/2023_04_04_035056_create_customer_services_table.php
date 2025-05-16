@@ -1,4 +1,5 @@
-<?php
+?"<?php
+
 
 use App\Traits\CommonMigrationTrait;
 use Illuminate\Database\Migrations\Migration;
@@ -31,6 +32,11 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->boolean('is_notify')->nullable();
             $table->timestamp('closed_at')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->string('email')->nullable();
+
+            $table->unsignedBigInteger('support_topic_id')->nullable()->index();
+            $table->foreign('support_topic_id')->references('id')->on('support_topics')->onDelete('cascade');
 
             $table->unsignedBigInteger('priority_id')->nullable()->index();
             $table->foreign('priority_id')->references('id')->on('priorities')->onDelete('cascade');
@@ -42,16 +48,18 @@ return new class extends Migration
 
         });
 
-        Schema::create('support_ticket_comments', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
-            $table->text('subject')->nullable();
-            $table->text('message');
+            $table->text('message'); // Comment text
 
-            $table->unsignedBigInteger('support_ticket_id')->index();
-            $table->foreign('support_ticket_id')->references('id')->on('support_tickets');
+            // Polymorphic relationship
+            $table->morphs('commentable'); // Creates `commentable_id` & `commentable_type`
 
-            $table->bigInteger('user_id')->unsigned()->index();
-            $this->empExtracted($table);
+            // User who made the comment
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+
+            // Timestamps
+            $table->timestamps();
         });
 
         Schema::create('support_ticket_users', function (Blueprint $table) {
@@ -75,6 +83,7 @@ return new class extends Migration
             $table->string('client_ip')->nullable();
             $table->string('client_agent')->nullable();
             $table->string('form_id')->unique();
+            $table->text('reply')->nullable();$table->text('reply')->nullable();
 
             $table->unsignedBigInteger('client_id')->nullable()->index();
             $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
@@ -87,32 +96,63 @@ return new class extends Migration
             $table->string('name');
             $table->string('short_name')->nullable();
             $table->text('description')->nullable();
+
+            // Self-referencing foreign key (nullable for main categories)
+            $table->foreignId('parent_id')->nullable()->constrained('maintenance_categories')->onDelete('cascade');
+
             $this->empExtracted($table);
             $table->foreignId('team_id')->nullable()->constrained('teams');
         });
 
-        Schema::create('maintenances', function (Blueprint $table) {
+
+        Schema::create('maintenance_requests', function (Blueprint $table) {
             $table->id();
-            $table->string('reference',15)->unique();
+            $table->string('reference', 15)->unique();
             $table->mediumText('description')->nullable();
             $table->mediumText('remarks')->nullable();
             $table->string('note')->nullable();
             $table->string('status')->nullable();
+            $table->string('client_number')->nullable();
+            $table->string('client_phone_number')->nullable();
+            $table->string('client_email')->nullable();
+            $table->string('location')->nullable();
+            $table->string('other_issue')->nullable();
             $table->boolean('is_notify')->nullable();
             $table->timestamp('closed_at')->nullable();
             $table->timestamp('completed_at')->nullable();
 
-            $table->unsignedBigInteger('priority_id')->nullable()->index();
-            $table->foreign('priority_id')->references('id')->on('priorities')->onDelete('cascade');
-
-            $table->unsignedBigInteger('client_id')->nullable()->index();
-            $table->foreign('client_id')->references('id')->on('clients')->onDelete('cascade');
-
-            $table->unsignedBigInteger('maintenance_category_id')->nullable()->index();
-            $table->foreign('maintenance_category_id')->references('id')->on('maintenance_categories')->onDelete('cascade');
+            $table->string('type')->nullable();
+            $table->foreignId('property_unit_id')->nullable();
+            $table->foreignId('maintenance_category_id')->nullable();
+            $table->foreignId('priority_id')->nullable()->constrained('priorities')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('client_id')->nullable()->constrained('clients')->onDelete('cascade');
+            $table->foreignId('property_id')->nullable();
+            $table->foreignId('room_id')->nullable();
 
             $this->empExtracted($table);
         });
+
+        // Many-to-Many Pivot Table
+        Schema::create('maintenance_category_maintenance_requests', function (Blueprint $table) {
+          //  $table->id();
+            $table->foreignId('maintenance_id')->constrained('maintenance_requests')->onDelete('cascade');
+          //  $table->string('other_issue')->nullable();
+            // Shortened Foreign Key Name
+            $table->foreignId('maintenance_category_id')
+                ->constrained('maintenance_categories', 'id', 'fk_maint_category_request')
+                ->onDelete('cascade');
+        });
+
+        Schema::create('maintenance_requests_users', function (Blueprint $table) {
+            $table->unsignedBigInteger('maintenance_requests_id')->index();
+            $table->foreign('maintenance_requests_id')->references('id')->on('maintenance_requests');
+
+            $table->unsignedBigInteger('user_id')->index();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
+        });
+
     }
 
     /**
@@ -120,6 +160,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::dropIfExists('maintenance_category_maintenance');
+        Schema::dropIfExists('maintenances');
+        Schema::dropIfExists('maintenance_categories');
+        Schema::dropIfExists('customer_enquiries');
         Schema::dropIfExists('customer_services');
     }
 };

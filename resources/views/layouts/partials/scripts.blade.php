@@ -7,6 +7,10 @@
 <script type="text/javascript" src="/assets/libs/flatpickr/flatpickr.min.js"></script>
 <script type="text/javascript" src="/assets/libs/bootstrap/js/bootstrap-select.min.js"></script>
 
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
 
 <!-- prismjs plugin -->
 <script src="/assets/libs/prismjs/prism.js"></script>
@@ -26,8 +30,6 @@
 <!-- dropify min -->
 <script src="/plugins/dropify/dropify.min.js"></script>
 
-<!-- dropzone min -->
-<script src="/assets/libs/dropzone/dropzone-min.js"></script>
 
 <script src="/assets/js/pages/form-validation.init.js"></script>
 
@@ -48,13 +50,16 @@
 <!-- App js -->
 <script src="/assets/js/app.js"></script>
 <script src="/assets/js/custom.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 
 <!-- ecommerce product details init -->
 <script src="/assets/js/pages/ecommerce-product-details.init.js"></script>
 
 <script>
     var dateFormat = @json(env('Date_Format'));
+    function capitalize(str) {
+        return str ? str.charAt(0).toUpperCase() + str.slice(1) : '';
+    }
+
     function ShowItem(url, target)
     {
         $.ajax({

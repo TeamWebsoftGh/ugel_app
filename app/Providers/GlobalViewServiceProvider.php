@@ -4,8 +4,7 @@ namespace App\Providers;
 
 use App\Http\View\Composers\PropertyComposer;
 use App\Http\View\Composers\LayoutComposer;
-use App\Models\Common\FinancialYear;
-use App\Models\Timesheet\LeaveType;
+use App\Services\Helpers\PropertyHelper;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,17 +33,18 @@ class GlobalViewServiceProvider extends ServiceProvider
         );
 
         View::composer(
-            ['property.*', 'settings.*', 'client.*', 'report.*', 'employee.*', 'timesheet.*','memo.*','resource.*',
+            ['property.*', 'settings.*', 'client.*', 'report.*', 'legal.*', 'billing.*','communication.*','resource.*',
                 'organization.*', 'workflow.*','offers.*', 'workflow-requests.*', 'customer-service.*', 'tasks.*',
-                'configuration.leave-types.*'],
+                'user-access.teams.*'],
             PropertyComposer::class
         );
 
+
         view()->composer([
-            'timesheet.partials*',
+            'report.*',
         ], function ($view) {
-            $view->with('leave_years', FinancialYear::pluck('year'));
-            $view->with('leave_year', date('Y'));
+            $view->with('properties', PropertyHelper::getAllProperties());
+            $view->with('report_year', date('Y'));
         });
     }
 

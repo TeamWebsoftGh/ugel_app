@@ -5,27 +5,18 @@ namespace App\Http\Controllers\Workflow;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Workflow\Workflow;
-use App\Traits\JsonResponseTrait;
-use App\Services\Interfaces\IWorkflowPositionTypeService;
-use App\Services\Interfaces\IWorkflowService;
-use App\Services\Interfaces\IWorkflowTypeService;
+use App\Services\Workflow\Interfaces\IWorkflowPositionTypeService;
+use App\Services\Workflow\Interfaces\IWorkflowService;
+use App\Services\Workflow\Interfaces\IWorkflowTypeService;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\View\View;
-use function datatables;
-use function redirect;
-use function request;
-use function user;
-use function view;
 
 class WorkflowController extends Controller
 {
-    use JsonResponseTrait;
-
     private IWorkflowPositionTypeService $positionTypeService;
     private IWorkflowService $workflowService;
     private IWorkflowTypeService $workflowTypeService;
@@ -48,31 +39,42 @@ class WorkflowController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return Application|\Illuminate\Contracts\View\Factory|Response|\Illuminate\View\View
+     * @return JsonResponse|Application|Factory|RedirectResponse|View
      */
-    public function index()
+    public function index(Request $request)
     {
-        $workflow = new Workflow();
-        $positionTypes = $this->positionTypeService->listActiveWorkflowPositionTypes('updated_at');
-        $workflowTypes = $this->workflowTypeService->listActiveWorkflowTypes('updated_at');
-        $workflows = $this->workflowService->listWorkflows('updated_at');
-        if (request()->ajax())
+        if ($request->ajax())
         {
-            return datatables()->of($workflows)
-                ->setRowId(function ($row)
-                {
-                    return $row->id;
-                })
-                ->addIndexColumn()
-                ->setRowAttr([
-                    'data-target' => function($travel) {
-                        return '#wf_position-content';
-                    },
-                ])
+            $items = $this->workflowService->listWorkflows($request->all());
+            return datatables()->of($items)
+                ->setRowId(fn($row) => $row->id)
+                ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
+                ->addColumn('workflow_type_name', fn($row) => $row->workflowType->name)
+                ->addColumn('workflow_position_name', fn($row) => $row->workflowPositionType->name)
+                ->addColumn('flow_sequence', fn($row) => "Stage ".$row->flow_sequence)
+                ->addColumn('action', fn($data) => $this->getActionButtons($data, "workflow-position-types"))
+                ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('workflow.workflows.create', compact('positionTypes', 'workflow', 'workflowTypes'));
+        return view('workflow.workflows.index');
+    }
+
+    public function create()
+    {
+        $workflow = new Workflow();
+        $workflow->is_active = 1;
+        $flowSequenceOptions = collect(range(1, 10))->mapWithKeys(function ($i) {
+            return [$i => "Stage $i"];
+        });
+        $positionTypes = $this->positionTypeService->listActiveWorkflowPositionTypes();
+        $workflowTypes = $this->workflowTypeService->listActiveWorkflowTypes();
+
+        if (request()->ajax()){
+            return view('workflow.workflows.edit', compact('positionTypes', 'workflow', 'workflowTypes', 'flowSequenceOptions'));
+        }
+
+        return redirect()->route('workflows.workflows.index');
     }
 
     /**
@@ -81,14 +83,17 @@ class WorkflowController extends Controller
      * @param int $id
      * @return Application|Factory|RedirectResponse|View
      */
-    public function show($id)
+    public function edit($id)
     {
         $workflow = $this->workflowService->findWorkflowById($id);
-        $positionTypes = $this->positionTypeService->listActiveWorkflowPositionTypes('updated_at');
-        $workflowTypes = $this->workflowTypeService->listActiveWorkflowTypes('updated_at');
+        $positionTypes = $this->positionTypeService->listActiveWorkflowPositionTypes();
+        $workflowTypes = $this->workflowTypeService->listActiveWorkflowTypes();
+        $flowSequenceOptions = collect(range(1, 10))->mapWithKeys(function ($i) {
+            return [$i => "Stage $i"];
+        });
 
         if (request()->ajax()){
-            return view('workflow.workflows.edit', compact('positionTypes', 'workflow', 'workflowTypes'));
+            return view('workflow.workflows.edit', compact('positionTypes', 'workflow', 'workflowTypes', 'flowSequenceOptions'));
         }
 
         return redirect()->route('workflows.workflows.index');
@@ -106,9 +111,9 @@ class WorkflowController extends Controller
             'workflow_name' => 'required',
             'workflow_type' => 'required',
             'workflow_position_type' => 'required',
-            'action' => 'required',
+            'action_type' => 'required',
             'flow_sequence' => 'required',
-            'status' => 'required',
+            'is_active' => 'required',
         ]);
 
         $data = $request->except('_token', '_method', 'id');

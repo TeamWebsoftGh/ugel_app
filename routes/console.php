@@ -9,6 +9,7 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('app:send-bulk-sms')->everyMinute();
-Schedule::command('app:send-quick-sms')->everyFifteenSeconds()->withoutOverlapping();
-Schedule::command('app:send-quick-whatsapp')->everyFifteenSeconds()->withoutOverlapping();
-Schedule::command('app:send-quick-voice')->everyFifteenSeconds()->withoutOverlapping();
+Schedule::command('app:send-quick-sms')->everyThirtySeconds()->withoutOverlapping();
+//Schedule::command('app:send-quick-whatsapp')->everyFifteenSeconds()->withoutOverlapping();
+Schedule::command('app:send-email')->everyThirtySeconds()->withoutOverlapping();
+//Schedule::command('app:send-quick-voice')->everyFifteenSeconds()->withoutOverlapping();

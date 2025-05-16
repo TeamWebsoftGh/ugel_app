@@ -7,8 +7,8 @@ use App\Constants\ResponseMessage;
 use App\Http\Resources\PropertyCategoryResource;
 use App\Http\Resources\PropertyTypeResource;
 use App\Services\Helpers\PropertyHelper;
-use App\Services\Interfaces\Properties\IPropertyCategoryService;
-use App\Services\Interfaces\Properties\IPropertyTypeService;
+use App\Services\Properties\Interfaces\IPropertyCategoryService;
+use App\Services\Properties\Interfaces\IPropertyTypeService;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Exceptions\Exception;
 
@@ -66,6 +66,18 @@ class CommonController extends MobileController
         return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, new PropertyCategoryResource($item));
     }
 
+
+    public function getPrice(Request $request)
+    {
+        $validatedData = $request->validate([
+            'booking_period_id' => 'nullable',
+            'property_unit_id' => 'required',
+        ]);
+
+        $item = PropertyHelper::getPropertyUnitPrice(request()->get('property_unit_id'), request()->get('booking_period_id'));
+
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
+    }
     public function countries(Request $request)
     {
         $items = PropertyHelper::getAllCountries();

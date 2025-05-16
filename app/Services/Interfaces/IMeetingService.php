@@ -2,7 +2,7 @@
 
 namespace App\Services\Interfaces;
 
-use App\Models\Memo\Meeting;
+use App\Models\Communication\Meeting;
 use Illuminate\Support\Collection;
 
 interface IMeetingService extends IBaseService

@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Property;
 
+use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
+use App\Helpers\DataTableActionHelper;
 use App\Models\Property\Property;
 use App\Services\Helpers\PropertyHelper;
-use App\Services\Interfaces\IPropertyService;
+use App\Services\Properties\Interfaces\IPropertyService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use App\Abstracts\Http\Controller;
 
 class PropertyController extends Controller
 {
@@ -20,57 +21,44 @@ class PropertyController extends Controller
     /**
      * PropertyController constructor.
      *
-     * @param IPropertyService $serviceTypeService
+     * @param IPropertyService $propertyService
      */
-    public function __construct(IPropertyService $serviceTypeService)
+    public function __construct(IPropertyService $propertyService)
     {
         parent::__construct();
-        $this->propertyService = $serviceTypeService;
+        $this->propertyService = $propertyService;
     }
 
     public function index(Request $request)
     {
-        if (request()->ajax())
-        {
-            $data = request()->all();
-            $properties = $this->propertyService->listProperties($data, "updated_at", "desc");
+        if ($request->ajax()) {
+            $properties = $this->propertyService->listProperties($request->all(), "updated_at", "desc");
 
             return datatables()->of($properties)
-                ->setRowId(function ($row)
-                {
-                    return $row->id;
-                })
-                ->addColumn('category', function ($row)
-                {
-                    return $row->propertyType->propertyCategory->name ?? '';
-                })
-                ->addColumn('type', function ($row)
-                {
-                    return $row->propertyType->name ?? '';
-                })
-                ->addColumn('purpose', function ($row)
-                {
-                    return $row->propertyPurpose->name ?? '';
-                })
-                ->addColumn('status', function ($row)
-                {
-                    return $row->is_active?"Active":"Inactive";
-                })
-                ->addColumn('action', function ($data)
-                {
-                    $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></button>';
-                    $button .= '&nbsp;';
-                    if (user()->can('update-property-types'))
-                    {
-                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
-                        $button .= '&nbsp;';
-                    }
-                    if (user()->can('delete-property-types'))
-                    {
-                        $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
-                    }
-
-                    return $button;
+                ->setRowId(fn($row) => $row->id)
+                ->addColumn('category', fn($row) => $row->propertyType->propertyCategory->name ?? '')
+                ->addColumn('type', fn($row) => $row->propertyType->name ?? '')
+                ->addColumn('purpose', fn($row) => $row->propertyPurpose->name ?? '')
+                ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
+                ->addColumn('action', function ($row) {
+                    return DataTableActionHelper::generate($row->id, [
+                        //'view' => true,
+                        'view' => [
+                            'url' => route('properties.show', $row->id),
+                        ],
+                        'edit' => user()->can("update-properties"),
+                        'delete' => user()->can("delete-properties"),
+                    ],[
+                        [
+                            'label' => 'View Units',
+                            'icon' => 'ri-home-4-line',
+                            'url' => route("property-units.index", ['filter_property' => $row->id])
+                        ],
+                        [
+                            'label' => 'View Rooms',
+                            'icon' => 'ri-home-4-line',
+                            'url' => route("rooms.index", ['filter_property' => $row->id])
+                        ]]);
                 })
                 ->rawColumns(['action'])
                 ->make(true);
@@ -83,6 +71,14 @@ class PropertyController extends Controller
     public function propertyLease()
     {
         return view('property.properties.lease');
+    }
+
+
+    public function all(Request $request)
+    {
+        $data = request()->all();
+        $properties = $this->propertyService->listProperties($data, "updated_at", "desc")->paginate();
+        return view('property.properties.all', compact('properties'));
     }
 
 
@@ -118,6 +114,8 @@ class PropertyController extends Controller
             'country_id' => 'required|integer',
             'region_id' => 'required|integer',
             'city_id' => 'required|integer',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // 2MB max
+            'images.*' => ['nullable', 'image', 'mimes:jpg,jpeg,png,gif,webp', 'max:2048']
         ]);
 
         $data = $request->except('_token', '_method', 'id');
@@ -155,7 +153,7 @@ class PropertyController extends Controller
         $property = $this->propertyService->findPropertyById($id);
 
         if ($request->ajax()){
-            return view('service-types.show', compact('property'));
+            return view('property.properties.edit', compact('property'));
         }
 
         return view('property.properties.show', compact('property'));
@@ -191,8 +189,8 @@ class PropertyController extends Controller
      */
     public function destroy($id)
     {
-        $meeting = $this->serviceTypeService->findServiceTypeById($id);
-        $result = $this->serviceTypeService->deleteServiceType($meeting);
+        $meeting = $this->propertyService->findPropertyById($id);
+        $result = $this->propertyService->deleteProperty($meeting);
 
         return $this->responseJson($result);
     }

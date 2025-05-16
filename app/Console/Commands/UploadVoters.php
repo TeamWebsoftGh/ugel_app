@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use App\Imports\DelegateImport;
-use App\Models\Memo\Announcement;
-use App\Models\Memo\SmsAlert;
+use App\Models\Communication\Announcement;
+use App\Models\Communication\SmsAlert;
 use App\Services\Interfaces\IDelegateService;
 use App\Traits\SmsTrait;
 use Carbon\Carbon;

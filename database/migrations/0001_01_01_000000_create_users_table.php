@@ -15,8 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('user_type')->nullable();
+            $table->string('code')->nullable();
             $table->text('description')->nullable();
             $table->boolean('is_active')->default(1);
+            $table->unsignedBigInteger('team_lead_id')->nullable()->index();
 
             $this->empExtracted($table);
         });
@@ -44,9 +46,9 @@ return new class extends Migration
             $table->date('last_password_reset')->nullable();
             $table->timestamp('last_active')->nullable();
             $table->rememberToken();
+            $table->string('session_id')->nullable();
 
             $table->boolean('is_builtin')->default(0);
-
             $table->unsignedBigInteger('client_id')->nullable();
 
             $this->empExtracted($table);
@@ -75,6 +77,26 @@ return new class extends Migration
             $table->timestamp('expire_at')->nullable();
             $table->timestamps();
             $table->softDeletes();
+        });
+
+        Schema::create('user_devices', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->string('device')->nullable();
+            $table->string('ip_address')->nullable();
+            $table->string('user_agent')->nullable();
+            $table->string('location')->nullable();
+            $table->boolean('is_verified')->default(false);
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::create('team_users', function (Blueprint $table) {
+            $table->unsignedBigInteger('team_id')->index();
+            $table->foreign('team_id')->references('id')->on('teams');
+
+            $table->unsignedBigInteger('user_id')->index();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

@@ -62,6 +62,15 @@ class LogActivityListener
             $log->user_model = get_class($user);
         }
 
+        //  Track old and new changes (only if model was changed and dirty)
+        if ($event->eloquent && method_exists($event->eloquent, 'getDirty')) {
+            $changes = $event->eloquent->getChanges();
+            $original = $event->eloquent->getOriginal();
+
+            $log->before = json_encode(array_intersect_key($original, $changes));
+            $log->after = json_encode($changes);
+        }
+
         $log->save();
     }
 }

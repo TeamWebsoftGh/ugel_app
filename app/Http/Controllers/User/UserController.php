@@ -5,7 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Auth\User;
-use App\Services\Interfaces\IUserService;
+use App\Services\Auth\Interfaces\IUserService;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;

@@ -27,9 +27,17 @@ class KnowledgeBaseRepository extends BaseRepository implements IKnowledgeBaseRe
      *
      * @return Collection $topics
      */
-    public function listTopics(string $order = 'id', string $sort = 'desc'): Collection
+    public function listTopics(array $filter = [], string $order = 'updated_at', string $sort = 'desc')
     {
-        return $this->model->orderBy($order, $sort)->get();
+        $query = $this->getFilteredList();
+        $query->when(!empty($filter['filter_status']), function ($q) use ($filter) {
+            $q->where('is_active', $filter['filter_status']);
+        });
+
+        $query->when(!empty($filter['filter_category']), function ($q) use ($filter) {
+            $q->where('category_id', $filter['filter_category']);
+        });
+        return $query->orderBy($order, $sort);
     }
 
     /**

@@ -67,16 +67,16 @@ class PublicationRepository extends BaseRepository implements IPublicationReposi
     {
         $result = Publication::query();
 
-        if (!empty($params['filter_subsidiary']))
+        if (!empty($params['filter_property']))
         {
-            $result = $result->Where('subsidiary_id', $params['filter_subsidiary'])
-                ->orWhere('subsidiary_id','=',null);
+            $result = $result->Where('property_id', $params['filter_property'])
+                ->orWhere('property_id','=',null);
         };
 
-        if (!empty($params['filter_department']))
+        if (!empty($params['filter_property_type']))
         {
-            $result = $result->where('department_id', $params['filter_department'])
-                ->orWhere('department_id','=',null);
+            $result = $result->where('property_type_id', $params['filter_property_type'])
+                ->orWhere('property_type_id','=',null);
         };
 
         return $result->orderBy($order, $sort)->get();

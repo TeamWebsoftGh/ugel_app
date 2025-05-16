@@ -3,7 +3,8 @@
 namespace App\Models\Workflow;
 
 use App\Abstracts\Model;
-use Carbon\Carbon;
+use App\Models\Auth\User;
+use App\Models\Client\Client;
 
 class WorkflowRequest extends Model
 {
@@ -14,7 +15,8 @@ class WorkflowRequest extends Model
         'is_active',
         'current_flow_sequence',
         'approved_at',
-        'employee_id',
+        'client_id',
+        'user_id',
         'created_at',
         'updated_at',
         'workflow_requestable_id',
@@ -29,9 +31,14 @@ class WorkflowRequest extends Model
         return $this->morphTo();
     }
 
-    public function employee()
+    public function client()
     {
-        return $this->belongsTo(Employee::class)->withDefault();
+        return $this->belongsTo(Client::class)->withDefault();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class)->withDefault();
     }
 
     public function workflowRequestDetails(): \Illuminate\Database\Eloquent\Relations\HasMany
@@ -57,8 +64,8 @@ class WorkflowRequest extends Model
         return $this->belongsTo(WorkflowType::class)->withDefault();
     }
 
-    public function getCreatedAtAttribute($value)
+    public function workflow()
     {
-        return Carbon::parse($value)->format(env('Date_Format'). ' h:i a');
+        return $this->belongsTo(Workflow::class)->withDefault();
     }
 }

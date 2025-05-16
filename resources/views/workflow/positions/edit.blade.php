@@ -1,7 +1,7 @@
-<form method="POST" action="{{route('workflows.positions.store')}}"  class="form-horizontal">
+<form method="POST" id="position" action="{{route('workflows.positions.store')}}"  class="form-horizontal">
     @csrf
     <input type="hidden" id="_id" name="id" value="{{$workflowPosition->id}}">
-    <input type="hidden" id="_name" name="me" value="{{$workflowPosition->deduction_name}}">
+    <input type="hidden" id="_name" name="me" value="{{$workflowPosition->position_name}}">
     <div class="row">
         <div class="col-md-4 col-6 form-group">
             <label>{{__('Name')}} *</label>
@@ -39,18 +39,18 @@
             @enderror
         </div>
         <div class="col-md-4 col-6 form-group">
-            <label>{{__('Employee')}} *</label>
-            <select name="employee_id" id="employee_id" data-ignore="1" class="form-control selectpicker"
+            <label>{{__('User')}} *</label>
+            <select name="user_id" id="employee_id" data-ignore="1" class="form-control selectpicker"
                     data-live-search="true"
-                    title='{{__('Selecting',['key'=>__('Employee')])}}...'>
+                    title='{{__('Selecting',['key'=>__('User')])}}...'>
                 <option value="" disabled selected>{{__('Select one...')}}</option>
                 @forelse($users as $employee)
                     <option value="{{$employee->id}}">{{$employee->fullname}}</option>
                 @empty
                 @endforelse
             </select>
-            <span class="input-note text-danger" id="error-employee_id"> </span>
-            @error('employee_id')
+            <span class="input-note text-danger" id="error-user_id"> </span>
+            @error('user_id')
             <span class="input-note text-danger">{{ $message }} </span>
             @enderror
         </div>
@@ -60,7 +60,7 @@
                     data-live-search="true"
                     title='{{__('Selecting',['key'=>__('Reports to')])}}...'>
                 <option value="" disabled selected>{{__('Select one...')}}</option>
-                @forelse($employees as $employee)
+                @forelse($users as $employee)
                     <option value="{{$employee->id}}">{{$employee->fullname}}</option>
                 @empty
                 @endforelse
@@ -95,13 +95,13 @@
     </div>
     <div class="form-group">
         <div class="form-group col-12">
-            @include("shared.new-controls")
+            @include("shared.save-button")
         </div>
     </div>
 </form>
 <script>
     $(document).ready(function () {
-        $('#employee_id').selectpicker('val', '{{$workflowPosition->user_id}}');
+        $('#user_id').selectpicker('val', '{{$workflowPosition->user_id}}');
         $('#status').selectpicker('val', '{{$workflowPosition->is_active}}');
         $('#reports_to').selectpicker('val', '{{$workflowPosition->reports_to}}');
         $('#category').selectpicker('val', '{{$workflowPosition->subject_id}}');
@@ -114,10 +114,10 @@
     });
     function getCategory(type){
         let _token = $('input[name="_token"]').val();
-        if (type == 'hod') {
+        if(type == 'team'){
             $('#cat_container').show();
             $.ajax({
-                url:"{{ route('dynamic_department') }}",
+                url:"{{ route('dynamic_team') }}",
                 method:"POST",
                 data:{ _token:_token},
                 success:function(result)
@@ -128,35 +128,7 @@
                     $('#category').selectpicker('val', '{{$workflowPosition->subject_id}}');
                 }
             });
-        }else if(type == 'branch-manager'){
-            $('#cat_container').show();
-            $.ajax({
-                url:"{{ route('dynamic_branch') }}",
-                method:"POST",
-                data:{ _token:_token},
-                success:function(result)
-                {
-                    $('#category').selectpicker("destroy");
-                    $('#category').html(result);
-                    $('#category').selectpicker();
-                    $('#category').selectpicker('val', '{{$workflowPosition->subject_id}}');
-                }
-            });
-        } else if(type == 'general-manager'){
-            $('#cat_container').show();
-            $.ajax({
-                url:"{{ route('dynamic_subsidiary') }}",
-                method:"POST",
-                data:{ _token:_token},
-                success:function(result)
-                {
-                    $('#category').selectpicker("destroy");
-                    $('#category').html(result);
-                    $('#category').selectpicker();
-                    $('#category').selectpicker('val', '{{$workflowPosition->subject_id}}');
-                }
-            });
-        }else if(type == 'unit-head'){
+        } else if(type == 'unit-head'){
             $('#cat_container').show();
             $.ajax({
                 url:"{{ route('dynamic_unit') }}",

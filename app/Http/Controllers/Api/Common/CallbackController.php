@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Api\Common;
 
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
-use App\Models\Memo\SmsAlert;
-use App\Models\Payment\Transaction;
-use App\Models\Payment\CallbackRequest;
-use App\Services\Helpers\FundTransferHelper;
+use App\Models\Communication\SmsAlert;
 use App\Traits\SmsTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;

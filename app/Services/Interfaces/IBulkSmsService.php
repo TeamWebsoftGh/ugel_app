@@ -2,12 +2,12 @@
 
 namespace App\Services\Interfaces;
 
-use App\Models\Memo\Announcement;
+use App\Models\Communication\Announcement;
 use Illuminate\Support\Collection;
 
 interface IBulkSmsService extends IBaseService
 {
-    public function listAnnouncements(array $params = null, string $order = 'id', string $sort = 'desc');
+    public function listAnnouncements(array $filter = [], string $order = 'id', string $sort = 'desc');
 
     public function createAnnouncement(array $params);
 

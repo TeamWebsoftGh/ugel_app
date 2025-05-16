@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class NotificationHelper {
@@ -11,73 +12,24 @@ class NotificationHelper {
         $user =user();
         $rows = $user->unreadNotifications;
         $notifications = [];
-//        foreach ($rows->slice(0,12) as $k => $notification) {
-//            $notifications[] = [
-//                'id' => $notification->id,
-//                'created_at' => $notification->created_at,
-//                'type' => $notification->type,
-//            //    'message' => $notification->data['message'],
-//                'read_at' => $notification->read_at,
-//              //  'icon' => $notification->data['icon'],
-//              //  'title' => $notification->data['title']??'',
-//                'user_id' => $user->id
-//            ];
-//        }
+        foreach ($rows->slice(0,12) as $k => $notification) {
+            $notifications[] = [
+                'id' => $notification->id,
+                'created_at' => $notification->created_at,
+                'created_at_ago' => Carbon::parse($notification->created_at)->diffForHumans(),
+                'type' => $notification->type,
+                'message' => $notification->data['message'],
+                'read_at' => $notification->read_at,
+                'url' => $notification->data['url']??"/",
+                'icon' => $notification->data['icon']??'',
+                'title' => $notification->data['title']??'',
+                'user_id' => $user->id
+            ];
+        }
 
         // dd( $user->unreadNotifications, get_current_user());
         return $notifications;
     }
-
-    public static function getEducationalLevels()
-    {
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
-        return EducationalLevel::where('status', 1)->get();
-    }
-
-    public static function getCareerLevels()
-    {
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
-        return CareerLevel::where('status', 1)->get();
-    }
-
-
-    public static function getSkills()
-    {
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
-        return Skill::where('status', 1)->get();
-    }
-
-    public static function getCountries()
-    {
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
-        return Country::where('status', 0)->get();
-    }
-    public static function getRegions($id)
-    {
-        /**
-         * Admission Type
-         *
-         * @return Collection
-         */
-        return Province::where('country_id', $id)->get();
-    }
-
 
     public static function getCities($id)
     {

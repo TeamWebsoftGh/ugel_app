@@ -60,8 +60,7 @@ return new class extends Migration
             $this->empExtracted($table);
         });
 
-        Schema::create('amenitable', function (Blueprint $table) {
-            $table->id();
+        Schema::create('amenitables', function (Blueprint $table) {
             $table->foreignId('amenity_id')->constrained()->onDelete('cascade');
             $table->unsignedBigInteger('amenitable_id');
             $table->string('amenitable_type');
@@ -138,7 +137,9 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->string('room_name');
+            $table->text('description')->nullable();
             $table->integer('floor')->nullable();
+            $table->string('block')->nullable();
             $table->boolean('has_ac')->default(0);
             $table->boolean('has_washroom')->default(0);
             $table->integer('bed_count')->default(1)->comment('Number of beds in the room');

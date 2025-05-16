@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Memo\Meeting;
+use App\Models\Communication\Meeting;
 use App\Repositories\Interfaces\IMeetingRepository;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;

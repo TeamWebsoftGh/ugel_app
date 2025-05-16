@@ -1,4 +1,3 @@
-let token = $('meta[name="csrf-token"]').attr('content');
 
 function SubmitForm(url, data, method)
 {
@@ -16,8 +15,8 @@ function SubmitForm(url, data, method)
             HandleJSONPOSTErrors(XMLHttpRequest, textStatus, errorThrown);
         },
         success: function (data) {
-            bootbox.alert(DetermineIconFromResult(data) + " " + data.Message, function () {
-                if(data.Result === "SUCCESS")
+            bootbox.alert(DetermineIconFromResult(data) + " " + data.message, function () {
+                if(data.status === "success")
                 {
                     $('#activityModal').modal('hide');
                     $("#task-details").load(location.href+" #task-details>*","");

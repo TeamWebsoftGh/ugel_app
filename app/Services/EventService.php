@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Models\Auth\User;
-use App\Models\Memo\Event;
+use App\Models\Communication\Event;
 use App\Notifications\EventNotify;
 use App\Repositories\Interfaces\IClientRepository;
 use App\Repositories\Interfaces\IEventRepository;

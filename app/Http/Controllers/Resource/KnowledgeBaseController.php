@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers\Resource;
 
+use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
-use App\Http\Controllers\Controller;
 use App\Models\Resource\KnowledgeBase;
-use App\Traits\JsonResponseTrait;
 use App\Services\Interfaces\ICategoryService;
 use App\Services\Interfaces\IKnowledgeBaseService;
+use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class KnowledgeBaseController extends Controller
 {
-    use JsonResponseTrait;
     /**
      * @var ICategoryService
      */
@@ -32,17 +32,26 @@ class KnowledgeBaseController extends Controller
         $this->knowledgeBaseService = $knowledgeBase;
     }
 
-    public function index()
+
+    public function index(Request $request)
     {
-        $topics = $this->knowledgeBaseService->listTopics('updated_at');
-        $categories = $this->categoryService->listActiveCategories();
-        $topic = new KnowledgeBase();
-        return view('resource.knowledge-base.create', compact('topics', 'topic', 'categories'));
+        if ($request->ajax()) {
+            $items = $this->knowledgeBaseService->listTopics($request->all());
+            return datatables()->of($items)
+                ->setRowId(fn($row) => $row->id)
+                ->addColumn('status', fn($row) => $row->is_active ? 'Active' : 'Inactive')
+                ->addColumn('category_name', fn($row) => $row->category->name)
+                ->addColumn('action', fn($data) => $this->getActionButtons($data, "knowledge-bases"))
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('resource.knowledge-base.index');
     }
 
-    public function showAll()
+    public function all(Request $request)
     {
-        $topics = $this->knowledgeBaseService->listTopics('created_at', 'asc');
+        $topics = $this->knowledgeBaseService->listTopics($request->all());
         if (request()->ajax())
         {
             return datatables()->of($topics)
@@ -61,6 +70,20 @@ class KnowledgeBaseController extends Controller
         return view('resource.knowledge-base.index', compact('topics'));
     }
 
+    public function create(Request $request)
+    {
+        $topic = new KnowledgeBase();
+        $topic->is_active = 1;
+        $topic->publish_date = Carbon::now()->format('Y-m-d');
+        $categories = $this->categoryService->listActiveCategories();
+
+        if ($request->ajax()){
+            return view('resource.knowledge-base.edit', compact('topic', 'categories'));
+        }
+
+        return redirect()->route("resource.knowledge-base.index");
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -73,7 +96,7 @@ class KnowledgeBaseController extends Controller
             'title' => 'required',
             'content' => 'required',
 //            'kb_files' => 'max:2048|mimes:jpg,bmp,png,pdf,docx'
-            'kb_files' => 'nullable|max:10240'
+            'attachments' => 'nullable|max:10240'
         ]);
 
         $data = $request->except('_token', '_method', 'id');
@@ -110,10 +133,9 @@ class KnowledgeBaseController extends Controller
     {
         $topic = $this->knowledgeBaseService->findTopicById($id);
         $categories = $this->categoryService->listActiveCategories();
-        $files = $topic->documents()->orderByDesc('created_at')->get();
 
         if ($request->ajax()){
-            return view('resource.knowledge-base.edit', compact('topic', 'categories', 'files'));
+            return view('resource.knowledge-base.edit', compact('topic', 'categories'));
         }
 
         return redirect()->route("resource.knowledge-base.index");
@@ -133,13 +155,29 @@ class KnowledgeBaseController extends Controller
         return view("resource.knowledge-base.show", compact("topic", "files"));
     }
 
-    public function deleteDocument($topic_id, $id)
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function destroy(int $id): JsonResponse
     {
-        $topic = $this->knowledgeBaseService->findTopicById($topic_id);
+        $item = $this->knowledgeBaseService->findTopicById($id);
+        $result = $this->knowledgeBaseService->deleteTopic($item);
 
-        $document = $topic->documents()->findOrFail($id);
+        return $this->responseJson($result);
+    }
 
-        $result = $this->knowledgeBaseService->deleteDocument($document, $topic);
+    /**
+     * Bulk delete resources from storage.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function bulkDelete(Request $request): JsonResponse
+    {
+        $result = $this->knowledgeBaseService->deleteMultiple($request->ids);
         return $this->responseJson($result);
     }
 

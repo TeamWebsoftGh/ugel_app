@@ -10,6 +10,7 @@ use App\Models\Settings\Configuration;
 use App\Models\Settings\Currency;
 use App\Models\Workflow\WorkflowPosition;
 use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Jackiedo\DotenvEditor\Facades\DotenvEditor;
 
 if (!function_exists('user')) {
     /**
@@ -28,6 +30,48 @@ if (!function_exists('user')) {
     function user($guard=null)
     {
         return auth()->guard($guard)->user();
+    }
+}
+
+function base64ToUploadedFile(string $base64File): ?UploadedFile
+{
+    try {
+        // Match the base64 string (expects data:<mime-type>;base64,<data>)
+        if (!preg_match('/^data:(.*?);base64,(.*)$/', $base64File, $matches)) {
+            return null; // Invalid base64 format
+        }
+
+        $mimeType = $matches[1];
+        $base64Data = $matches[2];
+
+        // Decode the file content
+        $fileContent = base64_decode($base64Data);
+        if ($fileContent === false) {
+            return null; // Failed decoding
+        }
+
+        // Guess extension from mime type (fallback to bin)
+        $extension = explode('/', $mimeType)[1] ?? 'bin';
+
+        // Create a temporary file
+        $tmpFilePath = tempnam(sys_get_temp_dir(), 'base64_');
+        file_put_contents($tmpFilePath, $fileContent);
+
+        // Rename it to have correct extension
+        $tmpFileWithExt = $tmpFilePath . '.' . $extension;
+        rename($tmpFilePath, $tmpFileWithExt);
+
+        // Create UploadedFile instance
+        return new UploadedFile(
+            $tmpFileWithExt,
+            basename($tmpFileWithExt),
+            $mimeType,
+            null,
+            true // Mark it as a test file (no need for HTTP request upload)
+        );
+    } catch (\Exception $e) {
+        log_error(format_exception($e), \App\Models\Common\DocumentUpload::class, 'convert-file-to-base64-failed');
+        return null;
     }
 }
 
@@ -72,6 +116,14 @@ if (!function_exists('enable_sms')) {
     {
         return env('ENABLE_SMS', 1);
     }
+}
+function updateEnvKeys($keys)
+{
+    DotenvEditor::setKeys($keys);
+    DotenvEditor::save();
+
+    \Artisan::call("cache:clear");
+    \Artisan::call("config:clear");
 }
 
 
@@ -196,7 +248,7 @@ if (!function_exists('employee')) {
      */
     function employee()
     {
-        return user()->employee;
+        return user();
     }
 }
 

@@ -34,7 +34,7 @@
     </table>
 </div>
 @section('js')
-    @include("layouts.portal.shared.datatable")
+    @include("layouts.shared.datatable")
     <script>
         let baseUrl = '/tasks/writers/';
         function ChangeOrderStatus(name, status, url)

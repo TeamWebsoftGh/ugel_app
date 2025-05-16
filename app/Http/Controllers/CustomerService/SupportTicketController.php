@@ -5,7 +5,9 @@ namespace App\Http\Controllers\CustomerService;
 use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Audit\LogActivity;
-use App\Services\Interfaces\ISupportTicketService;
+use App\Services\CustomerService\Interfaces\ISupportTicketService;
+use App\Services\Helpers\PropertyHelper;
+use App\Traits\TaskUtil;
 use Carbon\Carbon;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -33,23 +35,19 @@ class SupportTicketController extends Controller
     public function index(Request $request)
     {
         $data = $request->all();
-        $tickets = $this->ticketService->listSupportTickets($data);
-
-        if (empty($data['filter_start_date']))
-        {
-            $data['start_date'] = Carbon::now()->startOfYear()->format(env('Date_Format'));
-            $data['filter_start_date'] = Carbon::now()->startOfYear()->format('Y-m-d');
-        }else{
-            $data['start_date'] = Carbon::parse($data['filter_start_date'])->format(env('Date_Format'));
-        }
-
-        if (empty($data['filter_end_date']))
-        {
-            $data['end_date'] = Carbon::now()->format(env('Date_Format'));
-            $data['filter_end_date'] = Carbon::now()->format('Y-m-d');
-        }else{
-            $data['end_date'] = Carbon::parse($data['filter_end_date'])->format(env('Date_Format'));
-        }
+        $data['filter_start_date'] = $request->get('filter_start_date', Carbon::now()->startOfYear()->format('Y-m-d'));
+        $data['filter_end_date'] = $request->get('filter_end_date', Carbon::now()->format('Y-m-d'));
+        $data['filter_category'] = $request->get('filter_category', '');
+        $data['filter_customer'] = $request->get('filter_customer', '');
+        $data['filter_assignee'] = $request->get('filter_assignee', '');
+        $data['filter_client_type'] = $request->get('filter_client_type', '');
+        $data['filter_status'] = $request->get('filter_status', '');
+        $data['filter_priority'] = $request->get('filter_priority', '');
+        $data['filter_property'] = $request->get('filter_property', '');
+        $data['categories'] = TaskUtil::getAllSupportTopics();
+        $data['priorities'] = TaskUtil::getPriorities();
+        $data['statuses'] = TaskUtil::getAllStatuses();
+        $data['properties'] = PropertyHelper::getAllProperties();
 
         if (request()->ajax())
         {
@@ -62,11 +60,15 @@ class SupportTicketController extends Controller
                 ->addIndexColumn()
                 ->addColumn('client_name', function ($row)
                 {
-                    return $row->fullname;
+                    return $row->client->fullname;
                 })
-                ->addColumn('type', function ($row)
+                ->addColumn('client_number', function ($row)
                 {
-                    return $row->clientType->name;
+                    return $row->client->client_number;
+                })
+                ->addColumn('created_by', function ($row)
+                {
+                    return $row->owner->fullname;
                 })
                 ->addColumn('phone_number', function ($row)
                 {
@@ -74,18 +76,18 @@ class SupportTicketController extends Controller
                 })
                 ->addColumn('category', function ($row)
                 {
-                    return ucwords($row->clientType->category);
+                    return ucwords($row->supportTopic->name??"N/A");
                 })
                 ->addColumn('action', function ($data)
                 {
-                    $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></button>';
+                    $button = '<a href="'.route("support-tickets.show", $data->id).'" title="show" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></a>';
                     $button .= '&nbsp;';
-                    if (user()->can('update-customers'))
+                    if (user()->can('update-support-tickets') && !str_contains($data->status, 'Closed') )
                     {
-                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
+                        $button .= '<a href="'.route("support-tickets.edit", $data->id).'" title="Edit" class="btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-edit"></i></a>';
                         $button .= '&nbsp;';
                     }
-                    if (user()->can('delete-customers'))
+                    if (user()->can('delete-support-tickets') && !str_contains($data->status, 'Closed'))
                     {
                         $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
                     }
@@ -100,56 +102,45 @@ class SupportTicketController extends Controller
         return view("customer-service.support-tickets.index", compact("data"));
     }
 
-    public function myTickets()
+    public function myTickets(Request $request)
     {
-        $user = user();
-
-        $data['filter_user'] = $user->id;
-        $tickets = $this->ticketService->listSupportTickets($data);
-
-        if (empty($data['filter_start_date']))
-        {
-            $data['start_date'] = Carbon::now()->startOfYear()->format(env('Date_Format'));
-            $data['filter_start_date'] = Carbon::now()->startOfYear()->format('Y-m-d');
-        }else{
-            $data['start_date'] = Carbon::parse($data['filter_start_date'])->format(env('Date_Format'));
-        }
-
-        if (empty($data['filter_end_date']))
-        {
-            $data['end_date'] = Carbon::now()->format(env('Date_Format'));
-            $data['filter_end_date'] = Carbon::now()->format('Y-m-d');
-        }else{
-            $data['end_date'] = Carbon::parse($data['filter_end_date'])->format(env('Date_Format'));
-        }
-
-        return view("customer-service.support-tickets.index", compact("tickets", "data", "user"));
+        $data = $request->all();
+        $data['filter_start_date'] = $request->get('filter_start_date', Carbon::now()->startOfYear()->format('Y-m-d'));
+        $data['filter_end_date'] = $request->get('filter_end_date', Carbon::now()->format('Y-m-d'));
+        $data['filter_category'] = $request->get('filter_category', '');
+        $data['filter_customer'] = $request->get('filter_customer', '');
+        $data['filter_client_type'] = $request->get('filter_client_type', '');
+        $data['filter_status'] = $request->get('filter_status', '');
+        $data['filter_priority'] = $request->get('filter_priority', '');
+        $data['filter_property'] = $request->get('filter_property', '');
+        $data['categories'] = TaskUtil::getAllSupportTopics();
+        $data['priorities'] = TaskUtil::getPriorities();
+        $data['statuses'] = TaskUtil::getAllStatuses();
+        $data['properties'] = PropertyHelper::getAllProperties();
+        $data['user'] = user();
+        return view("customer-service.support-tickets.index", compact("data"));
     }
 
-    public function assigned()
+    public function assigned(Request $request)
     {
         $user = user();
+        $data = $request->all();
 
         $data['filter_assignee'] = $user->id;
-        $tickets = $this->ticketService->listSupportTickets($data);
+        $data['filter_start_date'] = $request->get('filter_start_date', Carbon::now()->startOfYear()->format('Y-m-d'));
+        $data['filter_end_date'] = $request->get('filter_end_date', Carbon::now()->format('Y-m-d'));
+        $data['filter_category'] = $request->get('filter_category', '');
+        $data['filter_customer'] = $request->get('filter_customer', '');
+        $data['filter_client_type'] = $request->get('filter_client_type', '');
+        $data['filter_status'] = $request->get('filter_status', '');
+        $data['filter_priority'] = $request->get('filter_priority', '');
+        $data['filter_property'] = $request->get('filter_property', '');
+        $data['categories'] = TaskUtil::getAllSupportTopics();
+        $data['priorities'] = TaskUtil::getPriorities();
+        $data['statuses'] = TaskUtil::getAllStatuses();
+        $data['properties'] = PropertyHelper::getAllProperties();
 
-        if (empty($data['filter_start_date']))
-        {
-            $data['start_date'] = Carbon::now()->startOfYear()->format(env('Date_Format'));
-            $data['filter_start_date'] = Carbon::now()->startOfYear()->format('Y-m-d');
-        }else{
-            $data['start_date'] = Carbon::parse($data['filter_start_date'])->format(env('Date_Format'));
-        }
-
-        if (empty($data['filter_end_date']))
-        {
-            $data['end_date'] = Carbon::now()->format(env('Date_Format'));
-            $data['filter_end_date'] = Carbon::now()->format('Y-m-d');
-        }else{
-            $data['end_date'] = Carbon::parse($data['filter_end_date'])->format(env('Date_Format'));
-        }
-
-        return view("customer-service.support-tickets.index", compact("tickets", "data", "user"));
+        return view("customer-service.support-tickets.index", compact("data"));
     }
 
     /**
@@ -160,6 +151,9 @@ class SupportTicketController extends Controller
     public function create()
     {
         $data = $this->ticketService->getCreateTicket();
+        if (request()->ajax()){
+            return view('customer-service.support-tickets.edit', $data);
+        }
         return view("customer-service.support-tickets.create", $data);
     }
 
@@ -174,18 +168,14 @@ class SupportTicketController extends Controller
     {
         $data = $request->except('_token', '_method', 'id');
 
-        if(!$request->has('update_request')){
-            $validatedData = $request->validate([
-                'subject' => 'required',
-                'ticket_note' => 'required',
-                'priority_id' => 'required',
-            ]);
-        }else{
-            $validatedData = $request->validate([
-                'status' => 'required',
-                'remarks' => 'required',
-            ]);
-        }
+        $validatedData = $request->validate([
+            'support_topic_id' => 'required',
+            'subject' => 'required',
+            'priority_id' => 'required',
+            'client_id' => 'required',
+            'ticket_note' => 'required',
+            'status' => 'sometimes',
+        ]);
 
         if ($request->has("id") && $request->input("id") != null)
         {
@@ -223,7 +213,7 @@ class SupportTicketController extends Controller
                 ['subject_type', 'App\Models\SupportTicket'],
                 ['subject_id', $ticket->id],
             ])->get();
-        $files = $ticket->documents()->orderByDesc('created_at')->get();
+        $files = $ticket->attachments()->orderByDesc('created_at')->get();
         $comments = $ticket->ticketComments();
         $assigneeIds =  $ticket->assignees()->pluck("id")->toArray();
         return view("customer-service.support-tickets.show", compact("ticket", "logs", 'files', 'comments', 'assigneeIds'));
@@ -292,6 +282,15 @@ class SupportTicketController extends Controller
 
         return redirect()->back();
     }
+
+    public function destroy(int $id)
+    {
+        $award = $this->ticketService->findSupportTicketById($id);
+        $result = $this->ticketService->deleteSupportTicket($award);
+
+        return $this->responseJson($result);
+    }
+
 
     public function deleteDocument($ticket_id, $id)
     {

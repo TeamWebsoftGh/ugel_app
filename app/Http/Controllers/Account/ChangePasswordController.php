@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Account;
 
 use App\Constants\ResponseType;
-use App\Services\Interfaces\IUserService;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Services\Auth\Interfaces\IUserService;
+use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 
 
@@ -30,8 +30,12 @@ class ChangePasswordController extends Controller
      *
      * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Foundation\Application
      */
-    public function edit()
+    public function edit(Request $request)
     {
+        if ($request->ajax())
+        {
+            return view('account.password');
+        }
         return view('account.change-password');
     }
 

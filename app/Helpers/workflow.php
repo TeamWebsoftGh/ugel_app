@@ -37,7 +37,7 @@ if (!function_exists('get_request_details_count')) {
         ->where('b.status',"PENDING")
                         ->where( function($q){
                             $q->where('workflow_request_details.implementor_id',user()->id)
-                              ->orWhere('workflow_request_details.new_implementor_id',user()->id);
+                              ->orWhere('workflow_request_details.old_implementor_id',user()->id);
                           })
                         ->get()
                         ->count();

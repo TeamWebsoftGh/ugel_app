@@ -31,7 +31,7 @@
                             <th>{{__('Phone Number')}}</th>
                             <th>{{__('Status')}}</th>
                             <th>{{__('Date Created')}}</th>
-                            <th class="not-exported">{{__('Action')}}</th>
+                            <th width="100px" class="not-exported">{{__('Action')}}</th>
                         </tr>
                         </thead>
                         <tbody>

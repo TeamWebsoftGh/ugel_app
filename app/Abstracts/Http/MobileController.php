@@ -56,6 +56,13 @@ abstract class MobileController extends BaseController
                     'current_page' => $awarePaginator->currentPage(),
                     'total_pages' => $awarePaginator->lastPage(),
                 ];
+
+                $response['links'] = [
+                    'first' => $awarePaginator->url(1),
+                    'last' => $awarePaginator->url($awarePaginator->lastPage()),
+                    'prev' => $awarePaginator->previousPageUrl(),
+                    'next' => $awarePaginator->nextPageUrl(),
+                ];
             }
         }
         return response()->json($response);

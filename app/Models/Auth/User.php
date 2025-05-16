@@ -31,6 +31,7 @@ class User extends Authenticatable
         'gender',
         'last_name',
         'password',
+        'session_id',
         'company_id',
         'phone_number',
         'photo',

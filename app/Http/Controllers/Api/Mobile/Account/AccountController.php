@@ -5,9 +5,8 @@ namespace App\Http\Controllers\Api\Mobile\Account;
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseType;
 use App\Http\Resources\UserResource;
-use App\Services\Interfaces\IUserService;
+use App\Services\Auth\Interfaces\IUserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password;
 
 class AccountController extends MobileController

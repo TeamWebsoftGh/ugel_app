@@ -2,8 +2,7 @@
 
 namespace App\Mail\Employees;
 
-use App\Models\Client\Leave;
-use App\Models\WorkflowRequestDetail;
+use App\Models\Workflow\WorkflowRequestDetail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -12,14 +11,14 @@ class WorkflowRequestRequestorMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $wf_request_detail;
+    public WorkflowRequestDetail $wf_request_detail;
     public $wf_type;
     public $implementor;
     public $employee;
 
     /**
      * Create a new message instance.
-     * @param Leave $leave
+     * @param WorkflowRequestDetail $wf_request_detail
      */
     public function __construct(WorkflowRequestDetail $wf_request_detail)
     {

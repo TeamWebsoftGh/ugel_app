@@ -6,6 +6,7 @@ use App\Abstracts\Http\FormRequest;
 use App\Traits\Import as ImportHelper;
 use App\Traits\Sources;
 use App\Utilities\Date;
+use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Contracts\Translation\HasLocalePreference;
@@ -58,15 +59,21 @@ abstract class Import implements HasLocalePreference, ShouldQueue, SkipsEmptyRow
             $row['is_active'] = (int) $row['enabled'];
         }
 
-        $date_fields = ['paid_at', 'invoiced_at', 'billed_at', 'due_at', 'issued_at', 'transferred_at'];
+        $date_fields = ['date_of_birth', 'invoiced_at', 'billed_at', 'due_at', 'issued_at', 'transferred_at'];
         foreach ($date_fields as $date_field) {
             if (!isset($row[$date_field])) {
                 continue;
             }
 
             try {
-                $row[$date_field] = Date::parse(ExcelDate::excelToDateTimeObject($row[$date_field]))
-                    ->format('Y-m-d H:i:s');
+                if (!empty($row[$date_field])) {
+                    if (is_numeric($row[$date_field])) {
+                        $row[$date_field] = Date::parse(ExcelDate::excelToDateTimeObject($row[$date_field]));
+                    } else {
+                        // Handle string like '12/04/2025'
+                        $row[$date_field] = Carbon::createFromFormat('d/m/Y', $row[$date_field]);
+                    }
+                }
             } catch (InvalidFormatException | \Exception $e) {
                 Log::info($e->getMessage());
             }

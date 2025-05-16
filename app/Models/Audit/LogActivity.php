@@ -19,7 +19,7 @@ class LogActivity extends Model
      *
      */
 
-    public function getuserAttribute()
+    public function getUserAttribute()
     {
         if ($this->attributes['user_model'])
             return $this->attributes['user_model']::find($this->attributes['user_id']);

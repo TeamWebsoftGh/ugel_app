@@ -3,15 +3,25 @@
 namespace App\Services\Helpers;
 
 use App\Models\Auth\User;
+use App\Models\Billing\Booking;
+use App\Models\Billing\BookingPeriod;
+use App\Models\Billing\InvoiceItemLookup;
+use App\Models\Billing\PropertyUnitPrice;
 use App\Models\Client\Client;
 use App\Models\Client\ClientType;
+use App\Models\Property\Amenity;
+use App\Models\Property\Property;
 use App\Models\Property\PropertyCategory;
 use App\Models\Property\PropertyPurpose;
 use App\Models\Property\PropertyType;
+use App\Models\Property\PropertyUnit;
+use App\Models\Property\Room;
 use App\Models\Settings\City;
 use App\Models\Settings\Country;
 use App\Models\Settings\Region;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class PropertyHelper
 {
@@ -29,7 +39,7 @@ class PropertyHelper
     public static function getAll(?bool $exc_exit = null, ?int $company_id = null): Collection
     {
         return User::select('id', 'first_name', 'last_name', 'title')
-            ->when(!is_owner(), fn($query) => $query->where('company_id', user()->company_id))
+            ->when(!is_owner(), fn($query) => $query->where('company_id', user()->company_id))->whereNull('client_id')
             ->get();
     }
 
@@ -38,7 +48,7 @@ class PropertyHelper
      */
     public static function getAllCustomers(): Collection
     {
-        return Client::select('id', 'first_name', 'last_name', 'title', 'business_name')->get();
+        return Client::select('id', 'first_name', 'last_name', 'title', 'business_name', 'client_number')->get();
     }
 
     /**
@@ -49,6 +59,38 @@ class PropertyHelper
         return PropertyType::select('id', 'name')
             ->where('is_active', 1)
             ->orderBy('name')
+            ->get();
+    }
+
+    public static function getAllHostels(): Collection
+    {
+        return PropertyUnit::whereHas('property.propertyType', function ($query) {
+            $query->where('short_name', 'hostel'); // Assuming 'name' is the column indicating the type
+        })
+            ->where('is_active', 1)
+            ->get();
+    }
+
+
+    public static function getAllBookingPeriods(): Collection
+    {
+        return BookingPeriod::where('short_name', 'hostel')
+            ->where('is_active', 1)
+            ->get(['id', 'name', 'type', 'booking_start_date', 'booking_end_date']);
+    }
+
+    public static function getAllProperties($propertyTypeId = null): Collection
+    {
+        return Property::select('id', 'property_name', 'property_type_id')
+            ->where('is_active', 1)
+            ->orderBy('property_name')
+            ->get();
+    }
+
+    public static function getAllAmenities(): Collection
+    {
+        return Amenity::select('id', 'name', 'short_name')
+            ->where('is_active', 1)
             ->get();
     }
 
@@ -120,6 +162,75 @@ class PropertyHelper
             ->get();
     }
 
+    public static function getPropertyUnitPrice($propertyUnitId, $bookingPeriodId = null)
+    {
+        $cacheKey = "property_unit_price:{$propertyUnitId}:{$bookingPeriodId}";
+
+        return Cache::remember($cacheKey, 3600, function () use ($propertyUnitId, $bookingPeriodId) {
+            $unit = PropertyUnit::select('id', 'rent_amount', 'rent_type', 'rent_duration')
+                ->where('id', $propertyUnitId)
+                ->first();
+
+            if (!$unit) {
+                return null;
+            }
+
+            $price = $unit->rent_amount;
+            $rent_type = $unit->rent_type;
+
+            if ($bookingPeriodId) {
+                $bp = BookingPeriod::find($bookingPeriodId);
+                $customPrice = PropertyUnitPrice::firstWhere([
+                    ['property_unit_id', '=', $propertyUnitId],
+                    ['booking_period_id', '=', $bookingPeriodId],
+                ]);
+
+                if ($customPrice != null) {
+                    $rent_type = $customPrice->rent_type;
+                    $price = $customPrice->price;
+
+                    // Adjust price based on mismatched rent_type and period
+                    if ($bp && $bp->type === 'year' && $rent_type === 'semester') {
+                        $price *= 2;
+                    } elseif ($bp && $bp->type === 'semester' && $rent_type === 'year') {
+                        $price /= 2;
+                    }
+                }
+            }
+
+            return [
+                'price' => $price, // Safe formatting
+                'rent_type' => $rent_type,
+                'rent_duration' =>1,
+            ];
+        });
+    }
+
+
+    /**
+     * Retrieve all active booking periods within the specified date range
+     *
+     * @param string|null $currentDate
+     * @param array $columns
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public static function getActiveBookingPeriods(?string $currentDate = null, array $columns = ['id', 'name', 'type', 'booking_start_date', 'booking_end_date', 'lease_start_date', 'lease_end_date'])
+    {
+        $currentDate = $currentDate ?? Carbon::now()->toDateString();
+
+        return BookingPeriod::where('is_active', 1)
+            ->where(function ($query) use ($currentDate) {
+                $query->whereNull('booking_start_date')
+                    ->orWhere('booking_start_date', '<=', $currentDate);
+            })
+            ->where(function ($query) use ($currentDate) {
+                $query->whereNull('booking_end_date')
+                    ->orWhere('booking_end_date', '>=', $currentDate);
+            })
+            ->orderBy('booking_start_date', 'desc')
+            ->get($columns);
+    }
+
     /**
      * Get All Active Client Types Filtered by Category
      */
@@ -131,4 +242,51 @@ class PropertyHelper
             ->orderBy('name')
             ->get();
     }
+
+    public static function getAllInvoiceItems(): Collection
+    {
+        return InvoiceItemLookup::where('is_active', 1)
+            ->get();
+    }
+
+    public static function isRoomAvailable(int $roomId, string $startDate, string $endDate): bool
+    {
+        $room = Room::where('id', $roomId)->where('is_active', 1)->first();
+
+        if (!$room) {
+            return false; // Room not found or inactive
+        }
+
+        $existingBookings = Booking::where('room_id', $roomId)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('lease_start_date', [$startDate, $endDate])
+                    ->orWhereBetween('lease_end_date', [$startDate, $endDate])
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->where('lease_start_date', '<=', $startDate)
+                            ->where('lease_end_date', '>=', $endDate);
+                    });
+            })->count();
+
+        return $existingBookings < $room->bed_count;
+    }
+
+    public static function isPropertyUnitAvailable($unit, string $startDate, string $endDate): bool
+    {
+        if (!$unit) {
+            return false; // Room not found or inactive
+        }
+
+        $existingBookings = Booking::where('property_unit_id', $unit->id)
+            ->where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('lease_start_date', [$startDate, $endDate])
+                    ->orWhereBetween('lease_end_date', [$startDate, $endDate])
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->where('lease_start_date', '<=', $startDate)
+                            ->where('lease_end_date', '>=', $endDate);
+                    });
+            })->count();
+
+        return !$existingBookings;
+    }
+
 }

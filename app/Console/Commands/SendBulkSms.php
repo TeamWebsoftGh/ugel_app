@@ -2,16 +2,12 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Memo\Announcement;
-use App\Models\Memo\SmsAlert;
-use App\Services\Interfaces\IDelegateService;
-use App\Services\Interfaces\IUserService;
+use App\Models\Communication\Announcement;
+use App\Models\Communication\SmsAlert;
+use App\Services\Auth\Interfaces\IUserService;
 use App\Traits\SmsTrait;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Queue;
 
 class SendBulkSms extends Command
 {

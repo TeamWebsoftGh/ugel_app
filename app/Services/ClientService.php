@@ -9,8 +9,9 @@ use App\Events\NewClientEvent;
 use App\Models\Auth\Role;
 use App\Models\Client\Client;
 use App\Models\Client\ClientType;
+use App\Models\Common\NumberGenerator;
+use App\Repositories\Auth\Interfaces\IUserRepository;
 use App\Repositories\Interfaces\IClientRepository;
-use App\Repositories\Interfaces\IUserRepository;
 use App\Services\Helpers\Response;
 use App\Services\Interfaces\IClientService;
 use App\Traits\UploadableTrait;
@@ -62,15 +63,22 @@ class ClientService extends ServiceBase implements IClientService
     {
         //Declaration
         $password = Str::password(12);
-        //$data['gender'] = strtolower($data['gender']);
         $client= null;
+        $created_user=null;
 
         //Process Request
         try {
             $data['is_active'] = 1;
-
             DB::beginTransaction();
-            $client = $this->clientRepo->createClient($data);
+            $client = $this->clientRepo->create($data);
+
+            if($client == null)
+            {
+                $this->response->status = ResponseType::ERROR;
+                $this->response->message = ResponseMessage::DEFAULT_ERR_CREATE;
+
+                return $this->response;
+            }
 
             if(!isset($data['password'])){
                 $data['password'] = $password;
@@ -84,11 +92,17 @@ class ClientService extends ServiceBase implements IClientService
             }
 
             $data['client_id'] = $client->id;
+            if (!isset($data['client_number'])){
+                $data['client_number'] = NumberGenerator::gen(Client::class);
+            }
+            if (!isset($data['username'])){
+                $data['username'] = $data['client_number'];
+            }
             $created_user = $this->userRepo->createUser($data);
             $created_user->syncRoles(array(optional(Role::firstWhere('name', 'customer'))->id));
 
             // Send the email verification notification
-            $created_user->sendEmailVerificationNotification();
+            //$created_user->sendEmailVerificationNotification();
 
             DB::commit();
             $created_user->password = $data['password'];
@@ -99,25 +113,8 @@ class ClientService extends ServiceBase implements IClientService
             log_error(format_exception($e), new Client(), 'create-client-failed');
         }
 
-        //Check if Client was created successfully
-        if (!$client)
-        {
-            $this->response->status = ResponseType::ERROR;
-            $this->response->message = ResponseMessage::DEFAULT_ERR_CREATE;
-
-            return $this->response;
-        }
-
         //Audit Trail
-        $logAction = 'create-client-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_CREATE;
-
-        log_activity($auditMessage, $client, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-        $this->response->data = $created_user;
-
-        return $this->response;
+        return $this->buildCreateResponse($client);
     }
 
     /**
@@ -129,7 +126,7 @@ class ClientService extends ServiceBase implements IClientService
      */
     public function findClientById(int $id): Client
     {
-        return $this->clientRepo->findClientById($id);
+        return $this->clientRepo->findOneOrFail($id);
     }
 
     /**
@@ -148,7 +145,7 @@ class ClientService extends ServiceBase implements IClientService
         try {
 
             DB::beginTransaction();
-            $result = $this->clientRepo->updateClient($data, $client);
+            $result = $this->clientRepo->update($data, $client->id);
 
             if(!$result)
             {
@@ -170,19 +167,11 @@ class ClientService extends ServiceBase implements IClientService
             log_error(format_exception($e), $client, 'update-client-failed');
         }
 
-        //Audit Trail
-        $logAction = 'update-client-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_UPDATE;
-
-        log_activity($auditMessage, $client, $logAction);
-        $this->response->status = ResponseType::SUCCESS;
-        $this->response->message = $auditMessage;
-
-        return $this->response;
+        return $this->buildUpdateResponse($client, $result);
     }
 
     /**
-     * @param Client $Client
+     * @param Client $client
      * @return Response
      */
     public function deleteClient(Client $client)
@@ -191,17 +180,9 @@ class ClientService extends ServiceBase implements IClientService
         $result = new Response();
 
         $client->users()->delete();
-        $this->clientRepo->delete($client->id);
+        $result = $this->clientRepo->delete($client->id);
 
-        //Audit Trail
-        $logAction = 'delete-client-successful';
-        $auditMessage = ResponseMessage::DEFAULT_SUCCESS_DELETE;
-
-        log_activity($auditMessage, $client, $logAction);
-        $result->status = ResponseType::SUCCESS;
-        $result->message = $auditMessage;
-
-        return $result;
+        return $this->buildDeleteResponse($result);
     }
 
     public function getCreateClient()

@@ -10,6 +10,9 @@ abstract class ResponseMessage {
     const DEFAULT_SUCCESS_UPLOAD = 'Record successfully uploaded!';
     const DEFAULT_SUCCESS_PASSWORD_RESET = 'Password successfully reset!';
 
+    const DUPLICATE_PAYMENT = 'Payment already made for this invoice!';
+    const INSUFFICIENT_BALANCE = 'You have insufficient funds to perform this transaction.';
+
     const DEFAULT_ERROR = 'Error! An error occurred while processing request.';
     const DEFAULT_CORE_BANKING_ERROR = 'Error! Invalid response from core banking.';
     const DEFAULT_DUPLICATE_ERROR = 'Error! Record exists.';

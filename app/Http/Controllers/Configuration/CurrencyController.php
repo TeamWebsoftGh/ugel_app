@@ -11,11 +11,10 @@ use Illuminate\Http\Request;
 
 class CurrencyController extends Controller
 {
-    use JsonResponseTrait;
     /**
      * @var CurrencyController
      */
-    private $currencyService;
+    private ICurrencyService|CurrencyController $currencyService;
 
     /**
      * CategoryController constructor.
@@ -30,48 +29,65 @@ class CurrencyController extends Controller
 
     public function index()
     {
-        $currencies = $this->currencyService->listCurrencies('updated_at');
-        $currency = new Currency();
-
         if (request()->ajax())
         {
+            $currencies = $this->currencyService->listCurrencies('updated_at');
+
             return datatables()->of($currencies)
                 ->setRowId(function ($row)
                 {
                     return $row->id;
                 })
-                ->setRowAttr([
-                    'data-target' => function($user) {
-                        return '#main-content';
-                    },
-                ])
+
                 ->addColumn('formatted_currency', function ($row)
                 {
                     return $row->currency .' '. $row->symbol?? '';
                 })
+                ->addColumn('status', function ($row)
+                {
+                    return $row->is_active?"Active":"Inactive";
+                })
+                ->addColumn('action', function ($data)
+                {
+                    $button = '<button type="button" name="show" data-id="' . $data->id . '" class="dt-show btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="show"><i class="las la-eye"></i></button>';
+                    $button .= '&nbsp;';
+                    if (user()->can('update-currencies'))
+                    {
+                        $button .= '<button type="button" name="edit" data-id="' . $data->id . '" class="dt-edit btn btn-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Edit"><i class="las la-edit"></i></button>';
+                        $button .= '&nbsp;';
+                    }
+                    if (user()->can('delete-currencies'))
+                    {
+                        $button .= '<button type="button" name="delete" data-id="' . $data->id . '" class="dt-delete btn btn-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Delete"><i class="las la-trash"></i></button>';
+                    }
+
+                    return $button;
+                })
+                ->rawColumns(['action'])
                 ->make(true);
         }
 
-        return view('configuration.currencies.create', compact('currency', 'currencies'));
+        return view('configuration.currencies.index');
     }
 
     public function edit(Request $request, $id)
     {
-        $currencies = $this->currencyService->listCurrencies();
         $currency = $this->currencyService->findCurrencyById($id);
 
         if ($request->ajax()){
-            return view('configuration.currencies.edit', compact('currency', 'currencies'));
+            return view('configuration.currencies.edit', compact('currency'));
         }
 
-        return view('configuration.currencies.index', compact('currencies'));
+        return redirect()->route('configurations.currencies.index');
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        $currencies = $this->currencyService->listCurrencies('updated_at', 'desc');
         $currency = new Currency();
-        return view('configuration.currencies.create', compact('currency', 'currencies'));
+        if ($request->ajax()){
+            return view('configuration.currencies.edit', compact('currency'));
+        }
+        return redirect()->route('configurations.currencies.index');
     }
 
     public function store(Request $request)

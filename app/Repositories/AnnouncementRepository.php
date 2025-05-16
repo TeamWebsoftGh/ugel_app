@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Memo\Announcement;
+use App\Models\Communication\Announcement;
 use App\Repositories\Interfaces\IAnnouncementRepository;
 
 class AnnouncementRepository extends BaseRepository implements IAnnouncementRepository
@@ -47,13 +47,17 @@ class AnnouncementRepository extends BaseRepository implements IAnnouncementRepo
             return $q->where('start_date', '<=', $ed);
         });
 
+        $result = $result->when($params['filter_property_type'], function ($q, $params) {
+            return $q->where('property_type_id', '<=', $params['filter_property_type']);
+        });
+
         $result->when($s, function ($q, $s) {
             return $q->Where('company_id', $s)
                 ->orWhere('company_id','=',null);
         });
 
 
-        return $result->orderBy($order, $sort)->get();
+        return $result->orderBy($order, $sort);
     }
 
     /**
@@ -63,7 +67,7 @@ class AnnouncementRepository extends BaseRepository implements IAnnouncementRepo
      *
      * @return Announcement
      */
-    public function createAnnouncement(array $data): Announcement
+    public function createAnnouncement(array $data)
     {
         return $this->create($data);
     }
@@ -75,7 +79,7 @@ class AnnouncementRepository extends BaseRepository implements IAnnouncementRepo
      *
      * @return Announcement
      */
-    public function findAnnouncementById(int $id): Announcement
+    public function findAnnouncementById(int $id)
     {
         return $this->findOneOrFail($id);
     }

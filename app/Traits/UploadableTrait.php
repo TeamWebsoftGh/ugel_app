@@ -49,10 +49,10 @@ trait UploadableTrait
      * @param Collection $files
      * @return bool
      */
-    public function saveDocuments(Collection $files, Model $model, $name ="")
+    public function saveDocuments(Collection $files, Model $model, $name ="", $type = null)
     {
         try {
-            $type = $model->getTable();
+            $type = $type?? $model->getTable();
             $count = 1;
             $files->each(function (UploadedFile $file) use ($model, $count, $type, $name) {
                 $count ++;
@@ -68,6 +68,7 @@ trait UploadableTrait
                     'file_type' => $file->getClientOriginalExtension(),
                     'file_size' => $size,
                     'created_by' => user()->id,
+                    'company_id' => company_id(),
                     'type' => $type,
                 ]);
                 $document->save();

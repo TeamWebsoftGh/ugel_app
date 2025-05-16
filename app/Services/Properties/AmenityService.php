@@ -3,9 +3,9 @@
 namespace App\Services\Properties;
 
 use App\Models\Property\Amenity;
-use App\Repositories\Interfaces\IAmenityRepository;
+use App\Repositories\Property\Interfaces\IAmenityRepository;
 use App\Services\Helpers\Response;
-use App\Services\Interfaces\Properties\IAmenityService;
+use App\Services\Properties\Interfaces\IAmenityService;
 use App\Services\ServiceBase;
 use Illuminate\Support\Collection;
 

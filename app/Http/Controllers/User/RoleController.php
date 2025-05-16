@@ -6,12 +6,11 @@ use App\Abstracts\Http\Controller;
 use App\Constants\ResponseType;
 use App\Models\Auth\Permission;
 use App\Models\Auth\Role;
-use App\Services\Interfaces\IRoleService;
+use App\Services\Auth\Interfaces\IRoleService;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\View\View;
 
 class RoleController extends Controller

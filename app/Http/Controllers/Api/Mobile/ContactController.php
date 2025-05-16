@@ -6,7 +6,7 @@ use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
 use App\Http\Resources\ContactGroupResource;
 use App\Http\Resources\ContactResource;
-use App\Models\Memo\ContactGroup;
+use App\Models\Communication\ContactGroup;
 use App\Services\Interfaces\IContactService;
 use App\Traits\JsonResponseTrait;
 use Illuminate\Http\Request;

@@ -4,124 +4,88 @@ namespace App\Http\Controllers\Api\Mobile;
 
 use App\Abstracts\Http\MobileController;
 use App\Constants\ResponseMessage;
-use App\Http\Resources\Loan\EmploymentDetailResource;
-use App\Http\Resources\Loan\PersonalDetailResource;
-use App\Models\Client\Client;
-use App\Models\Common\Bank;
-use App\Models\Loan\Loan;
-use App\Models\LoanDetails\EmploymentInformation;
-use App\Models\LoanDetails\PersonalDetail;
-use App\Services\Helpers\CoreBankingHelper;
-use App\Services\Interfaces\IClientDetailService;
-use App\Services\Interfaces\IClientService;
-use App\Services\Interfaces\ILoanProductService;
-use App\Services\Interfaces\ILoanService;
-use App\Traits\LoanTransformable;
+use App\Http\Resources\PaymentOptionResource;
+use App\Http\Resources\PaymentResource;
+use App\Services\Billing\Interfaces\IPaymentService;
+use App\Services\Billing\InvoiceService;
+use App\Services\Interfaces\IPaymentGatewayService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends MobileController
 {
-    use LoanTransformable;
+    private IPaymentService $paymentService;
+    private InvoiceService $invoiceService;
+    private IPaymentGatewayService $paymentGatewayService;
 
-    public IClientDetailService $clientDetailService;
-    public IClientService $clientService;
-
-    public function __construct(IClientDetailService $clientDetailService, IClientService $clientService)
+    public function __construct(IPaymentService $paymentService, InvoiceService $invoiceService, IPaymentGatewayService $paymentGatewayService)
     {
         parent::__construct();
-        $this->clientDetailService = $clientDetailService;
-        $this->clientService = $clientService;
+        $this->paymentService = $paymentService;
+        $this->invoiceService = $invoiceService;
+        $this->paymentGatewayService = $paymentGatewayService;
     }
 
-    public function banks()
+    public function index(Request $request)
     {
-        $banks = Bank::where('is_active', 1)->get(['name', 'code']);
+        $data = $request->all();
+        $data['filter_client'] = user()->client_id;
+        // Manually paginate the collection
+        $page = $request->input('page', 1);
+        $perPage = $request->input('perPage', 25);
+        $query = $this->paymentService->listPayments($data);
 
-        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $banks);
+        if ($perPage > 0) {
+            $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+            $resource = PaymentResource::collection($paginator); // Resource handles paginator
+
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource, $paginator);
+        } else {
+            $items = $query->get();
+            $resource = PaymentResource::collection($items);
+
+            return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $resource);
+        }
     }
 
-    public function verifyMoMo(Request $request)
+    public function paymentOptions(Request $request)
+    {
+        $data['online'] = PaymentOptionResource::collection($this->paymentGatewayService->listOnlinePaymentGateways());
+        $data['offline'] = PaymentOptionResource::collection($this->paymentGatewayService->listOfflinePaymentGateways());
+        $data['show_wallet_option'] = false;
+
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $data);
+    }
+
+    public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'wallet_number' => 'required',
-            'channel' => 'required|in:mtn,vodafone,tigo',
-        ], [
-            'channel.in' => 'The :attribute must be either mtn or vodafone or tigo.',  // Custom error message
+            'amount' => 'required|numeric',
+            'payment_method' => 'required|exists:payment_gateways,slug',
+            'invoice_id' => 'required',
         ]);
 
-        $data = $request->all();
-
-        return $this->apiResponseJson(CoreBankingHelper::verifyMomoNumber($data['wallet_number'], $data['channel']));
-    }
-
-    public function verifyBank(Request $request)
-    {
-        $validatedData = $request->validate([
-            'account_number' => 'required',
-            'bank_code' => 'required',
-        ]);
-        $data = $request->all();
-
-        return $this->apiResponseJson(CoreBankingHelper::verifyBankAccountNumber($data['account_number'], $data['bank_code']));
-    }
-
-    public function creditMoMo(Request $request)
-    {
-        $validatedData = $request->validate([
-            'account_number' => 'required',
-            'wallet_number' => 'required',
-            'amount' => 'required',
-            'narration' => 'required',
-            'reference' => 'required',
-            'channel' => 'required|in:mtn,vodafone,tigo',
-        ], [
-            'channel.in' => 'The :attribute must be either mtn or vodafone or tigo.',  // Custom error message
-        ]);
-        $data = $request->all();
-        $client = $this->clientService->findClientById(user()->id);
-
-        $results = CoreBankingHelper::transferToMoMo($client, $data['account_number'], $data['wallet_number'], $data['amount'], $data['narration'], $data['reference'], $data['channel']);
+        $data= $request->except('_token');
+        $invoice = $this->invoiceService->findInvoiceById($data['invoice_id']);
+        $data = $request->except('_token', '_method', 'id');
+        $results = $request->filled('id')
+            ? $this->paymentService->updatePayment($data, $this->paymentService->findPayment($request->input('id')))
+            : $this->paymentService->createPayment($data, $invoice);
 
         return $this->apiResponseJson($results);
     }
 
-    public function creditBank(Request $request)
+    public function show($id)
     {
-        $validatedData = $request->validate([
-            'debit_account_number' => 'required',
-            'credit_account_number' => 'required',
-            'amount' => 'required',
-            'narration' => 'required',
-            'reference' => 'required',
-            'bank_code' => 'required|exists:banks,code',
-        ], [
-            'channel.in' => 'The :attribute must be either mtn or vodafone or tigo.',  // Custom error message
-        ]);
-        $data = $request->all();
-        $client = $this->clientService->findClientById(user()->id);
+        $item = $this->paymentService->findPayment(['client_id' => user()->client_id, 'id' => $id]);
+        $item = new PaymentResource($item);
 
-        $results = CoreBankingHelper::transferToBank($client, $data['debit_account_number'], $data['credit_account_number'], $data['amount'], $data['narration'], $data['reference'], $data['bank_code']);
-
-        return $this->apiResponseJson($results);
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $item);
     }
 
-    public function debitMoMo(Request $request)
+    public function destroy(int $id)
     {
-        $validatedData = $request->validate([
-            'account_number' => 'required',
-            'wallet_number' => 'required',
-            'amount' => 'required',
-            'narration' => 'required',
-            'reference' => 'required',
-            'channel' => 'required|in:mtn,vodafone,tigo',
-        ], [
-            'channel.in' => 'The :attribute must be either mtn or vodafone or tigo.',  // Custom error message
-        ]);
-        $data = $request->all();
-        $client = $this->clientService->findClientById(user()->id);
-
-        $results = CoreBankingHelper::collectMoMo($client, $data['account_number'], $data['wallet_number'], $data['amount'], $data['narration'], $data['reference'], $data['channel']);
+        $item = $this->paymentService->findPayment(['id' => $id, 'client_id' => user()->client_id]);
+        $results = $this->paymentService->deletePayment($item);
 
         return $this->apiResponseJson($results);
     }

@@ -22,18 +22,18 @@
             </div>
             <div class="row">
                 <div class="form-group col-6 col-md-6">
-                    <label for="last_name" class="control-label">Last Name <span class="text-danger">*</span></label>
-                    <input type="text" name="last_name" value="{{old('last_name', $client->last_name)}}" class="form-control">
-                    <span class="input-note text-danger" id="error-last_name"> </span>
-                    @error('last_name')
-                    <span class="input-note text-danger">{{ $message }} </span>
-                    @enderror
-                </div>
-                <div class="form-group col-6 col-md-6">
                     <label for="name" class="control-label">First Name <span class="text-danger">*</span></label>
                     <input type="text" name="first_name" value="{{old('first_name', $client->first_name)}}" class="form-control">
                     <span class="input-note text-danger" id="error-first_name"> </span>
                     @error('first_name')
+                    <span class="input-note text-danger">{{ $message }} </span>
+                    @enderror
+                </div>
+                <div class="form-group col-6 col-md-6">
+                    <label for="last_name" class="control-label">Last Name <span class="text-danger">*</span></label>
+                    <input type="text" name="last_name" value="{{old('last_name', $client->last_name)}}" class="form-control">
+                    <span class="input-note text-danger" id="error-last_name"> </span>
+                    @error('last_name')
                     <span class="input-note text-danger">{{ $message }} </span>
                     @enderror
                 </div>
@@ -54,10 +54,10 @@
                     @enderror
                 </div>
                 <div class="form-group col-6 col-md-6">
-                    <label for="username" class="control-label">Username <span class="text-danger">*</span></label>
-                    <input type="text" id="username" @if($client->username != null) readonly @endif name="username" class="form-control" value="{{old('username', $client->username)}}">
-                    <span class="input-note text-danger" id="error-username"> </span>
-                    @error('username')
+                    <label for="client_number" class="control-label">Client/Student Number <span class="text-danger">*</span></label>
+                    <input type="text" id="client_number" @if($client->client_number != null) readonly @endif name="client_number" class="form-control" value="{{old('client_number', $client->client_number)}}">
+                    <span class="input-note text-danger" id="error-client_number"> </span>
+                    @error('client_number')
                     <span class="input-note text-danger">{{ $message }} </span>
                     @enderror
                 </div>
@@ -85,7 +85,7 @@
                 </div>
                 <div class="form-group col-6 col-md-6">
                     <label for="business_telephone" class="control-label">Business Phone <span class="text-danger">*</span></label>
-                    <input type="text" name="business_telephone" value="{{old('last_name', $client->business_telephone)}}" class="form-control">
+                    <input type="text" name="business_telephone" value="{{old('business_telephone', $client->business_telephone)}}" class="form-control">
                     <span class="input-note text-danger" id="error-business_telephone"> </span>
                     @error('business_telephone')
                     <span class="input-note text-danger">{{ $message }} </span>
@@ -133,9 +133,10 @@
             </div>
             <div class="form-group">
                 @if(user()->canany(['create-'.get_permission_name(), 'update-'.get_permission_name()]))
-                    <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
+                    <button type="submit" class="btn btn-success hide_show"><i class="fa fa-save"></i> Save</button>
                 @endif
             </div>
         </div>
     </div>
 </form>
+

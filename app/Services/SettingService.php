@@ -18,7 +18,7 @@ class SettingService extends ServiceBase implements ISettingService
 {
     use UploadableTrait;
 
-    private $settingRepo;
+    private ISettingRepository $settingRepo;
 
     /**
      * SettingService constructor.

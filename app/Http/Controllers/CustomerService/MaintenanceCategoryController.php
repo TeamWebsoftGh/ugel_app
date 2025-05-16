@@ -7,7 +7,7 @@ use App\Constants\ResponseType;
 use App\Http\Requests\ImportRequest;
 use App\Imports\AmenitiesImport;
 use App\Models\Property\PropertyCategory;
-use App\Services\Interfaces\IMaintenanceCategoryService;
+use App\Services\CustomerService\Interfaces\IMaintenanceCategoryService;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -51,9 +51,9 @@ class MaintenanceCategoryController extends Controller
                 {
                     return $row->is_active?"Active":"Inactive";
                 })
-                ->addColumn('updated_at', function ($row)
+                ->addColumn('parent_name', function ($row)
                 {
-                    return Carbon::parse($row->updated_at)->format(env('Date_Format'));
+                    return $row->parent->name??"Main";
                 })
                 ->addColumn('action', function ($data)
                 {
@@ -87,8 +87,9 @@ class MaintenanceCategoryController extends Controller
     public function create()
     {
         $maintenance_category= new PropertyCategory();
+        $categories = $this->maintenanceCategoryService->listMaintenanceCategories()->whereNull('parent_id')->get();
         if (request()->ajax()){
-            return view('customer-service.maintenance-categories.edit', compact('maintenance_category'));
+            return view('customer-service.maintenance-categories.edit', compact('maintenance_category', 'categories'));
         }
 
         return redirect()->route("maintenance-categories.index");
@@ -158,8 +159,9 @@ class MaintenanceCategoryController extends Controller
     public function edit($id)
     {
         $maintenance_category = $this->maintenanceCategoryService->findMaintenanceCategoryById($id);
+        $categories = $this->maintenanceCategoryService->listMaintenanceCategories()->whereNull('parent_id')->get();
         if (request()->ajax()){
-            return view('customer-service.maintenance-categories.edit', compact("maintenance_category"));
+            return view('customer-service.maintenance-categories.edit', compact("maintenance_category", "categories"));
         }
 
         return redirect()->route("maintenance-categories.index");

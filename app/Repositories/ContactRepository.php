@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\Memo\Contact;
+use App\Models\Communication\Contact;
 use App\Repositories\Interfaces\IContactRepository;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
