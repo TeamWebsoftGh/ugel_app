@@ -69,7 +69,7 @@ class RegisteredUserController extends MobileController
             $user = $results->data??null;
             event(new Registered($user));
             $results->data = [
-                'token' => $user->ussers()->first()?->createToken('ApiToken')->plainTextToken,
+                'token' => $user->users()->first()?->createToken('ApiToken')->plainTextToken,
                 'user' => $this->transformClient($user)
             ];
         }
