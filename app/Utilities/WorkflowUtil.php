@@ -125,7 +125,7 @@ Trait WorkflowUtil
         $nextSmallestSequence = Workflow::where('workflow_type_id', $workflowRequest->workflow_type_id)
             ->where('is_active', 1)
             ->where('flow_sequence', '>', $workflowRequest->current_flow_sequence)
-            ->where('action', 'approve')
+            ->where('action_type', 'approve')
             ->min('flow_sequence'); // Get the minimum sequence that is greater
 
         if (is_null($nextSmallestSequence)) {
@@ -136,7 +136,7 @@ Trait WorkflowUtil
         return Workflow::where('workflow_type_id', $workflowRequest->workflow_type_id)
             ->where('is_active', 1)
             ->where('flow_sequence', $nextSmallestSequence)
-            ->where('action', 'approve')
+            ->where('action_type', 'approve')
             ->get(); // Get all records with the smallest next sequence
     }
 

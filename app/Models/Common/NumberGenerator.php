@@ -28,7 +28,7 @@ class NumberGenerator extends Model
             $generated_number = sprintf('%06d', $obj->last_generated_value);
         } else {
             $obj = new NumberGenerator();
-            $obj->company_id = user()->company_id;
+            $obj->company_id = user()?->company_id??1;
             $obj->generatable_type = $generatable_type;
             $generated_number = "000001";
         }
