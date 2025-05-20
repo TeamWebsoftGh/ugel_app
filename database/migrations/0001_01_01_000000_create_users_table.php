@@ -39,6 +39,7 @@ return new class extends Migration
             $table->string('profile_photo')->nullable();
             $table->boolean('is_active')->default(1);
             $table->string('phone_number',15)->nullable();
+            $table->string('gender',50)->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('last_login_ip',32)->nullable();
             $table->timestampTz('last_login_date','2')->nullable();

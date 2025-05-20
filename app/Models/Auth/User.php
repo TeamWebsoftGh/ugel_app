@@ -34,7 +34,7 @@ class User extends Authenticatable
         'session_id',
         'company_id',
         'phone_number',
-        'photo',
+        'profile_photo',
         'is_active',
         'client_id',
         'last_login_ip',
