@@ -72,24 +72,6 @@ class EnquiryController extends MobileController
         return $this->apiResponseJson($results);
     }
 
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return Application|Factory|Response|View
-     */
-    public function create()
-    {
-        $enquiry = new Enquiry();
-        if (request()->ajax()){
-            return view('customer-service.enquiries.edit', compact("enquiry"));
-        }
-
-        return redirect()->route("enquiries.index");
-    }
-
     /**
      * Remove the specified resource from storage.
      *

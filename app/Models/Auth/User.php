@@ -132,7 +132,7 @@ class User extends Authenticatable
 
     public function getUserImageAttribute()
     {
-        return $this->attributes['photo'] ??"assets/images/user.png";
+        return $this->attributes['profile_photo'] ??"assets/images/user.png";
     }
 
     public function client()
