@@ -60,7 +60,7 @@ class EnquiryController extends MobileController
 
         $data = $request->all();
         $data['is_active']= 1;
-        $data['client_id'] = user()->client_id;
+        $data['client_id'] = user()?->client_id;
 
         $results = $this->enquiryService->createEnquiry($data);
 
