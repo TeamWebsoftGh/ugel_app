@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::group(['namespace' => 'Mobile\CustomerService', 'prefix' => 'customer-service'], function () {
+    Route::apiResource('enquiries', 'EnquiryController')->except(['update']);
     Route::get('maintenance-categories', [MaintenanceRequestController::class, 'categories']);
     Route::get('maintenance-requests/lookup', [MaintenanceRequestController::class, 'lookup'])->name('maintenance-requests.lookup');
     Route::post('maintenance-request/post-comment', [MaintenanceRequestController::class, 'postComment'])->name('maintenance-requests.postComment');

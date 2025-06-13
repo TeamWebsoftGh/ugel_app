@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Api\Auth\RegisteredUserController;
 use App\Http\Controllers\Api\Common\CallbackController;
 use App\Http\Controllers\Api\Mobile\CommonController;
+use App\Http\Controllers\Api\Mobile\CustomerService\EnquiryController;
 use App\Http\Controllers\Api\Mobile\PropertyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,7 +41,7 @@ Route::group(['namespace' => '\App\Http\Controllers\Api', 'prefix' => 'clients']
         Route::get('regions', [CommonController::class, 'regions']);
         Route::get('cities', [CommonController::class, 'cities']);
         Route::post('getPrice', [CommonController::class, 'getPrice']);
-        Route::apiResource('enquiries', 'EnquiryController')->except(['update']);
+        Route::post('enquiries',  [EnquiryController::class, 'store']);
 
 
     });
