@@ -19,6 +19,8 @@ Route::namespace('Account')->group(function () {
     Route::put('account/edit', [AccountController::class, 'update'])->name('account.update');
     Route::put('account/change-password', [AccountController::class, 'changePassword'])->name('account.change-password');
     Route::post('account/change-password', [AccountController::class, 'changePassword'])->name('account.change-password');
+    Route::get('account/notifications', [AccountController::class, 'notifications'])->name('account.notifications');
+    Route::delete('account/notifications', [AccountController::class, 'clearNotifications'])->name('account.notifications.clear');
 });
 // API route for email verification
 Route::middleware('auth:sanctum')->get('/email/verify/{id}/{hash}', [VerificationController::class, 'verify'])->name('verification.verify');

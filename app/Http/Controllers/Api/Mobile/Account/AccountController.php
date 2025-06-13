@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api\Mobile\Account;
 
 use App\Abstracts\Http\MobileController;
+use App\Constants\ResponseMessage;
 use App\Constants\ResponseType;
 use App\Http\Resources\UserResource;
 use App\Services\Auth\Interfaces\IUserService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rules\Password;
 
@@ -98,5 +100,36 @@ class AccountController extends MobileController
         $results = $this->userService->changePassword($data, $user);
 
         return $this->apiResponseJson($results);
+    }
+
+    public function notifications(Request $request)
+    {
+        $user =user();
+        $rows = $user->unreadNotifications;
+        $notifications = [];
+        foreach ($rows->slice(0,12) as $k => $notification) {
+            $notifications[] = [
+                'id' => $notification->id,
+                'created_at' => $notification->created_at,
+                'created_at_ago' => Carbon::parse($notification->created_at)->diffForHumans(),
+                'type' => $notification->type,
+                'message' => $notification->data['message'],
+                'read_at' => $notification->read_at,
+                'url' => $notification->data['url']??"/",
+                'icon' => $notification->data['icon']??'',
+                'title' => $notification->data['title']??'',
+                'user_id' => $user->id
+            ];
+        }
+
+        // dd( $user->unreadNotifications, get_current_user());
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS, $notifications);
+
+    }
+
+    public function clearNotifications()
+    {
+        user()->notifications()->delete();
+        return $this->sendResponse("000", ResponseMessage::DEFAULT_SUCCESS);
     }
 }

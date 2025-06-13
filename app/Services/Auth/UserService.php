@@ -18,15 +18,17 @@ use App\Services\Auth\Interfaces\IUserService;
 use App\Services\Helpers\Response;
 use App\Services\ServiceBase;
 use App\Traits\SmsTrait;
+use App\Traits\UploadableTrait;
 use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class UserService extends ServiceBase implements IUserService
 {
-    use SmsTrait;
+    use SmsTrait, UploadableTrait;
     private IUserRepository $userRepo;
 
     /**
@@ -70,6 +72,18 @@ class UserService extends ServiceBase implements IUserService
         try {
             if (!isset($data['password']))
                 $data['password'] = $password;
+
+            $image = $data['image']??null;
+
+            if(isset($data['image_base64']))
+            {
+                $image = base64ToUploadedFile($data['image_base64']);
+            }
+
+            if ($image instanceof UploadedFile) {
+                $data['profile_photo'] = $this->uploadPublic($image, $user->username, 'profile');
+            }
+
             $user = $this->userRepo->createUser($data);
             if (isset($data['role']))
                 $user->syncRoles($data['role']);
@@ -131,9 +145,17 @@ class UserService extends ServiceBase implements IUserService
 
         //Process Request
         try {
-//            if (isset($data['username'])){
-//                $data['username'] = Str::slug($data['username']);
-//            }
+            $image = $data['image']??null;
+
+            if(isset($data['image_base64']))
+            {
+                $image = base64ToUploadedFile($data['image_base64']);
+            }
+
+            if ($image instanceof UploadedFile) {
+                $data['profile_photo'] = $this->uploadPublic($image, $user->username, 'profile');
+            }
+
             $res = $this->userRepo->updateUser($data, $user);
 
             $userRepo = new UserRepository($user);

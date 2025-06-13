@@ -34,7 +34,7 @@ class User extends Authenticatable
         'session_id',
         'company_id',
         'phone_number',
-        'photo',
+        'profile_photo',
         'is_active',
         'client_id',
         'last_login_ip',
@@ -132,7 +132,7 @@ class User extends Authenticatable
 
     public function getUserImageAttribute()
     {
-        return $this->attributes['photo'] ??"assets/images/user.png";
+        return $this->attributes['profile_photo'] ??"assets/images/user.png";
     }
 
     public function client()

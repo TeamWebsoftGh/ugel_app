@@ -60,7 +60,7 @@ class EnquiryController extends MobileController
 
         $data = $request->all();
         $data['is_active']= 1;
-        $data['client_id'] = user()->client_id;
+        $data['client_id'] = user()?->client_id;
 
         $results = $this->enquiryService->createEnquiry($data);
 
@@ -70,24 +70,6 @@ class EnquiryController extends MobileController
         }
 
         return $this->apiResponseJson($results);
-    }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     *
-     * @return Application|Factory|Response|View
-     */
-    public function create()
-    {
-        $enquiry = new Enquiry();
-        if (request()->ajax()){
-            return view('customer-service.enquiries.edit', compact("enquiry"));
-        }
-
-        return redirect()->route("enquiries.index");
     }
 
     /**

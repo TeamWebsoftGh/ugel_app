@@ -65,22 +65,6 @@ class CompanyService extends ServiceBase implements ICompanyService
             }
             $company = $this->companyRepo->createCompany($params);
 
-            OfficeShift::create([
-                'shift_name' => 'Morning Shift',
-                'company_id' => $company->id,
-                'default_shift' => 1,
-                'monday_in' => '08:00AM',
-                'monday_out' => '05:00PM',
-                'tuesday_in' => '08:00AM',
-                'tuesday_out' => '05:00PM',
-                'wednesday_in' => '08:00AM',
-                'wednesday_out' => '05:00PM',
-                'thursday_in' => '08:00AM',
-                'thursday_out' => '05:00PM',
-                'friday_in' => '08:00AM',
-                'friday_out' => '05:00PM',
-            ]);
-
             Branch::create([
                 'location_name' => 'Accra',
                 'short_code' => 'HQ',
